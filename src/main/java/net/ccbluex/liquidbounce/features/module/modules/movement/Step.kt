@@ -249,7 +249,37 @@ class Step : Module() {
 
             if (mc.thePlayer.entityBoundingBox.minY - stepY > 0.6) { // Check if full block step
                 when {
-                    mode.equals("NCP", ignoreCase = true) || mode.equals("OldAAC", ignoreCase = true) -> {
+                    mode.equals("NCP", ignoreCase = true) -> {
+                        fakeJump()
+                        val rstepHeight = mc.thePlayer.entityBoundingBox.minY - stepY
+                        when {
+                            rstepHeight > 2.019 -> {
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.425, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.821, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.699, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.599, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.022, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.372, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.652, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.869, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 2.019, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.919, mc.thePlayer.posZ, false))
+                                mc.thePlayer.motionX = mc.thePlayer.motionZ = 0;
+                            }
+                            
+                            rstepHeight <= 2.019 && rstepHeight > 1.869 -> {
+                                
+                            }
+
+                        // Half legit step (1 packet missing) [COULD TRIGGER TOO MANY PACKETS]
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
+                            stepY + 0.41999998688698, stepZ, false))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
+                            stepY + 0.7531999805212, stepZ, false))
+                        timer.reset()
+                    }
+                    
+                    mode.equals("OldAAC", ignoreCase = true) -> {
                         fakeJump()
 
                         // Half legit step (1 packet missing) [COULD TRIGGER TOO MANY PACKETS]
