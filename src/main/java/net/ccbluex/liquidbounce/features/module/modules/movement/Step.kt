@@ -61,7 +61,7 @@ class Step : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (modeValue.equals("AAC4.4.0") && !(mc.thePlayer.isCollidedHorizontally&&mc.thePlayer.onGround)) {
+        if (modeValue.equals("AAC4.4.0") && !(mc.thePlayer.isCollidedHorizontally && mc.thePlayer.onGround)) {
             mc.thePlayer.stepHeight = 0.6F
         } else if (modeValue.equals("AAC4.4.0")) mc.thePlayer.stepHeight = 2.0F
         if (wasTimer) {
@@ -264,18 +264,45 @@ class Step : Module() {
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.869, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 2.019, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.919, mc.thePlayer.posZ, false))
-                                mc.thePlayer.motionX = mc.thePlayer.motionZ = 0;
+                                mc.thePlayer.motionX = mc.thePlayer.motionZ = 0
                             }
                             
                             rstepHeight <= 2.019 && rstepHeight > 1.869 -> {
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.425, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.821, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.699, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.599, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.022, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.372, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.652, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.869, mc.thePlayer.posZ, false))
+                                mc.thePlayer.motionX = mc.thePlayer.motionZ = 0
+                            }
+                            
+                            rstepHeight <= 1.869 && rstepHeight > 1.5 -> {
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.425, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.821, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.699, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.599, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.022, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.372, mc.thePlayer.posZ, false))
+                                mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.652, mc.thePlayer.posZ, false))
+                                mc.thePlayer.motionX = mc.thePlayer.motionZ = 0
+                            }
+                            
+                            rstepHeight <= 1.5 && rstepHeight > 1.015 -> {
                                 
                             }
+                            
+                            rstepHeight <= 1.015 && rstepHeight > 0.875 -> {
+                                
+                            }
+                            
+                            rstepHeight <= 0.875 && rstepHeight > 0.6 -> {
+                                
+                            }
+                        }
 
-                        // Half legit step (1 packet missing) [COULD TRIGGER TOO MANY PACKETS]
-                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
-                            stepY + 0.41999998688698, stepZ, false))
-                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
-                            stepY + 0.7531999805212, stepZ, false))
                         timer.reset()
                     }
                     
