@@ -131,7 +131,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             if (blur) {
                 GL11.glTranslatef(-originalX, -originalY, 0F)
                 GL11.glPushMatrix()
-                BlurUtils.blurAreaRounded(originalX + -x - 5F, originalY + -18F - y, originalX + -x + 8F + textLength, originalY + -y, 3F, strength)
+                // BlurUtils.blurAreaRounded(originalX + -x - 5F, originalY + -18F - y, originalX + -x + 8F + textLength, originalY + -y, 3F, strength)
                 GL11.glPopMatrix()
                 GL11.glTranslatef(originalX, originalY, 0F)
             } 
@@ -152,7 +152,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             if (blur) {
                 GL11.glTranslatef(-originalX, -originalY, 0F)
                 GL11.glPushMatrix()
-                BlurUtils.blurArea(originalX + -x - 1 - 26F, originalY + -28F - y, originalX + -x + 8 + textLength, originalY + -y, strength)
+                // BlurUtils.blurArea(originalX + -x - 1 - 26F, originalY + -28F - y, originalX + -x + 8 + textLength, originalY + -y, strength)
                 GL11.glPopMatrix()
                 GL11.glTranslatef(originalX, originalY, 0F)
             } 
