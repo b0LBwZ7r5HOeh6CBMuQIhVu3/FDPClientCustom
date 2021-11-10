@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.*;
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -361,6 +362,46 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         
         return vecRotation;
     }
+
+
+    public static float nextFloat(final float startInclusive, final float endInclusive) {
+        if (startInclusive == endInclusive || endInclusive - startInclusive <= 0.0f) {
+            return startInclusive;
+        }
+        return (float)(startInclusive + (endInclusive - startInclusive) * Math.random());
+    }
+
+
+        public static float[] getVodkaRotations(Entity e, boolean oldPositionUse) {
+        // Variables
+        double diffX = (oldPositionUse ? e.prevPosX : e.posX) - (oldPositionUse ? mc.thePlayer.prevPosX : mc.thePlayer.posX);
+        double diffZ = (oldPositionUse ? e.prevPosZ : e.posZ) - (oldPositionUse ? mc.thePlayer.prevPosZ : mc.thePlayer.posZ);
+        double diffY;
+
+        // Getting center of entity
+        if (e instanceof EntityLivingBase) {
+            EntityLivingBase entitylivingbase = (EntityLivingBase) e;
+            float randomed = nextFloat((float) (entitylivingbase.posY + entitylivingbase.getEyeHeight() / 1.5F), (float) (entitylivingbase.posY + entitylivingbase.getEyeHeight() - entitylivingbase.getEyeHeight() / 3F));
+            diffY = randomed - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
+        } else {
+            diffY = nextFloat((float) e.getEntityBoundingBox().minY, (float) e.getEntityBoundingBox().maxY) - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
+        }
+
+        // Distance between player and entity
+        double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
+
+        // Getting needed rotations
+        float yaw = (float) (((Math.atan2(diffZ, diffX) * 180.0 / Math.PI) - 90.0f)) + nextFloat(-2F, 2F);
+        float pitch = (float) (-(Math.atan2(diffY, dist) * 180.0 / Math.PI)) + nextFloat(-2F, 2F);
+
+        // Set rotations
+        yaw = (mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw));
+        pitch = mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch);
+        pitch = MathHelper.clamp_float(pitch, -90F, 90F);
+        return new float[] { yaw, pitch };
+    }
+
+
     /**
      * Calculate difference between the client rotation and your entity
      *

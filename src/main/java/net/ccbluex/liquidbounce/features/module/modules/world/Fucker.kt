@@ -49,6 +49,8 @@ object Fucker : Module() {
     private val surroundingsValue = BoolValue("Surroundings", true)
     private val noHitValue = BoolValue("NoHit", false)
     private val bypassValue = BoolValue("Bypass", false)
+    private val autoToolValue = BoolValue("AutoTool", false)
+    private val matrixValue = BoolValue("Matrix", false)
 
     /**
      * VALUES
@@ -134,10 +136,10 @@ object Fucker : Module() {
             actionValue.equals("destroy") || surroundings || !isRealBlock -> {
                 // Auto Tool
                 val autoTool = LiquidBounce.moduleManager[AutoTool::class.java]!!
-                if (autoTool.state) {
+                if (autoTool.state && autoToolValue.get()) {
                     autoTool.switchSlot(currentPos)
                 }
-
+                if(matrixValue.get()) mc.gameSettings.keyBindUseItem.pressed = true
                 // Break block
                 if (instantValue.get()) {
                     // CivBreak style block breaking
@@ -192,6 +194,7 @@ object Fucker : Module() {
                     currentDamage = 0F
                     pos = null
                 }
+                if(matrixValue.get()) mc.gameSettings.keyBindUseItem.pressed = false
             }
 
             // Use block

@@ -33,12 +33,12 @@ class Velocity : Module() {
     /**
      * OPTIONS
      */
-    private val horizontalValue = FloatValue("Horizontal", 0F, -1F, 1F)
-    private val verticalValue = FloatValue("Vertical", 0F, -1F, 1F)
+    private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
+    private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
     private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce",
                                                       "Redesky1", "Redesky2",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
-                                                      "MatrixReduce", "MatrixSimple", "MatrixGround",
+                                                      "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "Reverse", "SmoothReverse",
                                                       "Jump",
                                                       "Phase", "PacketPhase", "Glitch", "Spoof",
@@ -69,7 +69,7 @@ class Velocity : Module() {
 
     private val onlyGroundValue = BoolValue("OnlyGround", false)
     private val onlyCombatValue = BoolValue("OnlyCombat", false)
-    // private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
+    private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
     private val noFireValue = BoolValue("noFire", false)
     /**
      * VALUES
@@ -92,6 +92,9 @@ class Velocity : Module() {
     private var templateX = 0
     private var templateY = 0
     private var templateZ = 0
+
+    private var templateZA = 0.00
+    private var templateXA = 0.00
 
     private var isMatrixOnGround = false
 
@@ -234,6 +237,33 @@ class Velocity : Module() {
                 }
            }
 
+           "matrixnew" -> {
+                if (mc.thePlayer.hurtResistantTime == 16) {
+                        mc.thePlayer.motionX *= 0.25;
+                        mc.thePlayer.motionZ *= 0.25;
+                }
+           }
+
+           "matrixold" -> {
+                if (mc.thePlayer.hurtTime == 9) {
+                    templateXA = mc.thePlayer.motionX;
+                    templateZA = mc.thePlayer.motionZ;
+                } else if (mc.thePlayer.hurtResistantTime == 15) {
+                    mc.thePlayer.motionX = -templateXA * 0.275;
+                    mc.thePlayer.motionZ = -templateZA * 0.75;
+                    mc.thePlayer.motionY = -0.0535;
+                }
+           }
+
+           "matrixnewtest" -> {
+                if (mc.thePlayer.hurtResistantTime == 15) {
+                    mc.thePlayer.motionX *= 0.75;
+                    mc.thePlayer.motionZ *= 0.75;
+                    mc.thePlayer.motionY *= -0.75;
+                    mc.thePlayer.setVelocity(0.toDouble(), mc.thePlayer.motionY, 0.toDouble())
+                }
+           }
+
            "matrixground" -> {
                isMatrixOnGround = mc.thePlayer.onGround && !mc.gameSettings.keyBindJump.isKeyDown
                if (isMatrixOnGround) mc.thePlayer.onGround = false
@@ -275,7 +305,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            // if(onlyHitVelocityValue.get() && packet.getMotionY()<400.0) return
+            if(onlyHitVelocityValue.get() && packet.getMotionY()<40.0) return
             if (noFireValue.get() && mc.thePlayer.isBurning) return
             velocityTimer.reset()
 

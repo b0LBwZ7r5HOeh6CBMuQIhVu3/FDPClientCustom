@@ -94,9 +94,9 @@ class AutoReport : Module() {
                 return false
             }
 
-            if (entity.isSpectator) {
+/*            if (entity.isSpectator) {
                 return false
-            }
+            }*/
 
             val teams = LiquidBounce.moduleManager[Teams::class.java]!!
             return !teams.state || !teams.isInYourTeam(entity)

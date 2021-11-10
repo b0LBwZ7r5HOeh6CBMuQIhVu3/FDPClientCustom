@@ -7,6 +7,8 @@ package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.UpdateEvent
+import net.ccbluex.liquidbounce.event.MoveEvent
+import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -14,20 +16,38 @@ import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.BoolValue
 import net.minecraft.item.ItemBucketMilk
 import net.minecraft.item.ItemFood
 import net.minecraft.item.ItemPotion
+import net.minecraft.item.ItemBow
 import net.minecraft.network.play.client.C03PacketPlayer
+import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
+import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
+import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook
+import net.minecraft.network.play.client.C07PacketPlayerDigging
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
+import net.ccbluex.liquidbounce.utils.RotationUtils
+import net.ccbluex.liquidbounce.utils.MovementUtils
+import net.minecraft.util.BlockPos
+import net.minecraft.util.EnumFacing
 
 @ModuleInfo(name = "FastUse", category = ModuleCategory.PLAYER)
 class FastUse : Module() {
     private val modeValue = ListValue("Mode", arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC"), "DelayedInstant")
-    private val timerValue = FloatValue("Timer", 1.22F, 0.1F, 2.0F).displayable { modeValue.equals("Timer") }
+    private val timerValue = FloatValue("Timer", 1.22F, 0.1F, 2.0F).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
     private val durationValue = IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
     private val delayValue = IntegerValue("CustomDelay", 0, 0, 300).displayable { modeValue.equals("CustomDelay") }
+    private val noMoveValue = BoolValue("NoMove", false)
+    private val testValue = BoolValue("test", false)
+    private val bowValue = BoolValue("bow", false)
 
     private val msTimer = MSTimer()
     private var usedTimer = false
+    private var c03s = 0
+    private var c05s = 0
+    private var yaw = 0.0f
+    private var pitch = 0.0f
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
@@ -42,37 +62,52 @@ class FastUse : Module() {
 
         val usingItem = mc.thePlayer.itemInUse.item
 
-        if (usingItem is ItemFood || usingItem is ItemBucketMilk || usingItem is ItemPotion) {
+        if (usingItem is ItemFood || usingItem is ItemBucketMilk || usingItem is ItemPotion || (usingItem is ItemBow && bowValue.get())) {
+            if(usingItem is ItemBow && bowValue.get()){
+            yaw = if (RotationUtils.targetRotation != null)
+                RotationUtils.targetRotation.yaw
+            else
+                mc.thePlayer.rotationYaw
+
+            pitch = if (RotationUtils.targetRotation != null)
+                RotationUtils.targetRotation.pitch
+            else
+                mc.thePlayer.rotationPitch
+
+            mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
+            mc.thePlayer.itemInUseCount = mc.thePlayer.inventory.getCurrentItem().maxItemUseDuration - 1
+            }
             when (modeValue.get().lowercase()) {
                 "delayedinstant" -> if (mc.thePlayer.itemInUseDuration > durationValue.get()) {
                     repeat(36 - mc.thePlayer.itemInUseDuration) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
-                    mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
 
                 "instant" -> {
                     repeat(35) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
-                    mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
                 "aac" -> {
                     mc.timer.timerSpeed = 0.49F
                     usedTimer = true
                     if (mc.thePlayer.itemInUseDuration > 14) {
                     repeat(23) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
+                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
                 }
                 "newaac" -> {
                     mc.timer.timerSpeed = 0.49F
                     usedTimer = true
                     repeat(2) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
                     // mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -87,32 +122,55 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.ticksExisted % 2 == 0) {
                         repeat(2) {
-                            mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem !is ItemBow) if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                         }
                     }
                 }
 
                 "customdelay" -> {
+                    mc.timer.timerSpeed = timerValue.get()
+                    usedTimer = true
                     if (!msTimer.hasTimePassed(delayValue.get().toLong())) {
                         return
                     }
 
-                    mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     msTimer.reset()
                 }
+            }
+            if(c03s >= 40) {
+                if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                c03s = 0
+            }
+            if(c05s >= 40){
+                if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+                c05s = 0
             }
         }
     }
 
-    // @EventTarget
-    // fun onMove(event: MoveEvent?) {
-    //     if (event == null) return
+    @EventTarget
+    fun onMove(event: MoveEvent?) {
+        if (event == null) return
 
-    //     if (!mc.thePlayer.isUsingItem || !modeValue.get().lowercase()=="aac") return
-    //     val usingItem1 = mc.thePlayer.itemInUse.item
-    //     if ((usingItem1 is ItemFood || usingItem1 is ItemBucketMilk || usingItem1 is ItemPotion))
-    //         event.zero()
-    // }
+        if (!mc.thePlayer.isUsingItem || !noMoveValue.get()) return
+        val usingItem1 = mc.thePlayer.itemInUse.item
+        if ((usingItem1 is ItemFood || usingItem1 is ItemBucketMilk || usingItem1 is ItemPotion))
+            event.zeroXZ()
+    }
+
+    @EventTarget
+    fun onPacket(event: PacketEvent?) {
+        if (event == null) return
+        val packet = event.packet
+
+        if (packet is C03PacketPlayer && testValue.get() && packet !is C05PacketPlayerLook && packet !is C04PacketPlayerPosition && packet !is C06PacketPlayerPosLook){
+            if(mc.thePlayer.isUsingItem) c03s++ else c03s = 0
+        }
+        if (packet is C05PacketPlayerLook && bowValue.get()){
+            if(mc.thePlayer.isUsingItem) c05s++ else c05s = 0
+        }
+    }
 
     override fun onDisable() {
         if (usedTimer) {

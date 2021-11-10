@@ -25,6 +25,7 @@ class TargetStrafe : Module() {
     private val onlySpeedValue = BoolValue("OnlySpeed", false)
     private val onlyGroundValue = BoolValue("OnlyGround", false)
     private val renderValue = BoolValue("Render", true)
+    private val testValue = BoolValue("test", false)
     private var direction = true
 
     @EventTarget
@@ -44,7 +45,7 @@ class TargetStrafe : Module() {
     fun strafe(event: MoveEvent) {
         val target = LiquidBounce.combatManager.target
         if (canStrafe(target)) {
-            MovementUtils.setSpeed(event, MovementUtils.getSpeed().toDouble(), RotationUtils.getRotationsEntity(target).yaw, if (direction) 1.0 else -1.0, if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()) 0.0 else 1.0)
+            MovementUtils.setSpeed(event,(if(testValue.get()) 0.13.toDouble() else MovementUtils.getSpeed().toDouble()), RotationUtils.getRotationsEntity(target).yaw, if (direction) 1.0 else -1.0, if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()) 0.0 else 1.0)
         }
     }
 

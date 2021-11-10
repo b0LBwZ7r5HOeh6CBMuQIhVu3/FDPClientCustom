@@ -44,7 +44,7 @@ class NameProtect : Module() {
 
         if (allPlayersValue.get()) {
             for (playerInfo in mc.netHandler.playerInfoMap)
-                event.text = StringUtils.replace(event.text, playerInfo.gameProfile.name, playerNameValue.get())
+                event.text = StringUtils.replace(event.text, playerInfo.gameProfile.name, translateAlternateColorCodes(playerNameValue.get()) + "§f")
         }
     }
 }

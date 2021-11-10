@@ -288,6 +288,11 @@ class Scaffold : Module() {
                     PacketUtils.sendPacketNoEvent(c08)
                 }
                 PacketUtils.sendPacketNoEvent(c08)
+            if (swingValue.equals("packet")) {
+                mc.netHandler.addToSendQueue(C0APacketAnimation())
+            } else if (swingValue.equals("normal")) {
+                mc.thePlayer.swingItem()
+            }
             }
             when (extraClickValue.get().lowercase()) {
                 "emptyc08" -> sendPacket(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getStackInSlot(slot)))
@@ -315,6 +320,7 @@ class Scaffold : Module() {
                     }
                 }
             }
+
             clickDelay = TimeUtils.randomDelay(extraClickMinDelayValue.get(), extraClickMaxDelayValue.get())
             clickTimer.reset()
         }
@@ -702,6 +708,11 @@ class Scaffold : Module() {
                     val hitVec = targetPlace!!.vec3
                     afterPlaceC08 = C08PacketPlayerBlockPlacement(targetPlace!!.blockPos, targetPlace!!.enumFacing.index, itemStack, (hitVec.xCoord - blockPos.x.toDouble()).toFloat(), (hitVec.yCoord - blockPos.y.toDouble()).toFloat(), (hitVec.zCoord - blockPos.z.toDouble()).toFloat())
                 }
+            }
+            if (swingValue.equals("packet")) {
+                mc.netHandler.addToSendQueue(C0APacketAnimation())
+            } else if (swingValue.equals("normal")) {
+                mc.thePlayer.swingItem()
             }
         }
         if (isDynamicSprint) {
