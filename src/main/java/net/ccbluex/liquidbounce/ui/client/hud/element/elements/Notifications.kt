@@ -54,7 +54,7 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     /**
      * Draw element
      */
-    fun drawElement(partialTicks: Float): Border? {
+    override fun drawElement(partialTicks: Float): Border? {
         val bgColor = Color(bgRedValue.get(), bgGreenValue.get(), bgBlueValue.get(), bgAlphaValue.get())
         var animationY = 30F
         val notifications = mutableListOf<Notification>()
