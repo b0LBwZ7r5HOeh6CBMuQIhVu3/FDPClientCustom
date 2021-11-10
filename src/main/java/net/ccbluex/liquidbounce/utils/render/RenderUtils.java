@@ -159,6 +159,65 @@ public final class RenderUtils extends MinecraftInstance {
         glDisable(GL_LINE_SMOOTH);
         if (popPush) glPopMatrix();
     }
+    
+    // rTL = radius top left, rTR = radius top right, rBR = radius bottom right, rBL = radius bottom left
+    public static void customRounded(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float rTL, float rTR, float rBR, float rBL, int color) {
+        float alpha = (color >> 24 & 0xFF) / 255.0F;
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+
+        float z = 0;
+        if (paramXStart > paramXEnd) {
+            z = paramXStart;
+            paramXStart = paramXEnd;
+            paramXEnd = z;
+        }
+
+        if (paramYStart > paramYEnd) {
+            z = paramYStart;
+            paramYStart = paramYEnd;
+            paramYEnd = z;
+        }
+
+        double xTL = paramXStart + rTL;
+        double yTL = paramYStart + rTL;
+
+        double xTR = paramXEnd - rTR;
+        double yTR = paramYStart + rTR;
+
+        double xBR = paramXEnd - rBR;
+        double yBR = paramYEnd - rBR;
+
+        double xBL = paramXStart + rBL;
+        double yBL = paramYEnd - rBL;
+
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(1);
+
+        glColor4f(red, green, blue, alpha);
+        glBegin(GL_POLYGON);
+    
+        double degree = Math.PI / 180;
+        for (double i = 0; i <= 90; i += 0.25)
+            glVertex2d(xBR + Math.sin(i * degree) * rBR, yBR + Math.cos(i * degree) * rBR);
+        for (double i = 90; i <= 180; i += 0.25)
+            glVertex2d(xTR + Math.sin(i * degree) * rTR, yTR + Math.cos(i * degree) * rTR);
+        for (double i = 180; i <= 270; i += 0.25)
+            glVertex2d(xTL + Math.sin(i * degree) * rTL, yTL + Math.cos(i * degree) * rTL);
+        for (double i = 270; i <= 360; i += 0.25)
+            glVertex2d(xBL + Math.sin(i * degree) * rBL, yBL + Math.cos(i * degree) * rBL);
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glPopMatrix();
+    }
 
     public static void drawCircle(float x, float y, float radius, int color) {
         float alpha = (color >> 24 & 0xFF) / 255.0F;

@@ -32,13 +32,13 @@ import java.awt.Color
 
 import org.lwjgl.opengl.GL11
 
-@ElementInfo(name = "Notifications", single = true)
+@ElementInfo(name = "Notifications", blur = true)
 class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
                     side: Side = Side(Side.Horizontal.RIGHT, Side.Vertical.DOWN)) : Element(x, y, scale, side) {
 
     private val smoothYTransition = BoolValue("Smooth-YTransition", true)
     private val barValue = BoolValue("Bar", true)
-    private val blurValue = BoolValue("Blur", false)
+    // private val blurValue = BoolValue("Blur", false)
     private val blurStrength = FloatValue("Blur-Strength", 0F, 0F, 30F)
     private val newValue = BoolValue("New", true)
     private val bgRedValue = IntegerValue("Background-Red", 0, 0, 255)
@@ -49,12 +49,12 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     /**
      * Example notification for CustomHUD designer
      */
-    private val exampleNotification = Notification("Example Notification", Notification.NotifyType.INFO)
+    private val exampleNotification = Notification("","Example Notification", NotifyType.INFO)
 
     /**
      * Draw element
      */
-    override fun drawElement(): Border? {
+    fun drawElement(partialTicks: Float): Border? {
         val bgColor = Color(bgRedValue.get(), bgGreenValue.get(), bgBlueValue.get(), bgAlphaValue.get())
         var animationY = 30F
         val notifications = mutableListOf<Notification>()
@@ -64,9 +64,9 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
         
         if (mc.currentScreen !is GuiHudDesigner || !notifications.isEmpty()) 
             for(i in notifications)
-                i.drawNotification(animationY, smoothYTransition.get(), bgColor, side, barValue.get(), newValue.get(), blurValue.get(), blurStrength.get(), renderX.toFloat(), renderY.toFloat()).also { /**if (!i.stayTimer.hasTimePassed(i.displayTime))*/ animationY += if (newValue.get()) (if (side.vertical == Side.Vertical.DOWN) 20 else -20) else (if (side.vertical == Side.Vertical.DOWN) 30 else -30) }
+                i.drawNotification(animationY, smoothYTransition.get(), bgColor, side, barValue.get(), newValue.get(), false, blurStrength.get(), renderX.toFloat(), renderY.toFloat()).also { /**if (!i.stayTimer.hasTimePassed(i.displayTime))*/ animationY += if (newValue.get()) (if (side.vertical == Side.Vertical.DOWN) 20 else -20) else (if (side.vertical == Side.Vertical.DOWN) 30 else -30) }
         else
-            exampleNotification.drawNotification(animationY, smoothYTransition.get(), bgColor, side, barValue.get(), newValue.get(), blurValue.get(), blurStrength.get(), renderX.toFloat(), renderY.toFloat())
+            exampleNotification.drawNotification(animationY, smoothYTransition.get(), bgColor, side, barValue.get(), newValue.get(), false, blurStrength.get(), renderX.toFloat(), renderY.toFloat())
         if (mc.currentScreen is GuiHudDesigner) {
             exampleNotification.fadeState = Notification.FadeState.STAY
             //exampleNotification.stayTimer.reset()
@@ -105,12 +105,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
         this.textLength = Fonts.font40.getStringWidth(message)
     }
 
-    enum class NotifyType {
-        SUCCESS,
-        INFO,
-        WARNING,
-        ERROR
-    }
+
 
     enum class FadeState {
         IN,STAY,OUT,END
@@ -235,4 +230,11 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             FadeState.END -> hud.removeNotification(this)
         }        
     }
+}
+
+enum class NotifyType {
+    SUCCESS,
+    INFO,
+    WARNING,
+    ERROR
 }
