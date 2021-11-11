@@ -34,7 +34,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private val animSpeedValue = FloatValue("AnimSpeed", 10F, 1F, 20F)
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
     private val fontValue = FontValue("Font", Fonts.font40)
-
+    private val LBPlusAnimHP = 0F
     private var prevTarget: EntityLivingBase? = null
     private var lastHealth = 20F
     private var lastChangeHealth = 20F
@@ -84,7 +84,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             lastHealth = getHealth(prevTarget)
             changeTime = time
         }
-        var nowAnimHP = if ((time - (animSpeedValue.get() * 50)) <changeTime) {
+        val nowAnimHP = if ((time - (animSpeedValue.get() * 50)) <changeTime) {
             getHealth(prevTarget) + (lastChangeHealth - getHealth(prevTarget)) * (1 - ((time - changeTime) / (animSpeedValue.get() * 50F)))
         } else {
             getHealth(prevTarget)
@@ -186,9 +186,9 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         }
     }
     private fun drawLBPlus(target: EntityLivingBase, easingHealth: Float){
-                    if (easingHealth < 0 || easingHealth > target.maxHealth ||
-                        abs(easingHealth - target.health) < 0.01) {
-                        easingHealth = target.health
+                    if (LBPlusAnimHP < 0 || LBPlusAnimHP > target.maxHealth ||
+                        abs(LBPlusAnimHP - target.health) < 0.01) {
+                        LBPlusAnimHP = target.health
                     }
 
                     val width = (38 + Fonts.font40.getStringWidth(target.name)).coerceAtLeast(120).toFloat()
@@ -197,15 +197,15 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
                     RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0,0,0,0).rgb, Color(0,0,0,160).rgb)
 
                     // Damage animation
-                    if (easingHealth > target.health)
-                        RenderUtils.drawRect(0F, 34F, (easingHealth / target.maxHealth) * width,
+                    if (LBPlusAnimHP > target.health)
+                        RenderUtils.drawRect(0F, 34F, (LBPlusAnimHP / target.maxHealth) * width,
                                 36F, Color(252, 185, 65).rgb)
 
                     // Health bar
                     RenderUtils.drawRect(0F, 34F, (target.health / target.maxHealth) * width,
                             36F, BlendUtils.getHealthColor(target.health, target.maxHealth).rgb)
 
-                    easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - animSpeedValue.get())) * RenderUtils.deltaTime
+                    LBPlusAnimHP += ((target.health - LBPlusAnimHP) / 2.0F.pow(10.0F - animSpeedValue.get())) * RenderUtils.deltaTime
 
                     Fonts.font40.drawString(target.name, 36, 3, 0xffffff)
                     Fonts.font35.drawString("Distance: ${decimalFormat.format(mc.thePlayer.getDistanceToEntityBox(target))}", 36, 15, 0xffffff)
