@@ -22,6 +22,8 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
+import kotlin.math.abs
+import kotlin.math.pow
 
 @ElementInfo(name = "Targets")
 class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vertical.MIDDLE)) {
@@ -182,7 +184,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         }
     }
     private fun drawLBPlus(target: EntityLivingBase, easingHealth: Float){
-                    if (target != lastTarget || easingHealth < 0 || easingHealth > target.maxHealth ||
+                    if (easingHealth < 0 || easingHealth > target.maxHealth ||
                         abs(easingHealth - target.health) < 0.01) {
                         easingHealth = target.health
                     }
@@ -201,7 +203,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
                     // Health bar
                     RenderUtils.drawRect(0F, 34F, (target.health / target.maxHealth) * width,
-                            36F, BlendUtils.getHealthColor(actualTarget.health, actualTarget.maxHealth).rgb)
+                            36F, BlendUtils.getHealthColor(target.health, target.maxHealth).rgb)
 
                     easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - animSpeedValue.get())) * RenderUtils.deltaTime
 
@@ -336,5 +338,16 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "exhibition" -> Border(0F, 0F, 140F, 45F)
             else -> null
         }
+    }
+    private fun drawHead(skin: ResourceLocation, x: Float, y: Float, scale: Float, width: Int, height: Int, red: Float, green: Float, blue: Float) {
+        GL11.glPushMatrix()
+        GL11.glTranslatef(x, y, 0F)
+        GL11.glScalef(scale, scale, scale)
+        GL11.glColor4f(red.coerceIn(0F, 1F), green.coerceIn(0F, 1F), blue.coerceIn(0F, 1F), 1F)
+        mc.textureManager.bindTexture(skin)
+        Gui.drawScaledCustomSizeModalRect(0, 0, 8F, 8F, 8, 8, width, height,
+                64F, 64F)
+        GL11.glPopMatrix()
+        GL11.glColor4f(1f, 1f, 1f, 1f)
     }
 }
