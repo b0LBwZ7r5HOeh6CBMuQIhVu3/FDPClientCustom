@@ -54,7 +54,7 @@ class PlayerList : Element() {
     private val distanceValue = IntegerValue("Line-Distance", 0, 0, 400)
     private val gradientAmountValue = IntegerValue("Gradient-Amount", 25, 1, 50)
 
-    override fun drawElement(): Border {
+    override fun drawElement(partialTicks: Float): Border? {
         val reverse = reverseValue.get()
         val font = fontValue.get()
         val fontOffset = fontOffsetValue.get()
@@ -98,7 +98,7 @@ class PlayerList : Element() {
             for (i in 0..(gradientAmountValue.get()-1)) {
                 val barStart = i.toDouble() / gradientAmountValue.get().toDouble() * barLength
                 val barEnd = (i + 1).toDouble() / gradientAmountValue.get().toDouble() * barLength
-                RenderUtils.drawGradientSideways(barStart, -1.0, barEnd, 0.0,color,color)
+                RenderUtils.drawGradientSideways(barStart, -1.0, barEnd, 0.0,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb)
             }
         }
 
