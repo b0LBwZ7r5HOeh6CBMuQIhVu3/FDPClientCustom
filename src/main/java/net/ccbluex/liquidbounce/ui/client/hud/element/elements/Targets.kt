@@ -34,7 +34,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private val animSpeedValue = FloatValue("AnimSpeed", 10F, 1F, 20F)
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
     private val fontValue = FontValue("Font", Fonts.font40)
-    private val LBPlusAnimHP = 0F
+    private var LBPlusAnimHP = 0F
     private var prevTarget: EntityLivingBase? = null
     private var lastHealth = 20F
     private var lastChangeHealth = 20F
