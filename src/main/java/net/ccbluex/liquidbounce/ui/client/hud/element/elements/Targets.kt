@@ -9,6 +9,8 @@ import net.ccbluex.liquidbounce.ui.client.hud.element.Side
 import net.ccbluex.liquidbounce.utils.render.BlendUtils
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.extensions.*
+import net.minecraft.util.ResourceLocation
+import net.minecraft.client.gui.Gui
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
@@ -189,9 +191,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
                         easingHealth = target.health
                     }
 
-                    val width = (38 + Fonts.font40.getStringWidth(target.name))
-                            .coerceAtLeast(120)
-                            .toFloat()
+                    val width = (38 + Fonts.font40.getStringWidth(target.name)).coerceAtLeast(120).toFloat()
 
                     // Draw rect box
                     RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0,0,0,0).rgb, Color(0,0,0,160).rgb)
