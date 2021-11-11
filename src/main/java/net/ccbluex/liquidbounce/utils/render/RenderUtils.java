@@ -624,7 +624,7 @@ public final class RenderUtils extends MinecraftInstance {
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
     }
-    public static void drawGradientSideways(final double left, final double top, final double right, final double bottom, final int col1, final int col2) {
+    public static void drawGradientSidewaysLBP(final double left, final double top, final double right, final double bottom, final int col1, final int col2) {
         final float f = (col1 >> 24 & 0xFF) / 255.0f;
         final float f2 = (col1 >> 16 & 0xFF) / 255.0f;
         final float f3 = (col1 >> 8 & 0xFF) / 255.0f;

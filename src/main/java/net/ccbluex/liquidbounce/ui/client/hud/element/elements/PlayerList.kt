@@ -98,7 +98,7 @@ class PlayerList : Element() {
             for (i in 0..(gradientAmountValue.get()-1)) {
                 val barStart = i.toDouble() / gradientAmountValue.get().toDouble() * barLength
                 val barEnd = (i + 1).toDouble() / gradientAmountValue.get().toDouble() * barLength
-                RenderUtils.drawGradientSideways(barStart, -1.0, barEnd, 0.0,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb)
+                RenderUtils.drawGradientSidewaysLBP(barStart, -1.0, barEnd, 0.0,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb,Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get()).rgb)
             }
         }
 
