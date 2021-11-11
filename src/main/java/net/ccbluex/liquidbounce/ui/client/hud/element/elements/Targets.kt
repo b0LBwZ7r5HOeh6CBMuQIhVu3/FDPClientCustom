@@ -84,7 +84,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             lastHealth = getHealth(prevTarget)
             changeTime = time
         }
-        val nowAnimHP = if ((time - (animSpeedValue.get() * 50)) <changeTime) {
+        var nowAnimHP = if ((time - (animSpeedValue.get() * 50)) <changeTime) {
             getHealth(prevTarget) + (lastChangeHealth - getHealth(prevTarget)) * (1 - ((time - changeTime) / (animSpeedValue.get() * 50F)))
         } else {
             getHealth(prevTarget)
@@ -191,9 +191,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
                         easingHealth = target.health
                     }
 
-                    val width = (38 + target.name.let(Fonts.font40::getStringWidth))
-            .coerceAtLeast(120)
-            .toFloat()
+                    val width = (38 + Fonts.font40.getStringWidth(target.name)).coerceAtLeast(120).toFloat()
 
                     // Draw rect box
                     RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0,0,0,0).rgb, Color(0,0,0,160).rgb)
