@@ -6,6 +6,7 @@ import net.ccbluex.liquidbounce.ui.client.hud.element.Border
 import net.ccbluex.liquidbounce.ui.client.hud.element.Element
 import net.ccbluex.liquidbounce.ui.client.hud.element.ElementInfo
 import net.ccbluex.liquidbounce.ui.client.hud.element.Side
+import net.ccbluex.liquidbounce.utils.render.BlendUtils
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.extensions.*
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
@@ -13,6 +14,7 @@ import net.ccbluex.liquidbounce.utils.render.EaseUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.value.FontValue
 import net.ccbluex.liquidbounce.value.IntegerValue
+import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.entity.EntityLivingBase
@@ -23,9 +25,9 @@ import kotlin.math.roundToInt
 
 @ElementInfo(name = "Targets")
 class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vertical.MIDDLE)) {
-    private val modeValue = ListValue("Mode", arrayOf("Novoline", "Astolfo", "Liquid", "Flux", "Rise", "Zamorozka"), "Rise")
+    private val modeValue = ListValue("Mode", arrayOf("Novoline", "Astolfo", "Liquid", "Flux", "Rise", "Zamorozka","LB+"), "Rise")
     private val switchModeValue = ListValue("SwitchMode", arrayOf("Slide", "Zoom", "None"), "Slide")
-    private val animSpeedValue = IntegerValue("AnimSpeed", 10, 5, 20)
+    private val animSpeedValue = FloatValue("AnimSpeed", 10F, 1F, 20F)
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
     private val fontValue = FontValue("Font", Fonts.font40)
 
@@ -104,6 +106,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "flux" -> drawFlux(prevTarget!!, nowAnimHP)
             "rise" -> drawRise(prevTarget!!, nowAnimHP)
             "zamorozka" -> drawZamorozka(prevTarget!!, nowAnimHP)
+            "LB+" -> drawLBPlus(prevTarget!!, nowAnimHP)
         }
 
         return getTBorder()
@@ -178,7 +181,51 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
                 36, 24, 0xffffff)
         }
     }
+    private fun drawLBPlus(target: EntityLivingBase, easingHealth: Float){
+                    if (target != lastTarget || easingHealth < 0 || easingHealth > target.maxHealth ||
+                        abs(easingHealth - target.health) < 0.01) {
+                        easingHealth = target.health
+                    }
 
+                    val width = (38 + Fonts.font40.getStringWidth(target.name))
+                            .coerceAtLeast(120)
+                            .toFloat()
+
+                    // Draw rect box
+                    RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0,0,0,0).rgb, Color(0,0,0,160).rgb)
+
+                    // Damage animation
+                    if (easingHealth > target.health)
+                        RenderUtils.drawRect(0F, 34F, (easingHealth / target.maxHealth) * width,
+                                36F, Color(252, 185, 65).rgb)
+
+                    // Health bar
+                    RenderUtils.drawRect(0F, 34F, (target.health / target.maxHealth) * width,
+                            36F, BlendUtils.getHealthColor(actualTarget.health, actualTarget.maxHealth).rgb)
+
+                    easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - animSpeedValue.get())) * RenderUtils.deltaTime
+
+                    Fonts.font40.drawString(target.name, 36, 3, 0xffffff)
+                    Fonts.font35.drawString("Distance: ${decimalFormat.format(mc.thePlayer.getDistanceToEntityBox(target))}", 36, 15, 0xffffff)
+
+                    // Draw info
+                    val playerInfo = mc.netHandler.getPlayerInfo(target.uniqueID)
+                    if (playerInfo != null) {
+                        Fonts.font35.drawString("Ping: ${playerInfo.responseTime.coerceAtLeast(0)}",
+                                36, 24, 0xffffff)
+
+                        // Draw head
+                        val locationSkin = playerInfo.locationSkin
+
+                        val scaleHT = (target.hurtTime.toFloat() / target.maxHurtTime.coerceAtLeast(1).toFloat()).coerceIn(0F, 1F)
+                        drawHead(locationSkin, 
+                            2F + 15F * (scaleHT * 0.2F), 
+                            2F + 15F * (scaleHT * 0.2F), 
+                            1F - scaleHT * 0.2F, 
+                            30, 30, 
+                            1F, 0.4F + (1F - scaleHT) * 0.6F, 0.4F + (1F - scaleHT) * 0.6F)
+                    }
+    }
     private fun drawZamorozka(target: EntityLivingBase, easingHealth: Float) {
         val font = fontValue.get()
 
