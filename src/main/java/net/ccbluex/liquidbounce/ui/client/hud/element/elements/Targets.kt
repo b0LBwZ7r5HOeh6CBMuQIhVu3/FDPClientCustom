@@ -110,7 +110,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "flux" -> drawFlux(prevTarget!!, nowAnimHP)
             "rise" -> drawRise(prevTarget!!, nowAnimHP)
             "zamorozka" -> drawZamorozka(prevTarget!!, nowAnimHP)
-            "lb+"+ -> drawLBPlus(prevTarget!!, nowAnimHP)
+            "lb+" -> drawLBPlus(prevTarget!!, nowAnimHP)
         }
 
         return getTBorder()
