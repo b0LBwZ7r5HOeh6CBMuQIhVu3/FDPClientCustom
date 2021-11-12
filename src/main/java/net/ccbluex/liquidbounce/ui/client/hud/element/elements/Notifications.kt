@@ -47,7 +47,7 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     private val bgBlueValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgAlphaValue = IntegerValue("Background-Alpha", 190, 0, 255)
     private val fontValue = FontValue("Font", Fonts.font40)
-
+    var fontRenderer = fontValue.get()
     /**
      * Example notification for CustomHUD designer
      */
@@ -57,6 +57,8 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
      * Draw element
      */
     override fun drawElement(partialTicks: Float): Border? {
+        if(fontRenderer != fontValue.get())
+            fontRenderer = fontValue.get()
         val bgColor = Color(bgRedValue.get(), bgGreenValue.get(), bgBlueValue.get(), bgAlphaValue.get())
         var animationY = 30F
         val notifications = mutableListOf<Notification>()
@@ -104,7 +106,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
         this.displayTime = time.toLong()
         this.firstY = 19190F
         this.stayTimer.reset()
-        this.textLength = fontValue.get().getStringWidth(message)
+        this.textLength = fontRenderer.getStringWidth(message)
     }
 
 
@@ -147,7 +149,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
                 })  
 
             GlStateManager.resetColor()
-            fontValue.get().drawString(message, -x + 3, -13F - y, -1)
+            fontRenderer.drawString(message, -x + 3, -13F - y, -1)
         } else {
             //bg
             GlStateManager.resetColor()
@@ -195,7 +197,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             }
             
             GlStateManager.resetColor()
-            fontValue.get().drawString(message, -x + 2, -18F - y, -1)
+            fontRenderer.drawString(message, -x + 2, -18F - y, -1)
         }
         
         when (fadeState) {
