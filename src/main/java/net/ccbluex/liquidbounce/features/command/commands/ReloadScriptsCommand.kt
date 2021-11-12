@@ -10,9 +10,10 @@ import net.ccbluex.liquidbounce.features.command.Command
 import net.ccbluex.liquidbounce.features.command.CommandManager
 import net.ccbluex.liquidbounce.features.module.modules.misc.KillInsults
 import net.ccbluex.liquidbounce.ui.cape.GuiCapeManager
+import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGu
 import net.ccbluex.liquidbounce.ui.font.Fonts
 
-class ReloadCommand : Command("reload", emptyArray()) {
+class ReloadScriptsCommand : Command("reload", emptyArray()) {
     /**
      * Execute commands with provided [args]
      */
@@ -31,7 +32,7 @@ class ReloadCommand : Command("reload", emptyArray()) {
                 LiquidBounce.isStarting = false
 
                 LiquidBounce.clickGui = ClickGui()
-                LiquidBounce.fileManager.loadConfig(LiquidBounce.fileManager.clickGuiConfig)
+                // LiquidBounce.fileManager.loadConfig(LiquidBounce.fileManager.clickGuiConfig)
         alert("Reloaded.")
         LiquidBounce.isStarting = false
         LiquidBounce.isLoadingConfig = false
