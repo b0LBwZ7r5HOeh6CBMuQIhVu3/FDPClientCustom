@@ -47,7 +47,7 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     private val bgBlueValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgAlphaValue = IntegerValue("Background-Alpha", 190, 0, 255)
     private val fontValue = FontValue("Font", Fonts.font40)
-    var fontRenderer = fontValue.get()
+    private var fontRenderer = Fonts.font40
     /**
      * Example notification for CustomHUD designer
      */
