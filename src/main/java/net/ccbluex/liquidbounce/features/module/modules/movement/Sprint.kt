@@ -60,7 +60,7 @@ class Sprint : Module() {
 
         if (allDirectionsValue.get()) {
             mc.thePlayer.isSprinting = true
-            if (RotationUtils.getRotationDifference(Rotation((MovementUtils.direction * 180f / Math.PI).toFloat(), mc.thePlayer.rotationPitch)) > 30) {
+            if (mc.thePlayer.movementInput.moveForward < 0.8F) {
                 when (allDirectionsBypassValue.get().lowercase()) {
                     "rotate" -> RotationUtils.setTargetRotation(Rotation((MovementUtils.direction * 180f / Math.PI).toFloat(), mc.thePlayer.rotationPitch), 10)
                     "toggle" -> {
