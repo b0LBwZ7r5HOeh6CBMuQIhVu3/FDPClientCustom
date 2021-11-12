@@ -13,7 +13,7 @@ import net.ccbluex.liquidbounce.ui.cape.GuiCapeManager
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGu
 import net.ccbluex.liquidbounce.ui.font.Fonts
 
-class ReloadScriptsCommand : Command("reload", emptyArray()) {
+class ReloadScriptsCommand : Command("reloadScripts", emptyArray()) {
     /**
      * Execute commands with provided [args]
      */
