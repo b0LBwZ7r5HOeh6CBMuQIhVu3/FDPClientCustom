@@ -13,6 +13,7 @@ import net.ccbluex.liquidbounce.LiquidBounce.hud
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
+import net.ccbluex.liquidbounce.value.fontValue
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.ui.client.hud.element.Border
 import net.ccbluex.liquidbounce.ui.client.hud.element.Element
@@ -45,6 +46,7 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     private val bgGreenValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgBlueValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgAlphaValue = IntegerValue("Background-Alpha", 190, 0, 255)
+    private val fontValue = FontValue("Font", Fonts.font40)
 
     /**
      * Example notification for CustomHUD designer
@@ -102,7 +104,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
         this.displayTime = time.toLong()
         this.firstY = 19190F
         this.stayTimer.reset()
-        this.textLength = Fonts.font40.getStringWidth(message)
+        this.textLength = fontValue.get().getStringWidth(message)
     }
 
 
@@ -145,7 +147,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
                 })  
 
             GlStateManager.resetColor()
-            Fonts.font40.drawString(message, -x + 3, -13F - y, -1)
+            fontValue.get().drawString(message, -x + 3, -13F - y, -1)
         } else {
             //bg
             GlStateManager.resetColor()
@@ -193,7 +195,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             }
             
             GlStateManager.resetColor()
-            Fonts.font40.drawString(message, -x + 2, -18F - y, -1)
+            fontValue.get().drawString(message, -x + 2, -18F - y, -1)
         }
         
         when (fadeState) {
