@@ -264,8 +264,8 @@ class Step : Module() {
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.869, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 2.019, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.919, mc.thePlayer.posZ, false))
-                                mc.thePlayer.motionX = 0
-                                mc.thePlayer.motionZ = 0
+                                mc.thePlayer.motionX = 0.toDouble()
+                                mc.thePlayer.motionZ = 0.toDouble()
                             }
                             
                             rstepHeight <= 2.019 && rstepHeight > 1.869 -> {
@@ -277,8 +277,8 @@ class Step : Module() {
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.372, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.652, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.869, mc.thePlayer.posZ, false))
-                                mc.thePlayer.motionX = 0
-                                mc.thePlayer.motionZ = 0                            }
+                                mc.thePlayer.motionX = 0.toDouble()
+                                mc.thePlayer.motionZ = 0.toDouble()                            }
                             
                             rstepHeight <= 1.869 && rstepHeight > 1.5 -> {
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.425, mc.thePlayer.posZ, false))
@@ -288,8 +288,8 @@ class Step : Module() {
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.022, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.372, mc.thePlayer.posZ, false))
                                 mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.652, mc.thePlayer.posZ, false))
-                                mc.thePlayer.motionX = 0
-                                mc.thePlayer.motionZ = 0                            }
+                                mc.thePlayer.motionX = 0.toDouble()
+                                mc.thePlayer.motionZ = 0.toDouble()                            }
                             
                             rstepHeight <= 1.5 && rstepHeight > 1.015 -> {
                                 
