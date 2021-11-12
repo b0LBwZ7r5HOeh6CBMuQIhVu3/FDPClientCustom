@@ -46,8 +46,8 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
     private val bgGreenValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgBlueValue = IntegerValue("Background-Red", 0, 0, 255)
     private val bgAlphaValue = IntegerValue("Background-Alpha", 190, 0, 255)
-    private val fontValue = FontValue("Font", Fonts.font40)
-    private var fontRenderer = Fonts.font40
+    // private val fontValue = FontValue("Font", Fonts.font40)
+    // private var fontRenderer = Fonts.font40
     /**
      * Example notification for CustomHUD designer
      */
@@ -57,8 +57,8 @@ class Notifications(x: Double = 0.0, y: Double = 30.0, scale: Float = 1F,
      * Draw element
      */
     override fun drawElement(partialTicks: Float): Border? {
-        if(fontRenderer != fontValue.get())
-            fontRenderer = fontValue.get()
+/*        if(fontRenderer != fontValue.get())
+            fontRenderer = fontValue.get()*/
         val bgColor = Color(bgRedValue.get(), bgGreenValue.get(), bgBlueValue.get(), bgAlphaValue.get())
         var animationY = 30F
         val notifications = mutableListOf<Notification>()
@@ -106,7 +106,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
         this.displayTime = time.toLong()
         this.firstY = 19190F
         this.stayTimer.reset()
-        this.textLength = fontRenderer.getStringWidth(message)
+        this.textLength = Fonts.font35.getStringWidth(message)
     }
 
 
@@ -149,7 +149,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
                 })  
 
             GlStateManager.resetColor()
-            fontRenderer.drawString(message, -x + 3, -13F - y, -1)
+            Fonts.font35.drawString(message, -x + 3, -13F - y, -1)
         } else {
             //bg
             GlStateManager.resetColor()
@@ -197,7 +197,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             }
             
             GlStateManager.resetColor()
-            fontRenderer.drawString(message, -x + 2, -18F - y, -1)
+            Fonts.font35.drawString(message, -x + 2, -18F - y, -1)
         }
         
         when (fadeState) {
