@@ -10,7 +10,8 @@ import net.ccbluex.liquidbounce.features.command.Command
 import net.ccbluex.liquidbounce.features.command.CommandManager
 import net.ccbluex.liquidbounce.features.module.modules.misc.KillInsults
 import net.ccbluex.liquidbounce.ui.cape.GuiCapeManager
-import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGu
+import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.ClickGui
+import net.ccbluex.liquidbounce.launch.options.LegacyUiLaunchOption
 import net.ccbluex.liquidbounce.ui.font.Fonts
 
 class ReloadScriptsCommand : Command("reloadScripts", emptyArray()) {
@@ -31,7 +32,8 @@ class ReloadScriptsCommand : Command("reloadScripts", emptyArray()) {
             LiquidBounce.configManager.load(LiquidBounce.configManager.nowConfig, false)
                 LiquidBounce.isStarting = false
 
-                LiquidBounce.clickGui = ClickGui()
+                // LiquidBounce.clickGui = ClickGui()
+                LegacyUiLaunchOption.clickGui = ClickGui()
                 // LiquidBounce.fileManager.loadConfig(LiquidBounce.fileManager.clickGuiConfig)
         alert("Reloaded.")
         LiquidBounce.isStarting = false
