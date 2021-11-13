@@ -17,8 +17,7 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.renderer.RenderHelper
-
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.EntityLivingBase
 import org.lwjgl.opengl.GL11
@@ -227,7 +226,8 @@ class Targets : Element(-46.0,-40.0,1F,Side(Side.Horizontal.MIDDLE,Side.Vertical
                     var y = 26
 
                     for (index in 3 downTo 0) {
-                        val stack = target.inventory.armorInventory[index] ?: continue
+                        val entityTarget = target as EntityPlayer
+                        val stack = entityTarget.inventory.armorInventory[index] ?: continue
 
                         if (stack.getItem() == null)
                             continue
