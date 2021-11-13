@@ -5,8 +5,11 @@ I skidded LiquidBoune+ and FDPClient.
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a41ae7bde63c143e426a/maintainability)](https://codeclimate.com/github/UnlegitMC/FDPClient/maintainability)
 A skidded version of LiquidBounce.
+
 Base: [FDPClient](https://github.com/UnlegitMC/FDPClient).
+
 Base of base: [LiquidBounce](https://github.com/CCBlueX/LiquidBounce).
+
 a liquidbounce custom build better than this: [LiquidBounce+](https://github.com/WYSI-Foundation/LiquidBouncePlus).
 
 ## License
