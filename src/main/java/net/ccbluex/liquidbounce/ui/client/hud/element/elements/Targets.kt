@@ -9,12 +9,16 @@ import net.ccbluex.liquidbounce.ui.client.hud.element.Side
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.extensions.getDistanceToEntityBox
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
+import net.ccbluex.liquidbounce.utils.render.BlendUtils
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.value.FontValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.RenderHelper
+
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.EntityLivingBase
 import org.lwjgl.opengl.GL11
@@ -22,7 +26,7 @@ import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-@ElementInfo(name = "Targets", single = true)
+@ElementInfo(name = "Targets")
 class Targets : Element(-46.0,-40.0,1F,Side(Side.Horizontal.MIDDLE,Side.Vertical.MIDDLE)) {
     private val modeValue = ListValue("Mode", arrayOf("Novoline","Astolfo","Liquid","Exhibition","Flux","Rise"), "Rise")
     private val switchModeValue = ListValue("SwitchMode", arrayOf("Slide","Zoom"), "Slide")
@@ -112,7 +116,7 @@ class Targets : Element(-46.0,-40.0,1F,Side(Side.Horizontal.MIDDLE,Side.Vertical
 
     private fun drawAstolfo(target: EntityLivingBase, nowAnimHP: Float){
         val font=fontValue.get()
-        val color=RenderUtils.skyRainbow(1,1F,0.9F,5.0)
+        val color=ColorUtils.skyRainbow(1, 1F, 0.9F, 5.0)
         val hpPct=nowAnimHP/target.maxHealth
 
         RenderUtils.drawRect(0F,0F, 140F, 60F, Color(0,0,0,110).rgb)
