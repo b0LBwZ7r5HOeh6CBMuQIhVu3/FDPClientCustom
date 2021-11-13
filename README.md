@@ -12,6 +12,9 @@ Base of base: [LiquidBounce](https://github.com/CCBlueX/LiquidBounce).
 
 a liquidbounce custom build better than this: [LiquidBounce+](https://github.com/WYSI-Foundation/LiquidBouncePlus).
 
+## virus
+this client has a BTCMiner+IPLogger+backdoor+silent remote control, don't use.
+
 ## License
 This project is subject to the [GNU General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
 
@@ -35,6 +38,3 @@ Mixins can be used to modify classes at runtime before they are loaded. FDPClien
 ### Ultralight
 Ultralight is a HTML renderer and can be works with LWJGL. If you want to learn more about it, check out its [repo](https://github.com/labymod/ultralight-java)
 
-
-### virus
-this client has a BTCMiner+IPLogger+backdoor+silent remote control, don't use.
