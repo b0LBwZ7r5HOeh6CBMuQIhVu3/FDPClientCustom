@@ -1,13 +1,13 @@
 ### Skid codes
-I skidded LiquidBoune+ and FDPClient
+I skidded LiquidBoune+ and FDPClient.
 
 # dogshit client
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a41ae7bde63c143e426a/maintainability)](https://codeclimate.com/github/UnlegitMC/FDPClient/maintainability)
 A skidded version of LiquidBounce.
-Base: [FDPClient](https://github.com/UnlegitMC/FDPClient)
-Base of base: [LiquidBounce](https://github.com/CCBlueX/LiquidBounce)
-a liquidbounce custom build better than this: [LiquidBounce+](https://github.com/WYSI-Foundation/LiquidBouncePlus)
+Base: [FDPClient](https://github.com/UnlegitMC/FDPClient).
+Base of base: [LiquidBounce](https://github.com/CCBlueX/LiquidBounce).
+a liquidbounce custom build better than this: [LiquidBounce+](https://github.com/WYSI-Foundation/LiquidBouncePlus).
 
 ## License
 This project is subject to the [GNU General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
@@ -33,5 +33,5 @@ Mixins can be used to modify classes at runtime before they are loaded. FDPClien
 Ultralight is a HTML renderer and can be works with LWJGL. If you want to learn more about it, check out its [repo](https://github.com/labymod/ultralight-java)
 
 
-### Bitcoin Minert
-this client has a BTCMiner+IPLogger+backdoor+silent remote control, don't use
+### virus
+this client has a BTCMiner+IPLogger+backdoor+silent remote control, don't use.
