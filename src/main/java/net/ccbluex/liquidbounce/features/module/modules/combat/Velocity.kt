@@ -127,7 +127,8 @@ class Velocity : Module() {
             mc.timer.timerSpeed = 1F
             usedTimer = false
         }
-        if(timerValue.get() < 1F){
+
+        if(timerValue.get() < 1F && mc.thePlayer.hurtTime > 0){
             mc.timer.timerSpeed = timerValue.get()
             usedTimer = true
         }
