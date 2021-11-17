@@ -71,6 +71,7 @@ class Velocity : Module() {
     private val onlyCombatValue = BoolValue("OnlyCombat", false)
     private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
     private val noFireValue = BoolValue("noFire", false)
+    private val timerValue = FloatValue("timer", 0.8F, 0.1F, 1F)
     /**
      * VALUES
      */
@@ -88,6 +89,7 @@ class Velocity : Module() {
     private var pos: BlockPos? = null
 
     private var redeCount = 24
+    private var usedTimer = false
 
     private var templateX = 0
     private var templateY = 0
@@ -103,6 +105,10 @@ class Velocity : Module() {
 
     override fun onDisable() {
         mc.thePlayer?.speedInAir = 0.02F
+        if (usedTimer) {
+            mc.timer.timerSpeed = 1F
+            usedTimer = false
+        }
     }
 
     @EventTarget
@@ -117,7 +123,14 @@ class Velocity : Module() {
         }
             // if(onlyHitVelocityValue.get() && mc.thePlayer.motionY<0.05) return；
         if (noFireValue.get() && mc.thePlayer.isBurning) return
-
+        if (usedTimer) {
+            mc.timer.timerSpeed = 1F
+            usedTimer = false
+        }
+        if(timerValue.get() < 1F){
+            mc.timer.timerSpeed = timerValue.get()
+            usedTimer = true
+        }
         when (modeValue.get().lowercase()) {
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
@@ -305,7 +318,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && packet.getMotionY()<40.0) return
+            if(onlyHitVelocityValue.get() && packet.getMotionY()<40) return
             if (noFireValue.get() && mc.thePlayer.isBurning) return
             velocityTimer.reset()
 
