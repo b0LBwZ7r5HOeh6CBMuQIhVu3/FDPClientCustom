@@ -10,9 +10,11 @@ class FreeLook : Module() {
 
     override fun onEnable() {
         mc.gameSettings.debugCamEnable = true
+        mc.gameSettings.thirdPersonView = 2
     }
 
     override fun onDisable() {
         mc.gameSettings.debugCamEnable = false
+        mc.gameSettings.thirdPersonView = 0
     }
 }

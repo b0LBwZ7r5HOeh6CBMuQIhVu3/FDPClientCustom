@@ -43,6 +43,7 @@ object AntiBot : Module() {
     private val matrixBotValue = BoolValue("MatrixBot", false)
     private val matrixBotStrictValue = BoolValue("MatrixBotStict", false).displayable { matrixBotValue.get() }
     private val needHitValue = BoolValue("NeedHit", false)
+    private val lowWidthValue = BoolValue("LowWidth", true)
     private val neverMoveValue = BoolValue("NeverMove", false)
     private val neverRotationValue = BoolValue("neverRotation", false)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
@@ -106,6 +107,10 @@ object AntiBot : Module() {
         }
 
         if (healthValue.get() && entity.health > 20F) {
+            return true
+        }
+
+        if (lowWidthValue.get() && entity.width < 0.5F) {
             return true
         }
 

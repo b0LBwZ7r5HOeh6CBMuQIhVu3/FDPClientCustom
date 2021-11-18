@@ -105,7 +105,7 @@ class Targets : Element(-46.0,-40.0,1F,Side(Side.Horizontal.MIDDLE,Side.Vertical
             "novoline" -> drawNovo(prevTarget!!,nowAnimHP)
             "astolfo" -> drawAstolfo(prevTarget!!,nowAnimHP)
             "liquid" -> drawLiquid(prevTarget!!,nowAnimHP)
-            "Exhibition" -> drawExhibition(prevTarget!!,nowAnimHP)
+            "exhibition" -> drawExhibition(prevTarget!!,nowAnimHP)
             "flux" -> drawFlux(prevTarget!!,nowAnimHP)
             "rise" -> drawRise(prevTarget!!,nowAnimHP)
         }
