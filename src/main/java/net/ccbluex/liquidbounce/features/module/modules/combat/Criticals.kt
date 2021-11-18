@@ -178,7 +178,7 @@ class Criticals : Module() {
                         }
                         "minemoratest" -> {
                             mc.timer.timerSpeed = 0.82f
-                            mc.thePlayer.motionY = 0.124514
+                            mc.thePlayer.motionY = 0.114514886
                         }
                     }
                 }
