@@ -93,11 +93,7 @@ object Fucker : Module() {
             teamPos = pos ?: return
             return
         }else{
-            val x = pos.x?:0 - teamPos.x?:0
-            val y = pos.y?:0 - teamPos.y?:0
-            val z = pos.y?:0 - teamPos.y?:0
-            val diff = sqrt(x * x + y * y + z * z)
-            if (diff >= 8) {
+            if(BlockUtils.getCenterDistance(teamPos) > rangeValue.get()+3){
                 return
             }
         }
