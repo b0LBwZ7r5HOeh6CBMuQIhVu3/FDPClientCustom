@@ -33,6 +33,7 @@ class NoSlow : Module() {
     private val consumeStrafeMultiplier = FloatValue("ConsumeStrafeMultiplier", 1.0F, 0.2F, 1.0F)
     private val bowForwardMultiplier = FloatValue("BowForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val bowStrafeMultiplier = FloatValue("BowStrafeMultiplier", 1.0F, 0.2F, 1.0F)
+    private val aac5oldPacket = BoolValue("AAC5OldPacket", false).displayable { modeValue.equals("AAC5") }
     private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
     private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") }
     // Soulsand
@@ -99,7 +100,7 @@ class NoSlow : Module() {
 //        val heldItem = mc.thePlayer.heldItem
         if (modeValue.get().lowercase() == "aac5") {
             if (event.eventState == EventState.POST && (mc.thePlayer.isUsingItem || mc.thePlayer.isBlocking() || killAura.blockingStatus)) {
-                mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), if(aac5oldPacket.get()) -1 else 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
             }
             return
         }
