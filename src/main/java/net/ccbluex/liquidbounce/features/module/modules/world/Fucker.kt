@@ -61,7 +61,7 @@ object Fucker : Module() {
 
     private var pos: BlockPos? = null
     private var oldPos: BlockPos? = null
-    private var teamPos: BlockPos? = null
+    private var teamPos: BlockPos!! = null
     private var blockHitDelay = 0
     private val switchTimer = MSTimer()
     private var isRealBlock = false
