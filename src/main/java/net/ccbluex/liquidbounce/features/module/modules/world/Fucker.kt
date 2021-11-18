@@ -93,11 +93,11 @@ object Fucker : Module() {
             teamPos = pos ?: return
             return
         }else{
-            val x = pos?.getX() - teamPos?.getX()
-            val y = pos?.getY() - teamPos?.getY()
-            val z = pos?.getZ() - teamPos?.getZ()
+            val x = pos.x?:0 - teamPos.x?:0
+            val y = pos.y?:0 - teamPos.y?:0
+            val z = pos.y?:0 - teamPos.y?:0
             val diff = sqrt(x * x + y * y + z * z)
-            if(diff > (8.0).toDouble()){
+            if (diff >= 8) {
                 return
             }
         }
