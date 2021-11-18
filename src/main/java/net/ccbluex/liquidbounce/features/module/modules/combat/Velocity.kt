@@ -44,13 +44,6 @@ class Velocity : Module() {
                                                       "Jump",
                                                       "Phase", "PacketPhase", "Glitch", "Spoof",
                                                       "Legit"), "Simple")
-                                                      "Redesky1", "Redesky2",
-                                                      "AAC5.2.0", "AAC5.2.0Combat",
-                                                      "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
-                                                      "Reverse", "SmoothReverse",
-                                                      "Jump",
-                                                      "Phase", "PacketPhase", "Glitch", "Spoof",
-                                                      "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
     private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F).displayable { modeValue.equals("Reverse") }
