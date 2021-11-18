@@ -51,6 +51,7 @@ object Fucker : Module() {
     private val bypassValue = BoolValue("Bypass", false)
     private val autoToolValue = BoolValue("AutoTool", false)
     private val matrixValue = BoolValue("Matrix", false)
+    private val teamsValue = BoolValue("Teams", false)
 
     /**
      * VALUES
@@ -58,6 +59,7 @@ object Fucker : Module() {
 
     private var pos: BlockPos? = null
     private var oldPos: BlockPos? = null
+    private var teamPos: BlockPos? = null
     private var blockHitDelay = 0
     private val switchTimer = MSTimer()
     private var isRealBlock = false
@@ -85,7 +87,18 @@ object Fucker : Module() {
             currentDamage = 0F
             return
         }
-
+        if(teamPos == null){
+            teamPos = pos
+            return
+        }else{
+            val x = pos.getX() - teamPos.getX()
+            val y = pos.getY() - teamPos.getY()
+            val z = pos.getZ() - teamPos.getZ()
+            val diff = sqrt(x * x + y * y + z * z)
+            if(diff > 8){
+                return
+            }
+        }
         var currentPos = pos ?: return
         var rotations = RotationUtils.faceBlock(currentPos) ?: return
 
@@ -219,6 +232,13 @@ object Fucker : Module() {
         RenderUtils.drawBlockBox(pos ?: return, Color.RED, false, true, 1F)
     }
 
+    @EventTarget
+    fun onWorld(event: WorldEvent) {
+        teamPos = null
+    }
+    override fun onEnable() {
+        teamPos = null
+    }
     /**
      * Find new target block by [targetID]
      */
