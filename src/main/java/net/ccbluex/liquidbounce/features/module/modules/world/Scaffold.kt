@@ -36,12 +36,8 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
 import net.minecraft.item.ItemStack
-import net.minecraft.network.play.client.C03PacketPlayer
+import net.minecraft.network.play.client.*
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
-import net.minecraft.network.play.client.C09PacketHeldItemChange
-import net.minecraft.network.play.client.C0APacketAnimation
-import net.minecraft.network.play.client.C0BPacketEntityAction
 import net.minecraft.stats.StatList
 import net.minecraft.util.*
 import org.lwjgl.input.Keyboard
@@ -134,7 +130,7 @@ class Scaffold : Module() {
             "AAC3.6.4",
             "AAC4.4Constant",
             "AAC4Jump",
-            "VerusTest"
+            "Verus"
         ), "Jump"
     )
     private val stopWhenBlockAbove = BoolValue("StopTowerWhenBlockAbove", true)
@@ -464,7 +460,8 @@ class Scaffold : Module() {
                     mc.thePlayer.motionY = 0.42
                 }
             }
-            "verustest" -> {
+            "verus" -> {
+                mc.thePlayer.setPosition(mc.thePlayer.posX, round(mc.thePlayer.posY*2)/2, mc.thePlayer.posZ)
                 if (mc.thePlayer.ticksExisted % 2 == 1) {
                     mc.thePlayer.motionY = 0.5
                     spoofGround = false

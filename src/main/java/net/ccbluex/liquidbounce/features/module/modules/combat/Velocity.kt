@@ -17,6 +17,7 @@ import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
+import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.client.C02PacketUseEntity
 import net.minecraft.network.play.client.C03PacketPlayer
@@ -35,7 +36,7 @@ class Velocity : Module() {
      */
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
-    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce",
+    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce",
                                                       "Redesky1", "Redesky2",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
@@ -43,7 +44,14 @@ class Velocity : Module() {
                                                       "Jump",
                                                       "Phase", "PacketPhase", "Glitch", "Spoof",
                                                       "Legit"), "Simple")
-
+                                                      "Redesky1", "Redesky2",
+                                                      "AAC5.2.0", "AAC5.2.0Combat",
+                                                      "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
+                                                      "Reverse", "SmoothReverse",
+                                                      "Jump",
+                                                      "Phase", "PacketPhase", "Glitch", "Spoof",
+                                                      "Legit"), "Simple")
+    private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
     private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F).displayable { modeValue.equals("Reverse") }
     private val reverse2StrengthValue = FloatValue("SmoothReverseStrength", 0.05F, 0.02F, 0.1F).displayable { modeValue.equals("SmoothReverse") }
@@ -78,6 +86,8 @@ class Velocity : Module() {
     private var velocityTimer = MSTimer()
     private var velocityCalcTimer = MSTimer()
     private var velocityInput = false
+    private var velocityTick = 0
+    private var velocityAirTick = 0
 
     // SmoothReverse
     private var reverseHurt = false
@@ -113,6 +123,10 @@ class Velocity : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if(velocityInput) {
+            velocityTick++
+        }else velocityTick = 0
+        
         if (redeCount <24) redeCount++
         if (mc.thePlayer.isInWater || mc.thePlayer.isInLava || mc.thePlayer.isInWeb) {
             return
@@ -133,6 +147,19 @@ class Velocity : Module() {
             usedTimer = true
         }
         when (modeValue.get().lowercase()) {
+            "tick" -> {
+                if(velocityTick > velocityTickValue.get()) {
+                    if(mc.thePlayer.motionY > 0) mc.thePlayer.motionY = 0.0
+                    mc.thePlayer.motionX = 0.0
+                    mc.thePlayer.motionZ = 0.0
+                    mc.thePlayer.jumpMovementFactor = -0.00001f
+                    velocityInput = false
+                }
+                if(mc.thePlayer.onGround && velocityTick > 1) {
+                    velocityInput = false
+                }
+            }
+            
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
             }
@@ -322,9 +349,24 @@ class Velocity : Module() {
             if(onlyHitVelocityValue.get() && packet.getMotionY()<40) return
             if (noFireValue.get() && mc.thePlayer.isBurning) return
             velocityTimer.reset()
+            velocityTick = 0
 
             when (modeValue.get().lowercase()) {
+                "tick" -> {
+                    velocityInput = true
+                    val horizontal = horizontalValue.get()
+                    val vertical = verticalValue.get()
+
+                    if (horizontal == 0F && vertical == 0F) {
+                        event.cancelEvent()
+                    }
+
+                    packet.motionX = (packet.getMotionX() * horizontal).toInt()
+                    packet.motionY = (packet.getMotionY() * vertical).toInt()
+                    packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
+                }
                 "simple" -> {
+                    //velocityInput = true
                     val horizontal = horizontalValue.get()
                     val vertical = verticalValue.get()
 
