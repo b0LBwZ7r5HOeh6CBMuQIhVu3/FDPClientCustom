@@ -19,7 +19,6 @@ import net.ccbluex.liquidbounce.utils.block.BlockUtils
 import net.ccbluex.liquidbounce.utils.extensions.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.getEyeVec3
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
-import net.ccbluex.liquidbounce.event.WorldEvent
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.block.Block
@@ -30,7 +29,6 @@ import net.minecraft.network.play.client.C0APacketAnimation
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.Vec3
-import kotlin.math.sqrt
 import java.awt.Color
 
 @ModuleInfo(name = "Fucker", category = ModuleCategory.WORLD)
@@ -53,7 +51,6 @@ object Fucker : Module() {
     private val bypassValue = BoolValue("Bypass", false)
     private val autoToolValue = BoolValue("AutoTool", false)
     private val matrixValue = BoolValue("Matrix", false)
-    private val teamsValue = BoolValue("Teams", false)
 
     /**
      * VALUES
@@ -61,7 +58,6 @@ object Fucker : Module() {
 
     private var pos: BlockPos? = null
     private var oldPos: BlockPos? = null
-    private var teamPos: BlockPos!! = null
     private var blockHitDelay = 0
     private val switchTimer = MSTimer()
     private var isRealBlock = false
@@ -89,14 +85,7 @@ object Fucker : Module() {
             currentDamage = 0F
             return
         }
-        if(teamPos == null){
-            teamPos = pos ?: return
-            return
-        }else{
-            if(BlockUtils.getCenterDistance(teamPos) > rangeValue.get()+3){
-                return
-            }
-        }
+
         var currentPos = pos ?: return
         var rotations = RotationUtils.faceBlock(currentPos) ?: return
 
@@ -230,13 +219,6 @@ object Fucker : Module() {
         RenderUtils.drawBlockBox(pos ?: return, Color.RED, false, true, 1F)
     }
 
-    @EventTarget
-    fun onWorld(event: WorldEvent) {
-        teamPos = null
-    }
-    override fun onEnable() {
-        teamPos = null
-    }
     /**
      * Find new target block by [targetID]
      */
