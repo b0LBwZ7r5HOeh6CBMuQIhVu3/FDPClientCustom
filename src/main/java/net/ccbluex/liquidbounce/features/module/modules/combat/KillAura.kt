@@ -813,6 +813,7 @@ class KillAura : Module() {
                 mc.thePlayer.onEnchantmentCritical(entity)
             }
         } else {
+            mc.thePlayer.isSprinting = false
             if (mc.playerController.currentGameType != WorldSettings.GameType.SPECTATOR) {
                 mc.thePlayer.attackTargetEntityWithCurrentItem(entity)
             }
