@@ -194,7 +194,7 @@ class KillAura : Module() {
 
     private val noInventoryDelayValue = IntegerValue("NoInvDelay", 200, 0, 500)
     private val switchDelayValue = IntegerValue("SwitchDelay", 300, 1, 2000).displayable { targetModeValue.equals("Switch") }
-    private val limitedTargetsValue = IntegerValue("LimitedTargets", 0, 0, 50).displayable { targetModeValue.equals("Multi") }
+    private val limitedTargetsValue = IntegerValue("LimitedTargets", 0, 0, 50)
 
     // Visuals
     private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Sims", "None"), "FDP")
