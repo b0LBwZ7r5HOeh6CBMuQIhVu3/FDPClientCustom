@@ -16,6 +16,7 @@ import net.ccbluex.liquidbounce.features.module.modules.movement.Fly
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import java.util.*
+import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.IntegerValue
@@ -35,6 +36,7 @@ class Criticals : Module() {
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
+    private val timerValue = FloatValue("MinemoraTimer", 0.82f, 0.2f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
@@ -177,7 +179,7 @@ class Criticals : Module() {
                             mc.thePlayer.onGround = false
                         }
                         "minemoratest" -> {
-                            mc.timer.timerSpeed = 0.82f
+                            mc.timer.timerSpeed = timerValue.get()
                             mc.thePlayer.motionY = 0.114514886
                         }
                     }
