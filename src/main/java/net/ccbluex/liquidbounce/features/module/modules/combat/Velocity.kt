@@ -36,7 +36,7 @@ class Velocity : Module() {
      */
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
-    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce",
+    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
                                                       "Redesky1", "Redesky2",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
@@ -289,6 +289,15 @@ class Velocity : Module() {
                 }
            }
 
+           "aac5reduce2" -> {
+                if (mc.thePlayer.hurtTime == 9) {
+                    templateXA = mc.thePlayer.motionX;
+                    templateZA = mc.thePlayer.motionZ;
+                } else if (mc.thePlayer.hurtTime == 4) {
+                    mc.thePlayer.motionX = -templateXA * 0.6;
+                    mc.thePlayer.motionZ = -templateZA * 0.6;
+                }
+           }
            "matrixnewtest" -> {
                 if (mc.thePlayer.hurtResistantTime == 15) {
                     mc.thePlayer.motionX *= 0.75;
@@ -330,7 +339,7 @@ class Velocity : Module() {
 
     @EventTarget
     fun onPacket(event: PacketEvent) {
-        if ((onlyGroundValue.get() && !mc.thePlayer.onGround) || (onlyCombatValue.get() && !LiquidBounce.combatManager.inCombat)) {
+        if (mc.thePlayer == null || (onlyGroundValue.get() && !mc.thePlayer.onGround) || (onlyCombatValue.get() && !LiquidBounce.combatManager.inCombat)) {
             return
         }
 
