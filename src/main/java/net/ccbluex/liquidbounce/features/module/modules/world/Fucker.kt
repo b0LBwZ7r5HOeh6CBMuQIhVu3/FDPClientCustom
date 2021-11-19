@@ -89,11 +89,12 @@ object Fucker : Module() {
             currentDamage = 0F
             return
         }
-        if(teamPos == null){
-            teamPos = pos ?: return
+        if(teamPos == null && teamsValue.get()){
+            teamPos = pos
             return
         }else{
-            if(teamPos is BlockPos && BlockUtils.getCenterDistance(teamPos) > rangeValue.get()+3){
+            val teamBed = teamPos ?: BlockPos(0,0,0)
+            if(BlockUtils.getCenterDistance(teamBed) > rangeValue.get()+3 && teamsValue.get()){
                 return
             }
         }
