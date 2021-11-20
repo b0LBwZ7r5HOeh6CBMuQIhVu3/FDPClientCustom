@@ -42,7 +42,7 @@ class PackSpoofer : Module() {
                 mc.netHandler.addToSendQueue(C19PacketResourcePackStatus(packet.hash,
                         C19PacketResourcePackStatus.Action.SUCCESSFULLY_LOADED))
             } catch (e: URISyntaxException) {
-                ClientUtils.getLogger().error("Failed to handle resource pack", e)
+                ClientUtils.logError("Failed to handle resource pack", e)
                 mc.netHandler.addToSendQueue(C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD))
             }
         }
