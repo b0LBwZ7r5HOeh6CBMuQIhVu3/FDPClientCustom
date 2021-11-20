@@ -201,8 +201,8 @@ class Targets : Element(-46.0,-40.0,1F,Side(Side.Horizontal.MIDDLE,Side.Vertical
                     val font = fontValue.get()
                     font.drawString(target.name, 46, 4, -1)
 
-                    val barLength = 60F * (target.health / target.maxHealth).coerceIn(0F, 1F)
-                    RenderUtils.drawRect(45F, 15F, 45F + barLength, 18F, BlendUtils.getHealthColor(target.health, target.maxHealth).rgb)
+                    val barLength = 60F * (easingHealth / target.maxHealth).coerceIn(0F, 1F)
+                    RenderUtils.drawRect(45F, 15F, 45F + barLength, 18F, BlendUtils.getHealthColor(easingHealth, target.maxHealth).rgb)
 
                     for (i in 0..9) {
                         RenderUtils.drawBorder(45F + i * 6F, 15F, 45F + (i + 1F) * 6F, 18F, 0.25F, Color.black.rgb)
