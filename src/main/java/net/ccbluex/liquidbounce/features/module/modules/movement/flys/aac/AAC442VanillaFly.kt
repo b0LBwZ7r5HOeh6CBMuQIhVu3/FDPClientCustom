@@ -31,11 +31,11 @@ class AAC442VanillaFly : FlyMode("AAC4.4.2-Vanilla") {
     private var flyStart = false
 
     override fun onEnable() {
-
+	enabledTicks = 0
     }
 
     override fun onDisable() {
-
+	enabledTicks = 0
     }
 
     override fun onUpdate(event: UpdateEvent) {
