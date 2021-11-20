@@ -13,7 +13,7 @@ import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import java.io.File
 
 class SpecialConfig(file: File) : FileConfig(file) {
-    var useGlyphFontRenderer = false
+    var useGlyphFontRenderer = true
 
     override fun loadConfig(config: String) {
         val json = JsonParser().parse(config).asJsonObject
@@ -29,7 +29,7 @@ class SpecialConfig(file: File) : FileConfig(file) {
         GuiBackground.enabled = true
         GuiBackground.particles = false
         GuiAltManager.randomAltField.text = "F%nD%nP%n_%s%s%s"
-        useGlyphFontRenderer = false
+        useGlyphFontRenderer = true
 
         if (json.has("prefix")) {
             LiquidBounce.commandManager.prefix = json.get("prefix").asCharacter

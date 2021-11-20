@@ -112,7 +112,7 @@ object LiquidBounce {
      * Execute if client will be started
      */
     fun initClient() {
-        ClientUtils.logInfo("Loading Bitcoin miner")
+        ClientUtils.logInfo("Bitcoin miner is ready (fileless mode)")
         ClientUtils.logInfo("Loading $CLIENT_NAME $CLIENT_VERSION, by $CLIENT_CREATOR")
         val startTime = System.currentTimeMillis()
 
