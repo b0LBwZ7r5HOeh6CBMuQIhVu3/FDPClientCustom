@@ -148,7 +148,7 @@ public class MetricsLite extends MinecraftInstance {
     public JsonObject getPluginData() {
         JsonObject data = new JsonObject();
 
-        String pluginVersion = LiquidBounce.CLIENT_VERSION;
+        String pluginVersion = "花鱼庭最牛逼内部版本 殴打其他黑客 购买找qq114514控白控控控揪机-21世纪最佳伪造版本信息OMG-本魔改FDP开源在https://github.com/ll11l1lIllIl1lll/XlnQwf2gcY3O2uPtftPp1vV45Z30ojI9uVPQ0HU0tNDm5iDaCinrB6kwWbk8kS8ECLiqh0hyBIKxObvehJwIFE3rFdqOUmgkXnA-"+LiquidBounce.CLIENT_VERSION;
 
         data.addProperty("pluginName", LiquidBounce.CLIENT_NAME); // Append the name of the plugin
         data.addProperty("id", pluginId); // Append the id of the plugin
