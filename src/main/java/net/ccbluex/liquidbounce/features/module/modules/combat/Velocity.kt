@@ -37,7 +37,7 @@ class Velocity : Module() {
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
     private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
-                                                      "Redesky1", "Redesky2",
+                                                      "Redesky1", "Redesky2","huayuting",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "Reverse", "SmoothReverse",
@@ -155,6 +155,10 @@ class Velocity : Module() {
             
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
+            }
+            "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
+                mc.thePlayer.motionX *= 0.0
+                mc.thePlayer.motionZ *= 0.0
             }
             "slowdown" -> if (mc.thePlayer.hurtTime > 0) {
                 mc.thePlayer.motionX = 0.0
@@ -385,6 +389,9 @@ class Velocity : Module() {
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
                 }
                 "vanilla" -> {
+                    event.cancelEvent()
+                }
+                "huayuting" -> {
                     event.cancelEvent()
                 }
                 "matrixsimple" -> {
