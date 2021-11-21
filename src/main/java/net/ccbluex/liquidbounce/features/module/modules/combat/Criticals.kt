@@ -45,6 +45,8 @@ class Criticals : Module() {
     // private val rsNofallValue = BoolValue("RedeNofall",true)
 
     val msTimer = MSTimer()
+    private val minemoraTimer = MSTimer()
+    private var usedTimer = false
 
     private var target = 0
     private var needEdit = false
@@ -179,6 +181,8 @@ class Criticals : Module() {
                             mc.thePlayer.onGround = false
                         }
                         "minemoratest" -> {
+                            minemoraTimer.reset()
+                            usedTimer = true
                             mc.timer.timerSpeed = timerValue.get()
                             mc.thePlayer.motionY = 0.114514886
                         }
@@ -203,7 +207,10 @@ class Criticals : Module() {
                 }}
                 "motion" -> {
                     when (motionValue.get().lowercase()) {
-                        "minemoratest" -> if (!LiquidBounce.combatManager.inCombat) mc.timer.timerSpeed = 1.00f
+                        "minemoratest" -> if (usedTimer && minemoraTimer.hasTimePassed((100).toLong()) && mc.thePlayer.onGround ) {
+                            mc.timer.timerSpeed = 1.00f
+                            usedTimer = false
+                        }
                     }
                 }
                 "hover" -> {
