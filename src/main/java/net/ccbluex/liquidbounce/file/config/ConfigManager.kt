@@ -85,7 +85,13 @@ class ConfigManager {
     }
 
     fun loadConfigSet() {
+        try {
         val configSet = if (configSetFile.exists()) { JsonParser().parse(Files.readAllBytes(configSetFile.toPath()).toString(StandardCharsets.UTF_8)).asJsonObject } else { JsonObject() }
+        } catch (t: Throwable) {
+            ClientUtils.logError("[FileManager] Failed to load config file", t)
+            ClientUtils.logError("[FileManager] 喜报：你配置炸了")
+            val configSet = JsonObject()
+        }
 
         load(if (configSet.has("file")) {
             configSet.get("file").asString
