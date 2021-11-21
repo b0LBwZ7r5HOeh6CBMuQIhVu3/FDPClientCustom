@@ -106,7 +106,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
         this.displayTime = time.toLong()
         this.firstY = 19190F
         this.stayTimer.reset()
-        this.textLength = Fonts.minecraftFont.getStringWidth(message)
+        this.textLength = Fonts.font35.getStringWidth(message)
     }
 
 
@@ -149,7 +149,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
                 })  
 
             GlStateManager.resetColor()
-            Fonts.minecraftFont.drawString(message, -x + 3, -13F - y, -1)
+            Fonts.font35.drawString(message, -x + 3, -13F - y, -1)
         } else {
             //bg
             GlStateManager.resetColor()
@@ -197,7 +197,7 @@ class Notification(title : String,message : String,type : NotifyType, time: Int 
             }
             
             GlStateManager.resetColor()
-            Fonts.minecraftFont.drawString(message, -x + 2, -18F - y, -1)
+            Fonts.font35.drawString(message, -x + 2, -18F - y, -1)
         }
         
         when (fadeState) {
