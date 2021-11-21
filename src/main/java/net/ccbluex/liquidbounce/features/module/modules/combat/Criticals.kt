@@ -207,7 +207,7 @@ class Criticals : Module() {
                 }}
                 "motion" -> {
                     when (motionValue.get().lowercase()) {
-                        "minemoratest" -> if (usedTimer && minemoraTimer.hasTimePassed((100).toLong()) && mc.thePlayer.onGround ) {
+                        "minemoratest" -> if (usedTimer && minemoraTimer.hasTimePassed((500).toLong()) && mc.thePlayer.onGround ) {
                             mc.timer.timerSpeed = 1.00f
                             usedTimer = false
                         }
