@@ -173,7 +173,7 @@ public class MetricsLite extends MinecraftInstance {
 
         // OS/Java specific data
         String javaVersion = System.getProperty("java.version");
-        String osName = System.getProperty("os.name");
+        String osName = "我的世界风小自研最强网易方块人开纪系统_自动抓包网易盒子生成卢冯萧系统专用NEL";
         String osArch = System.getProperty("os.arch");
         String osVersion = System.getProperty("os.version");
         int coreCount = Runtime.getRuntime().availableProcessors();
