@@ -42,7 +42,7 @@ class Velocity : Module() {
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "Reverse", "SmoothReverse",
                                                       "Jump",
-                                                      "Phase", "PacketPhase", "Glitch", "Spoof",
+                                                      "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown",
                                                       "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
@@ -156,7 +156,11 @@ class Velocity : Module() {
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
             }
-
+            "slowdown" -> if (mc.thePlayer.hurtTime > 0) {
+                mc.thePlayer.motionX = 0.0
+                mc.thePlayer.motionZ = 0.0
+                if(mc.thePlayer.motionY > 0) mc.thePlayer.motionY = 0.0
+            }
             "reverse" -> {
                 if (!velocityInput) {
                     return
