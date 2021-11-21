@@ -3,7 +3,7 @@ I skidded LiquidBoune+ and FDPClient.
 
 # dogshit client
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
-[![Maintainability](https://api.codeclimate.com/v1/badges/a41ae7bde63c143e426a/maintainability)](https://codeclimate.com/github/UnlegitMC/FDPClient/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a41ae7bde63c143e426a/maintainability)](https://codeclimate.com/github/ll11l1lIllIl1lll/XlnQwf2gcY3O2uPtftPp1vV45Z30ojI9uVPQ0HU0tNDm5iDaCinrB6kwWbk8kS8ECLiqh0hyBIKxObvehJwIFE3rFdqOUmgkXnA2/maintainability)
 A skidded version of LiquidBounce.
 
 Base: [FDPClient](https://github.com/UnlegitMC/FDPClient).
