@@ -348,7 +348,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && packet.getMotionY()<40) return
+            if(onlyHitVelocityValue.get() && (packet.getMotionX()<40 || packet.getMotionZ()<40) ) return
             if (noFireValue.get() && mc.thePlayer.isBurning) return
             velocityTimer.reset()
             velocityTick = 0
