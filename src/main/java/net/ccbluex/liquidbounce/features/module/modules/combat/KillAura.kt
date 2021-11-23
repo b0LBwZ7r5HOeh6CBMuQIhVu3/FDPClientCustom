@@ -103,7 +103,7 @@ class KillAura : Module() {
     private val rangeSprintReducementValue = FloatValue("RangeSprintReducement", 0f, 0f, 0.4f)
 
     // Modes
-    private val boundingBoxModeValue = ListValue("LockLocation", arrayOf("Head","Auto"), "Auto")
+    private val boundingBoxModeValue = ListValue("LockLocation", arrayOf("Head","Auto","Old"), "Auto")
     private val priorityValue = ListValue("Priority", arrayOf("Health", "Distance", "Fov", "LivingTime", "Armor", "HurtResistantTime"), "Distance")
     private val targetModeValue = ListValue("TargetMode", arrayOf("Single", "Switch", "Multi"), "Single")
 
@@ -851,7 +851,18 @@ class KillAura : Module() {
         if (rotationModeValue.equals("None")) {
             return true
         }
+        when(boundingBoxModeValue.get()) {
+        "Old" -> {
+        var boundingBox = entity.entityBoundingBox
 
+        if (predictValue.get() && rotationModeValue.get() != "Test") {
+            boundingBox = boundingBox.offset(
+                (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
+                (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
+                (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()))
+            }
+        }
+        else -> {
         val nmsl = entity.entityBoundingBox
         val predictSize = if(predictValue.get()) floatArrayOf(minPredictSize.get(),maxPredictSize.get()) else floatArrayOf(0.0F,0.0F)
         val predict = doubleArrayOf(
@@ -861,6 +872,8 @@ class KillAura : Module() {
         val boundingBox = when(boundingBoxModeValue.get()) {
             "Head" -> AxisAlignedBB(max(nmsl.minX,nmsl.minX + predict[0]),max(nmsl.minY,nmsl.minY + predictSize[1]),max(nmsl.minZ,nmsl.minZ + predict[2]),min(nmsl.maxX,nmsl.maxX + predict[0]),min(nmsl.maxY,nmsl.maxY + predictSize[1]),min(nmsl.maxZ,nmsl.maxZ + predict[2]));
             else -> nmsl.offset(predict[0],predict[1],predict[2])
+        }
+            }
         }
 
         var rModes = when (rotationModeValue.get()) {
