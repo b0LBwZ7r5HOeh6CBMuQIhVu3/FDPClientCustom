@@ -851,10 +851,9 @@ class KillAura : Module() {
         if (rotationModeValue.equals("None")) {
             return true
         }
+        var boundingBox = entity.entityBoundingBox
         when(boundingBoxModeValue.get()) {
         "Old" -> {
-        var boundingBox = entity.entityBoundingBox
-
         if (predictValue.get() && rotationModeValue.get() != "Test") {
             boundingBox = boundingBox.offset(
                 (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
@@ -869,7 +868,7 @@ class KillAura : Module() {
             (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
             (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
             (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(predictSize[0], predictSize[1]))
-        val boundingBox = when(boundingBoxModeValue.get()) {
+        boundingBox = when(boundingBoxModeValue.get()) {
             "Head" -> AxisAlignedBB(max(nmsl.minX,nmsl.minX + predict[0]),max(nmsl.minY,nmsl.minY + predictSize[1]),max(nmsl.minZ,nmsl.minZ + predict[2]),min(nmsl.maxX,nmsl.maxX + predict[0]),min(nmsl.maxY,nmsl.maxY + predictSize[1]),min(nmsl.maxZ,nmsl.maxZ + predict[2]));
             else -> nmsl.offset(predict[0],predict[1],predict[2])
         }
