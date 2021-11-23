@@ -20,8 +20,6 @@ jobs:
           cache: "gradle"
       - name: Add version info
         run: echo "${{ github.event.head_commit.id }}" > src/main/resources/FDP_GIT_COMMIT_ID
-      - name: Add version info
-        run: echo "${{ github.head_ref#refs/*/ }}" > src/main/resources/FDP_GIT_REF
       - name: Build
         run: ./gradlew setupCiWorkspace && ./gradlew build
       - name: Rename build artifacts
@@ -30,4 +28,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: FDPClient
-          path: build/libs/FDPClient-${{ github.event.head_commit.id }}-${{ github.head_ref#refs/*/ }}.jar
+          path: build/libs/FDPClient-${{ github.event.head_commit.id }}.jar

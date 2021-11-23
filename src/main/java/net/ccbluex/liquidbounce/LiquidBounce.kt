@@ -93,13 +93,11 @@ object LiquidBounce {
     init {
         // check if this artifact is build from github actions
         val commitId = LiquidBounce::class.java.classLoader.getResourceAsStream("FDP_GIT_COMMIT_ID")
-        val ref = LiquidBounce::class.java.classLoader.getResourceAsStream("FDP_GIT_REF")
         CLIENT_VERSION = if (commitId == null) {
             CLIENT_REAL_VERSION
         } else {
             val str = IOUtils.toString(commitId, StandardCharsets.UTF_8).replace("\n", "")
-            val stra = IOUtils.toString(ref, StandardCharsets.UTF_8).replace("\n", "")
-            "" + (str.substring(0, 7.coerceAtMost(str.length)))+"/"+stra
+            "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
         }
 
         // initialize dynamic launch options
