@@ -50,7 +50,7 @@ object ClientUtils : MinecraftInstance() {
     }
 
     fun setTitle() {
-        Display.setTitle(LiquidBounce.CLIENT_NAME + "空格空格" + LiquidBounce.CLIENT_VERSION + "空格|空格Mc" + LiquidBounce.MINECRAFT_VERSION)
+        Display.setTitle(LiquidBounce.CLIENT_NAME + " ("+LiquidBounce.MINECRAFT_VERSION+"-" + LiquidBounce.CLIENT_VERSION + ")")
     }
 
     fun displayAlert(message: String) {
