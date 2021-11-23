@@ -52,7 +52,7 @@ class Arraylist(
     private val rectColorBlueAlpha = IntegerValue("Rect-Alpha", 255, 0, 255)
     private val saturationValue = FloatValue("Random-Saturation", 0.9f, 0f, 1f)
     private val brightnessValue = FloatValue("Random-Brightness", 1f, 0f, 1f)
-    private val tagsValue = ListValue("TagsStyle", arrayOf("-", "|", "()", "[]", "<>", "Space", "None"), "Space")
+    private val tagsValue = ListValue("TagsStyle", arrayOf("-", "|", "()", "[]", "<>", "Space", "None","NoBreak"), "Space")
     private val shadow = BoolValue("ShadowText", false)
     private val split = BoolValue("SplitName", false)
     private val slideInAnimation = BoolValue("SlideInAnimation", true)
@@ -98,6 +98,7 @@ class Arraylist(
             "[]" -> " [${module.tag}]"
             "<>" -> " <${module.tag}>"
             "space" -> " ${module.tag}"
+            "nobreak" -> "${module.tag}"
             else -> ""
         }
     }
