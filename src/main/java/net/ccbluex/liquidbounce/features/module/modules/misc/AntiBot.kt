@@ -1,5 +1,6 @@
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
+import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
@@ -15,10 +16,7 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.network.play.server.S0BPacketAnimation
-import net.minecraft.network.play.server.S14PacketEntity
-import net.minecraft.network.play.server.S19PacketEntityStatus
-import net.minecraft.network.play.server.S38PacketPlayerListItem
+import net.minecraft.network.play.server.*
 import java.util.*
 
 @ModuleInfo(name = "AntiBot", category = ModuleCategory.MISC)
@@ -46,6 +44,7 @@ object AntiBot : Module() {
     private val lowWidthValue = BoolValue("LowWidth", true)
     private val neverMoveValue = BoolValue("NeverMove", false)
     private val neverRotationValue = BoolValue("neverRotation", false)
+    private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
@@ -62,6 +61,7 @@ object AntiBot : Module() {
     private val swing = mutableListOf<Int>()
     private val invisible = mutableListOf<Int>()
     private val hitted = mutableListOf<Int>()
+    private val spawnInCombat = mutableListOf<Int>()
     private val notAlwaysInRadius = mutableListOf<Int>()
     private val alwaysInRadius = mutableListOf<Int>()
     private val noHitDelay = mutableListOf<Int>()
@@ -85,7 +85,6 @@ object AntiBot : Module() {
         }
 
         // Anti Bot checks
-
         if (colorValue.get() && !entity.displayName.formattedText.replace("§r", "").contains("§")) {
             return true
         }
@@ -106,7 +105,11 @@ object AntiBot : Module() {
             return true
         }
 
-        if (healthValue.get() && entity.health > 20F) {
+        if (healthValue.get() && (entity.health > 20F || entity.health <= 0F)) {
+            return true
+        }
+
+        if (spawnInCombatValue.get() && spawnInCombat.contains(entity.entityId)) {
             return true
         }
 
@@ -246,8 +249,7 @@ object AntiBot : Module() {
                 }
 
                 if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()) {
-                    notAlwaysInRadius.add(entity.entityId)
-                }
+                    notAlwaysInRadius.add(entity.entityId)                }
                 if (!notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get()) {
                     alwaysInRadius.add(entity.entityId)
                 }
@@ -280,6 +282,10 @@ object AntiBot : Module() {
                         duplicate.add(entry.profile.id)
                     }
                 }
+            }
+        } else if (packet is S0CPacketSpawnPlayer) {
+            if(LiquidBounce.combatManager.inCombat) {
+                spawnInCombat.add(packet.entityID)
             }
         }
 
@@ -326,5 +332,6 @@ object AntiBot : Module() {
         moved.clear()
         turnHead.clear()
         duplicate.clear()
+        spawnInCombat.clear()
     }
 }
