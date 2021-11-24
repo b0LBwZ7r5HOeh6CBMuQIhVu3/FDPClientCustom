@@ -7,6 +7,7 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
+import net.ccbluex.liquidbounce.event.MoveEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -42,7 +43,7 @@ class Velocity : Module() {
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "Reverse", "SmoothReverse",
                                                       "Jump",
-                                                      "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown",
+                                                      "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove",
                                                       "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
@@ -157,8 +158,8 @@ class Velocity : Module() {
                 mc.thePlayer.motionY = 0.42
             }
             "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
-                mc.thePlayer.motionX *= 0.0
-                mc.thePlayer.motionZ *= 0.0
+                mc.thePlayer.motionX *= -0.1
+                mc.thePlayer.motionZ *= -0.1
             }
             "slowdown" -> if (mc.thePlayer.hurtTime > 0) {
                 mc.thePlayer.motionX = 0.0
@@ -343,6 +344,14 @@ class Velocity : Module() {
                 }
             }
         }
+    }
+
+    @EventTarget
+    fun onMove(event: MoveEvent?) {
+        if (event == null) return
+
+        if(mc.thePlayer.hurtTime > 0 && modeValue.get().lowercase() == "nomove")
+            event.zeroXZ()
     }
 
     @EventTarget
