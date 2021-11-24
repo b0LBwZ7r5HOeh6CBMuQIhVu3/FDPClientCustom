@@ -43,7 +43,7 @@ class AAC442VanillaFly : FlyMode("AAC4.4.2-Vanilla") {
         if (enabledTicks == 3) {
            LiquidBounce.hud.addNotification(Notification("Fly", "Enabled Final Dad! You can fly freely until you disable fly", NotifyType.SUCCESS, 2000, 500))
         }
-        if (enabledTicks <= 2) {
+        if (enabledTicks <= 6) {
             mc.timer.timerSpeed = 0.3f
             mc.thePlayer.motionX = 0.0
             mc.thePlayer.motionY = 0.05
