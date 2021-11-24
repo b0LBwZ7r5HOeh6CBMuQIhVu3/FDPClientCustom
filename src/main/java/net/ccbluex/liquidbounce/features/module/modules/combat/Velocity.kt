@@ -41,13 +41,13 @@ class Velocity : Module() {
                                                       "Redesky1", "Redesky2","huayuting",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
-                                                      "Reverse", "SmoothReverse",
+                                                      "strafe", "SmoothReverse",
                                                       "Jump",
                                                       "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove",
                                                       "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
-    private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F).displayable { modeValue.equals("Reverse") }
+    private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F).displayable { modeValue.equals("strafe") }
     private val reverse2StrengthValue = FloatValue("SmoothReverseStrength", 0.05F, 0.02F, 0.1F).displayable { modeValue.equals("SmoothReverse") }
 
     // AAC Push
@@ -166,7 +166,7 @@ class Velocity : Module() {
                 mc.thePlayer.motionZ = 0.0
                 if(mc.thePlayer.motionY > 0) mc.thePlayer.motionY = 0.0
             }
-            "reverse" -> {
+            "strafe" -> {
                 if (!velocityInput) {
                     return
                 }
@@ -177,7 +177,6 @@ class Velocity : Module() {
                     velocityInput = false
                 }
             }
-
             "smoothreverse" -> {
                 if (!velocityInput) {
                     mc.thePlayer.speedInAir = 0.02F
@@ -433,7 +432,7 @@ class Velocity : Module() {
                     mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, 1.7976931348623157E+308, mc.thePlayer.posZ, true))
                 }
 
-                "aac5reduce", "reverse", "smoothreverse", "aaczero" -> velocityInput = true
+                "aac5reduce", "strafe", "smoothreverse", "aaczero" -> velocityInput = true
 
                 "phase" -> {
                     if (!mc.thePlayer.onGround && phaseOnlyGround.get()) {
