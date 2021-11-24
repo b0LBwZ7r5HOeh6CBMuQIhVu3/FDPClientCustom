@@ -127,7 +127,7 @@ class ModuleManager : Listenable {
     private fun onKey(event: KeyEvent) {
         if (pendingBindModule == null) {
             modules.filter { it.triggerType == EnumTriggerType.TOGGLE && it.keyBind == event.key }.forEach { it.toggle() }
-        } else {
+        } else if(event.key != Keyboard.KEY_RETURN) {
             pendingBindModule!!.keyBind = event.key
             ClientUtils.displayAlert("Bound module §a§l${pendingBindModule!!.name}§3 to key §a§l${Keyboard.getKeyName(event.key)}§3.")
             LiquidBounce.hud.addNotification(Notification("KeyBind", "Bound ${pendingBindModule!!.name} to ${Keyboard.getKeyName(event.key)}.", NotifyType.INFO))
