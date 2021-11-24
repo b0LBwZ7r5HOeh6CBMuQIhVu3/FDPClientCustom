@@ -40,41 +40,5 @@ class WTap : Module() {
         mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward)
     }
 
-    @EventTarget
-    fun onRender3D(event: Render3DEvent) {
-        val target = LiquidBounce.combatManager.target
-        if (renderValue.get() && canStrafe(target)) {
-            GL11.glDisable(3553)
-            GL11.glEnable(2848)
-            GL11.glEnable(2881)
-            GL11.glEnable(2832)
-            GL11.glEnable(3042)
-            GL11.glBlendFunc(770, 771)
-            GL11.glHint(3154, 4354)
-            GL11.glHint(3155, 4354)
-            GL11.glHint(3153, 4354)
-            GL11.glDisable(2929)
-            GL11.glDepthMask(false)
-            GL11.glLineWidth(3f)
-
-            GL11.glBegin(3)
-            val x = target!!.lastTickPosX + (target.posX - target.lastTickPosX) * event.partialTicks - mc.renderManager.viewerPosX
-            val y = target.lastTickPosY + (target.posY - target.lastTickPosY) * event.partialTicks - mc.renderManager.viewerPosY
-            val z = target.lastTickPosZ + (target.posZ - target.lastTickPosZ) * event.partialTicks - mc.renderManager.viewerPosZ
-            val radius = radiusValue.get()
-            for (i in 0..360 step 5) {
-                RenderUtils.glColor(Color.getHSBColor(if (i <180) { HUD.rainbowStart.get() + (HUD.rainbowStop.get() - HUD.rainbowStart.get()) * (i / 180f) } else { HUD.rainbowStart.get() + (HUD.rainbowStop.get() - HUD.rainbowStart.get()) * (-(i-360) / 180f) }, 0.7f, 1.0f))
-                GL11.glVertex3d(x - sin(i * Math.PI / 180F) * radius, y, z + cos(i * Math.PI / 180F) * radius)
-            }
-            GL11.glEnd()
-
-            GL11.glDepthMask(true)
-            GL11.glEnable(2929)
-            GL11.glDisable(2848)
-            GL11.glDisable(2881)
-            GL11.glEnable(2832)
-            GL11.glEnable(3553)
-        }
-    }
 
 }
