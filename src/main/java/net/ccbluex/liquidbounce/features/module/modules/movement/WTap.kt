@@ -23,13 +23,14 @@ import kotlin.math.sin
 class WTap : Module() {
     private val radiusValue = FloatValue("Radius", 2.0f, 0.1f, 4.0f)
     private val autoJumpValue = BoolValue("AutoJump", false)
+    private val noForwardValue = BoolValue("noForward", false)
     private var direction = true
     private var yaw = 0f
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
         val target = LiquidBounce.combatManager.target
-        if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()){
+        if (target != null && mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()){
             if(autoJumpValue.get()){mc.gameSettings.keyBindJump.pressed = true}
             if(noForwardValue.get()){mc.gameSettings.keyBindForward.pressed = false}
             mc.thePlayer.isSprinting = false
@@ -76,9 +77,4 @@ class WTap : Module() {
         }
     }
 
-    private fun canStrafe(target: EntityLivingBase?): Boolean {
-        return target != null &&
-                (!holdSpaceValue.get() || mc.thePlayer.movementInput.jump) &&
-                (!onlySpeedValue.get() || LiquidBounce.moduleManager[Speed::class.java]!!.state)
-    }
 }
