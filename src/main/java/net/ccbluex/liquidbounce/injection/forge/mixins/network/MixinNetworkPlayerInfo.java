@@ -30,7 +30,7 @@ public class MixinNetworkPlayerInfo {
 
         if (nameProtect.getState() && nameProtect.skinProtectValue.get()) {
             if (nameProtect.allPlayersValue.get() || Objects.equals(gameProfile.getId(), Minecraft.getMinecraft().getSession().getProfile().getId())) {
-                cir.setReturnValue(new Random().nextBoolean() ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
+                cir.setReturnValue(DefaultPlayerSkin.isSlimSkin(this.gameProfile.getId()) ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
                 cir.cancel();
             }
         }
