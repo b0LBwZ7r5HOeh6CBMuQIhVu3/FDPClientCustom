@@ -21,6 +21,7 @@ public class MixinNetworkPlayerInfo {
     @Shadow
     @Final
     private GameProfile gameProfile;
+
     private static final ResourceLocation TEXTURE_LIULIAQUI = new ResourceLocation("fdpclient/skin/TEXTURE_LIULIAQUI.png");
     private static final ResourceLocation TEXTURE_PIGEON233 = new ResourceLocation("fdpclient/skin/TEXTURE_PIGEON233.png");
     @Inject(method = "getLocationSkin", cancellable = true, at = @At("HEAD"))
@@ -29,7 +30,7 @@ public class MixinNetworkPlayerInfo {
 
         if (nameProtect.getState() && nameProtect.skinProtectValue.get()) {
             if (nameProtect.allPlayersValue.get() || Objects.equals(gameProfile.getId(), Minecraft.getMinecraft().getSession().getProfile().getId())) {
-                cir.setReturnValue(Random().nextBoolean() ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
+                cir.setReturnValue(new Random().nextBoolean() ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
                 cir.cancel();
             }
         }
