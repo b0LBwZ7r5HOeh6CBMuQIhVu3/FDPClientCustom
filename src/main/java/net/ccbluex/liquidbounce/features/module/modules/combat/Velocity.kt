@@ -7,7 +7,6 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
-import net.ccbluex.liquidbounce.event.MoveEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -43,7 +42,7 @@ class Velocity : Module() {
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "strafe", "SmoothReverse",
                                                       "Jump",
-                                                      "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove",
+                                                      "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove","Freeze",
                                                       "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
     // Reverse
@@ -349,8 +348,16 @@ class Velocity : Module() {
     fun onMove(event: MoveEvent?) {
         if (event == null) return
 
-        if(mc.thePlayer.hurtTime > 0 && modeValue.get().lowercase() == "nomove")
+        if(mc.thePlayer.hurtTime > 0) {
+            if (noFireValue.get() && mc.thePlayer.isBurning) return
+            if(modeValue.get().lowercase() == "nomove"){
             event.zeroXZ()
+            }
+            if(modeValue.get().lowercase() == "freeze"){
+            event.zero()
+            }
+        }
+
     }
 
     @EventTarget
@@ -358,14 +365,17 @@ class Velocity : Module() {
         if (mc.thePlayer == null || (onlyGroundValue.get() && !mc.thePlayer.onGround) || (onlyCombatValue.get() && !LiquidBounce.combatManager.inCombat)) {
             return
         }
-
+        if (noFireValue.get() && mc.thePlayer.isBurning) return
         val packet = event.packet
+        if(packet is C03PacketPlayer && modeValue.get().lowercase() == "freeze"){
+            event.cancelEvent()
+        }
         if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
             if(onlyHitVelocityValue.get() && (packet.getMotionX()<40 || packet.getMotionZ()<40) ) return
-            if (noFireValue.get() && mc.thePlayer.isBurning) return
+            
             velocityTimer.reset()
             velocityTick = 0
 
