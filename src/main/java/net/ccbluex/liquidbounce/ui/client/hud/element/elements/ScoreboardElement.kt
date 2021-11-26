@@ -144,7 +144,7 @@ class ScoreboardElement(
                 }
             }
             if(huayutingFakeLevelValue.get()){
-                if (name.contains("等 级", true)) {
+                if (name.contains("等  级", true)) {
                     name.replace(oldLevellValue.get().toString(),fakeLevelValue.get().toString())
 
                 }
