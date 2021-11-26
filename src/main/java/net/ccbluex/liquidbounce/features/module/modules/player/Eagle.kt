@@ -13,6 +13,7 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.minecraft.client.settings.GameSettings
 import net.minecraft.init.Blocks
 import net.minecraft.util.BlockPos
+import net.ccbluex.liquidbounce.value.BoolValue
 
 @ModuleInfo(name = "Eagle", category = ModuleCategory.PLAYER)
 class Eagle : Module() {
