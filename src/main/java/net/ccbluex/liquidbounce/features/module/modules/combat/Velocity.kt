@@ -36,7 +36,7 @@ class Velocity : Module() {
      */
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
-    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick", "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
+    private val modeValue = ListValue("Mode", arrayOf("Simple", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
                                                       "Redesky1", "Redesky2","huayuting",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
@@ -52,6 +52,8 @@ class Velocity : Module() {
     // AAC Push
     private val aacPushXZReducerValue = FloatValue("AACPushXZReducer", 2F, 1F, 3F).displayable { modeValue.equals("AACPush") }
     private val aacPushYReducerValue = BoolValue("AACPushYReducer", true).displayable { modeValue.equals("AACPush") }
+
+    private val oldACSlowValue = BoolValue("OldACSlow", true).displayable { modeValue.equals("OldAC") }
 
     // phase
     private val phaseHeightValue = FloatValue("PhaseHeight", 0.5F, 0F, 1F)
@@ -155,6 +157,13 @@ class Velocity : Module() {
             
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
+            }
+            "oldac" -> if (mc.thePlayer.hurtTime > 0) {
+                if(oldACSlowValue.get()){
+                    mc.thePlayer.motionX *= horizontalValue.get()
+                    mc.thePlayer.motionZ *= horizontalValue.get()
+                    mc.thePlayer.onGround = true
+                }
             }
             "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
                 mc.thePlayer.motionX *= -0.1
