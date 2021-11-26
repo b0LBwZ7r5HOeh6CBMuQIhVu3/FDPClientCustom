@@ -69,14 +69,13 @@ object Fucker : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        val targetId = blockValue.get()
         if(teamPos == null && teamsValue.get()){
             teamPos = find(targetId)
             return
-        }else{
-            val teamBed = teamPos
-            if(BlockUtils.getCenterDistance(teamBed) > rangeValue.get()+3 && teamsValue.get()){
+        }
+        if(BlockUtils.getCenterDistance(teamPos?:BlockPos(0,0,0)) > rangeValue.get()+3 && teamsValue.get()){
                 return
-            }
         }
         if (noHitValue.get()) {
             val killAura = LiquidBounce.moduleManager[KillAura::class.java]!!
@@ -86,7 +85,7 @@ object Fucker : Module() {
             }
         }
 
-        val targetId = blockValue.get()
+        
 
         if (pos == null || Block.getIdFromBlock(BlockUtils.getBlock(pos)) != targetId ||
             BlockUtils.getCenterDistance(pos!!) > rangeValue.get()) {
