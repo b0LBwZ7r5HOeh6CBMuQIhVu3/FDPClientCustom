@@ -212,7 +212,7 @@ class Criticals : Module() {
                     needEdit = false
                 }}
                 "motion" -> {
-                    if(motionTimer.get() != 1F) {
+                    if(motionTimerValue.get() != 1F) {
                         if ((mc.thePlayer.fallDistance > 0.12f) && (mc.thePlayer.fallDistance < 10f) && (mc.timer.timerSpeed < 1f) && usedTimer) {
                             mc.timer.timerSpeed = 1f
                             usedTimer = false
