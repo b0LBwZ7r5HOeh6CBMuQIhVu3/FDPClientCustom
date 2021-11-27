@@ -175,10 +175,10 @@ class Criticals : Module() {
                 "visual" -> mc.thePlayer.onCriticalHit(entity)
 
                 "motion" -> {
-                    if(motionTimer.get() != 1F){
+                    if(motionTimerValue.get() != 1F){
                         minemoraTimer.reset()
                         usedTimer = true
-                        mc.timer.timerSpeed = timerValue.get()
+                        mc.timer.timerSpeed = motionTimerValue.get()
                     }
                     when (motionValue.get().lowercase()) {
                         "jump" -> mc.thePlayer.motionY = 0.42
