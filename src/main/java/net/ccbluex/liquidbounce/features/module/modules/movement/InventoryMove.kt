@@ -28,7 +28,8 @@ import org.lwjgl.input.Keyboard
 class InventoryMove : Module() {
 
     private val noDetectableValue = BoolValue("NoDetectable", false)
-    private val bypassValue = ListValue("Bypass", arrayOf("NoOpenPacket", "Blink", "None"), "None")
+    private val bypassValue = ListValue("Bypass", arrayOf("NoOpenPacket", "Blink", "test", "None"), "None")
+    private val testPreValue = BoolValue("testPre", false).displayable { bypassValue.equals("test") }
     private val rotateValue = BoolValue("Rotate", true)
     private val noMoveClicksValue = BoolValue("NoMoveClicks", false)
     val noSprint = ListValue("NoSprint", arrayOf("Real", "PacketSpoof", "None"), "None")
@@ -71,6 +72,12 @@ class InventoryMove : Module() {
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
+        if(bypassValue.equals("test")){
+            if (((event.eventState == EventState.POST && !testPreValue.get()) || (event.eventState == EventState.PRE && testPreValue.get())) && (mc.currentScreen != null && mc.currentScreen !is GuiChat && (!noDetectableValue.get() || mc.currentScreen !is GuiContainer))) {
+                // mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), if(aac5oldPacket.get()) -1 else 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                mc.netHandler.addToSendQueue(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
+            }
+        }
         updateKeyState()
     }
 
