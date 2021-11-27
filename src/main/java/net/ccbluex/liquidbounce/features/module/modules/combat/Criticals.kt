@@ -35,7 +35,7 @@ class Criticals : Module() {
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
-    private val timerValue = FloatValue("MinemoraTimer", 0.82f, 0.2f, 1f)
+    private val motionTimerValue = FloatValue("motionTimer", 0.82f, 0.2f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
@@ -175,6 +175,11 @@ class Criticals : Module() {
                 "visual" -> mc.thePlayer.onCriticalHit(entity)
 
                 "motion" -> {
+                    if(motionTimer.get() != 1F){
+                        minemoraTimer.reset()
+                        usedTimer = true
+                        mc.timer.timerSpeed = timerValue.get()
+                    }
                     when (motionValue.get().lowercase()) {
                         "jump" -> mc.thePlayer.motionY = 0.42
                         "lowjump" -> mc.thePlayer.motionY = 0.3425
@@ -185,9 +190,6 @@ class Criticals : Module() {
                             mc.thePlayer.onGround = false
                         }
                         "minemoratest" -> {
-                            minemoraTimer.reset()
-                            usedTimer = true
-                            mc.timer.timerSpeed = timerValue.get()
                             mc.thePlayer.motionY = 0.114514886
                         }
                     }
@@ -210,8 +212,8 @@ class Criticals : Module() {
                     needEdit = false
                 }}
                 "motion" -> {
-                    when (motionValue.get().lowercase()) {
-                        "minemoratest" -> if ((mc.thePlayer.fallDistance > 0.12f) && (mc.thePlayer.fallDistance < 10f) && (mc.timer.timerSpeed < 1f) && usedTimer) {
+                    if(motionTimer.get() != 1F) {
+                        if ((mc.thePlayer.fallDistance > 0.12f) && (mc.thePlayer.fallDistance < 10f) && (mc.timer.timerSpeed < 1f) && usedTimer) {
                             mc.timer.timerSpeed = 1f
                             usedTimer = false
                         }

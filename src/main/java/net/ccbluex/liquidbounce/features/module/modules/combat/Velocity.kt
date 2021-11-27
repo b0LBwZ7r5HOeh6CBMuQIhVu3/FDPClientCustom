@@ -376,7 +376,7 @@ class Velocity : Module() {
         }
         if (noFireValue.get() && mc.thePlayer.isBurning) return
         val packet = event.packet
-        if(packet is C03PacketPlayer && modeValue.get().lowercase() == "freeze"){
+        if(packet is C03PacketPlayer && modeValue.get().lowercase() == "freeze" && mc.thePlayer.hurtTime > 0){
             event.cancelEvent()
         }
         if (packet is S12PacketEntityVelocity) {
