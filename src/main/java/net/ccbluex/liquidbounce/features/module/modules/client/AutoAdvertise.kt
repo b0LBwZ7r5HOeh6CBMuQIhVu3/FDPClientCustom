@@ -15,7 +15,7 @@ import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import java.util.*
 import kotlin.concurrent.schedule
 
-@ModuleInfo(name = "AutoAdvertise", category = ModuleCategory.CLIENT, array = false, defaultOn = true)
+@ModuleInfo(name = "AutoAdvertise", category = ModuleCategory.CLIENT, array = false, defaultOn = false)
 class AutoAdvertise : Module() {
     var waiting = false
 
@@ -26,7 +26,7 @@ class AutoAdvertise : Module() {
         Timer().schedule(2000L) {
             waiting = false
             if (mc.thePlayer != null) {
-                mc.thePlayer.sendChatMessage("[" + RandomUtils.randomString(3) + "] Try FDPClient! ${LiquidBounce.CLIENT_WEBSITE} [" + RandomUtils.randomString(3) + "]")
+                mc.thePlayer.sendChatMessage("hi")
             }
         }
         waiting = true
