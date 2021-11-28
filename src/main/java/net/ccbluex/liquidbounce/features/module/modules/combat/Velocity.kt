@@ -165,10 +165,6 @@ class Velocity : Module() {
                     mc.thePlayer.onGround = true
                 }
             }
-            "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
-                mc.thePlayer.motionX *= -0.1
-                mc.thePlayer.motionZ *= -0.1
-            }
             "slowdown" -> if (mc.thePlayer.hurtTime > 0) {
                 mc.thePlayer.motionX = 0.0
                 mc.thePlayer.motionZ = 0.0
@@ -376,14 +372,17 @@ class Velocity : Module() {
         }
         if (noFireValue.get() && mc.thePlayer.isBurning) return
         val packet = event.packet
-        if(packet is C03PacketPlayer && modeValue.get().lowercase() == "freeze" && mc.thePlayer.hurtTime > 0){
-            event.cancelEvent()
+        if(packet is C03PacketPlayer && mc.thePlayer.hurtTime > 0){
+            when (modeValue.get().lowercase()) {
+                "freeze" -> event.cancelEvent()
+                "huayuting" -> if(!mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) packet.y+=0.135
+            }
         }
         if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && (packet.getMotionX()<40 || packet.getMotionZ()<40) ) return
+            if(onlyHitVelocityValue.get() && (packet.getMotionX()<500 || packet.getMotionZ()<500) ) return
             
             velocityTimer.reset()
             velocityTick = 0
@@ -416,9 +415,6 @@ class Velocity : Module() {
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
                 }
                 "vanilla" -> {
-                    event.cancelEvent()
-                }
-                "huayuting" -> {
                     event.cancelEvent()
                 }
                 "matrixsimple" -> {
@@ -484,18 +480,19 @@ class Velocity : Module() {
                         return
                     }
 
-//                    chat("MOTX=${packet.motionX}, MOTZ=${packet.motionZ}")
-                    if (packet.motionX <500 && packet.motionY <500) {
-                        return
-                    }
-
                     mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY - phaseHeightValue.get(), mc.thePlayer.posZ, false))
                     event.cancelEvent()
                     packet.motionX = 0
                     packet.motionY = 0
                     packet.motionZ = 0
                 }
-
+                "huayuting" -> {
+                    mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.135, mc.thePlayer.posZ, false))
+                    event.cancelEvent()
+                    packet.motionX = 0
+                    packet.motionY = 0
+                    packet.motionZ = 0
+                }
                 "glitch" -> {
                     if (!mc.thePlayer.onGround) {
                         return
