@@ -17,10 +17,6 @@ object ServerSpoof : Listenable {
         if (enable && event.packet is C00Handshake) {
             val packet = event.packet
             val ipList = address.split(":").toTypedArray()
-            if(packet.ip == "59.111."+"137.99"){
-                packet.port = 0
-                PacketUtils.handlePacket(S40PacketDisconnect(ChatComponentText("客户端验证失败，请重启启动器")))
-            }
             packet.ip = ipList[0]
             if (ipList.size > 1) {
                 packet.port = ipList[1].toInt()
