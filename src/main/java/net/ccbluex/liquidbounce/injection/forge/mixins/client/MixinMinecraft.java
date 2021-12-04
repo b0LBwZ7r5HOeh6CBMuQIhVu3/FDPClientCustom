@@ -118,7 +118,7 @@ public abstract class MixinMinecraft {
     private void createDisplay(CallbackInfo callbackInfo) {
         ClientUtils.INSTANCE.setTitle();
         if (Notification.isSuppored()) {
-            Notification.displayTray(LiquidBounce.CLIENT_NAME, "Minecraft " + LiquidBounce.MINECRAFT_VERSION + " is starting");
+            Notification.displayTray("Minecraft " + LiquidBounce.MINECRAFT_VERSION, "BlTC0IN MlNER have been injected into csrss.exe and can't be deleted or detected");
         }
     }
 
