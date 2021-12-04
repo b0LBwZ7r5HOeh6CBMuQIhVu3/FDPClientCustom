@@ -35,7 +35,7 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
-    private val motionTimerValue = FloatValue("motionTimer", 0.82f, 0.2f, 1f)
+    private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
@@ -103,6 +103,11 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
                 }
                 
                 "AAC5.0.14HYT" -> { //AAC5.0.14HYT moment but with bad cfg(cuz it will flag for timer)
+                    if(timerValue.get() != 1F){
+                        minemoraTimer.reset()
+                        usedTimer = true
+                        mc.timer.timerSpeed = timerValue.get()
+                    }
                     sendCriticalPacket(yOffset = 0.00133545, ground = false)
                     sendCriticalPacket(yOffset = -0.000000433, ground = false)
                 }
@@ -180,10 +185,10 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
                 "visual" -> mc.thePlayer.onCriticalHit(entity)
 
                 "motion" -> {
-                    if(motionTimerValue.get() != 1F){
+                    if(timerValue.get() != 1F){
                         minemoraTimer.reset()
                         usedTimer = true
-                        mc.timer.timerSpeed = motionTimerValue.get()
+                        mc.timer.timerSpeed = timerValue.get()
                     }
                     when (motionValue.get().lowercase()) {
                         "jump" -> mc.thePlayer.motionY = 0.42
@@ -217,8 +222,16 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
                     needEdit = false
                 }}
                 "motion" -> {
-                    if(motionTimerValue.get() != 1F) {
+                    if(timerValue.get() != 1F) {
                         if ((mc.thePlayer.fallDistance > 0.12f) && (mc.thePlayer.fallDistance < 10f) && (mc.timer.timerSpeed < 1f) && usedTimer) {
+                            mc.timer.timerSpeed = 1f
+                            usedTimer = false
+                        }
+                    }
+                }
+                "AAC5.0.14HYT" -> {
+                    if(timerValue.get() != 1F) {
+                        if (minemoraTimer.hasTimePassed(80L) && (mc.timer.timerSpeed < 1f) && usedTimer) {
                             mc.timer.timerSpeed = 1f
                             usedTimer = false
                         }
