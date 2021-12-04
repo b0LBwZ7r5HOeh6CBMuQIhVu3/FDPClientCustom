@@ -36,6 +36,7 @@ class NoSlow : Module() {
     private val aac5oldPacket = BoolValue("AAC5OldPacket", false).displayable { modeValue.equals("AAC5") }
     private val aac5PreValue = BoolValue("AAC5Pre", false).displayable { modeValue.equals("AAC5") }
     private val aac5C07Value = BoolValue("AAC5C07", false).displayable { modeValue.equals("AAC5") }
+    private val aac5noEatPacketValue = BoolValue("AAC5NoEatPacket", false).displayable { modeValue.equals("AAC5") }
     private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
     private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") }
     // Soulsand
@@ -102,7 +103,7 @@ class NoSlow : Module() {
 
 //        val heldItem = mc.thePlayer.heldItem
         if (modeValue.get().lowercase() == "aac5") {
-            if (((event.eventState == EventState.POST && !aac5PreValue.get()) || (event.eventState == EventState.PRE && aac5PreValue.get())) && (mc.thePlayer.isUsingItem || mc.thePlayer.isBlocking() || killAura.blockingStatus)) {
+            if (((event.eventState == EventState.POST && !aac5PreValue.get()) || (event.eventState == EventState.PRE && aac5PreValue.get())) && ((!aac5noEatPacketValue.get() || !mc.thePlayer.isUsingItem) || mc.thePlayer.isBlocking() || killAura.blockingStatus)) {
                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), if(aac5oldPacket.get()) -1 else 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
             }
         }
