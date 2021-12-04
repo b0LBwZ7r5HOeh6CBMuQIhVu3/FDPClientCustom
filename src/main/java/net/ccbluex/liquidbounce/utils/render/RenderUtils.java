@@ -218,7 +218,44 @@ public final class RenderUtils extends MinecraftInstance {
         glDisable(GL_LINE_SMOOTH);
         glPopMatrix();
     }
+    public static void arcIiiilllIIiii(float x, float y, float start, float end, float radius, int color, float lineWidth) {
+        illlIIIIiii(x, y, start, end, radius, radius, color, lineWidth);
+    }
 
+    public static void drawOutFullCircle(float x, float y, float radius, int fill, float lineWidth) {
+        arcIiiilllIIiii(x, y, 0.0f, 360.0f, radius, fill, lineWidth);
+    }
+
+    public static void drawOutFullCircle(float x, float y, float radius, int fill, float lineWidth, float start, float end) {
+        arcIiiilllIIiii(x, y, start, end, radius, fill, lineWidth);
+    }
+    public static void illlIIIIiii(float x, float y, float start, float end, float w, float h, int color, float lineWidth) {
+        if (start > end) {
+            float temp = end;
+            end = start;
+            start = temp;
+        }
+        float alpha = (float)(color >> 24 & 255) / 255.0f;
+        float red = (float)(color >> 16 & 255) / 255.0f;
+        float green = (float)(color >> 8 & 255) / 255.0f;
+        float blue = (float)(color & 255) / 255.0f;
+        GlStateManager.func_179147_l();
+        GlStateManager.func_179090_x();
+        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.func_179131_c((float)red, (float)green, (float)blue, (float)alpha);
+        GL11.glEnable((int)2881);
+        GL11.glEnable((int)2848);
+        GL11.glLineWidth((float)lineWidth);
+        GL11.glBegin((int)3);
+        for (float i = end; i >= start; i -= 4.0f) {
+            GL11.glVertex2d((double)((double)x + Math.cos((double)((double)i * 3.141592653589793 / 180.0)) * (double)w * 1.001), (double)((double)y + Math.sin((double)((double)i * 3.141592653589793 / 180.0)) * (double)h * 1.001));
+        }
+        GL11.glEnd();
+        GL11.glDisable((int)2848);
+        GL11.glDisable((int)2881);
+        GlStateManager.func_179098_w();
+        GlStateManager.func_179084_k();
+    }
     public static void drawCircle(float x, float y, float radius, int color) {
         glColor(color);
         glEnable(GL_BLEND);
