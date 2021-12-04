@@ -17,7 +17,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.*
-import net.minecraft.item.itemArmor
+import net.minecraft.item.ItemArmor
 import java.util.*
 
 @ModuleInfo(name = "AntiBot", category = ModuleCategory.MISC)
@@ -142,11 +142,11 @@ object AntiBot : Module() {
             }
         }
         if (invalidArmorValue.get()) {
-            entity.inventory.armorInventory.forEach(
-                if(it != null && it !is itemArmor){
+            for (it in entity.inventory.armorInventory){
+                if(it != null && it !is ItemArmor){
                     return true
                 }
-            )
+            }
         }
         if (pingValue.get()) {
             if (mc.netHandler.getPlayerInfo(entity.uniqueID)?.responseTime == 0) {
