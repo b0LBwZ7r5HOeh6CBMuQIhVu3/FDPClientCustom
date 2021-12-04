@@ -17,6 +17,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.*
+import net.minecraft.item.itemArmor
 import java.util.*
 
 @ModuleInfo(name = "AntiBot", category = ModuleCategory.MISC)
@@ -37,6 +38,7 @@ object AntiBot : Module() {
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
     private val armorValue = BoolValue("Armor", false)
+    private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
     private val matrixBotValue = BoolValue("MatrixBot", false)
     private val matrixBotStrictValue = BoolValue("MatrixBotStict", false).displayable { matrixBotValue.get() }
@@ -139,7 +141,13 @@ object AntiBot : Module() {
                 return true
             }
         }
-
+        if (invalidArmorValue.get()) {
+            entity.inventory.armorInventory.forEach(
+                if(it != null && it !is itemArmor){
+                    return true
+                }
+            )
+        }
         if (pingValue.get()) {
             if (mc.netHandler.getPlayerInfo(entity.uniqueID)?.responseTime == 0) {
                 return true
