@@ -46,7 +46,7 @@ object AntiBot : Module() {
     private val lowWidthValue = BoolValue("LowWidth", true)
     private val neverMoveValue = BoolValue("NeverMove", false)
     private val neverRotationValue = BoolValue("neverRotation", false)
-    private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
+    // private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
@@ -56,6 +56,7 @@ object AntiBot : Module() {
     private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
     private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
     private val alwaysInRadiusWithTicksCheckValue = BoolValue("AlwaysInRadiusWithTicksCheck", false).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
+    private val alwaysInRadiusInCombatingValue = BoolValue("AlwaysInRadiusOnlyCombating", false).displayable { alwaysInRadiusValue.get()}
 
     private val ground = mutableListOf<Int>()
     private val air = mutableListOf<Int>()
@@ -111,7 +112,7 @@ object AntiBot : Module() {
             return true
         }
 
-        if (spawnInCombatValue.get() && spawnInCombat.contains(entity.entityId)) {
+        if (alwaysInRadiusInCombatingValue.get() && spawnInCombat.contains(entity.entityId)) {
             return true
         }
 
@@ -258,7 +259,7 @@ object AntiBot : Module() {
 
                 if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()) {
                     notAlwaysInRadius.add(entity.entityId)                }
-                if (!notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get()) {
+                if (!notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
                     alwaysInRadius.add(entity.entityId)
                 }
                 if (!noHitDelay.contains(entity.entityId) && entity.hurtResistantTime < 2 && entity.hurtTime > 9) {
@@ -290,10 +291,6 @@ object AntiBot : Module() {
                         duplicate.add(entry.profile.id)
                     }
                 }
-            }
-        } else if (packet is S0CPacketSpawnPlayer) {
-            if(LiquidBounce.combatManager.inCombat) {
-                spawnInCombat.add(packet.entityID)
             }
         }
 
