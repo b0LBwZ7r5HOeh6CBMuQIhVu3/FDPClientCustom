@@ -163,7 +163,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             .coerceAtLeast(118)
             .toFloat()
         // Draw rect box
-        RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0, 0, 0, backGroundAlphaValue.get()), Color(0, 0, 0, backGroundAlphaValue.get()))
+        RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0, 0, 0, backGroundAlphaValue.get()).rgb, Color(0, 0, 0, backGroundAlphaValue.get()).rgb)
 
         // Damage animation
         if (easingHP > getHealth(target)) {

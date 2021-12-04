@@ -38,7 +38,7 @@ object AntiBot : Module() {
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
     private val armorValue = BoolValue("Armor", false)
-    private val invalidArmorValue = BoolValue("invalidArmor", false)
+    // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
     private val matrixBotValue = BoolValue("MatrixBot", false)
     private val matrixBotStrictValue = BoolValue("MatrixBotStict", false).displayable { matrixBotValue.get() }
@@ -141,13 +141,13 @@ object AntiBot : Module() {
                 return true
             }
         }
-        if (invalidArmorValue.get()) {
+/*        if (invalidArmorValue.get()) {
             for (it in entity.inventory.armorInventory){
                 if(it != null && it !is ItemArmor){
                     return true
                 }
             }
-        }
+        }*/
         if (pingValue.get()) {
             if (mc.netHandler.getPlayerInfo(entity.uniqueID)?.responseTime == 0) {
                 return true
