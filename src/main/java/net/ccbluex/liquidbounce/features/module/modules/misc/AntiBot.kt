@@ -143,7 +143,7 @@ object AntiBot : Module() {
         }
         if (invalidArmorValue.get()) {
             for (it in entity.inventory.armorInventory){
-                if(it != null && it !is ItemArmor){
+                if(it != null && !it is ItemArmor){
                     return true
                 }
             }
