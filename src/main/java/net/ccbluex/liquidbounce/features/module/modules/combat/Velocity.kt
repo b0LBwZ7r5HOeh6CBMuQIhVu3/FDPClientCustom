@@ -118,6 +118,15 @@ class Velocity : Module() {
     }
     @EventTarget
     fun onMotion(event: MotionEvent) {
+        if (mc.thePlayer.isInWater || mc.thePlayer.isInLava || mc.thePlayer.isInWeb) {
+            return
+        }
+
+        if ((onlyGroundValue.get() && !mc.thePlayer.onGround) || (onlyCombatValue.get() && !LiquidBounce.combatManager.inCombat)) {
+            return
+        }
+            // if(onlyHitVelocityValue.get() && mc.thePlayer.motionY<0.05) return；
+        if (noFireValue.get() && mc.thePlayer.isBurning) return
         if (modeValue.get().lowercase() == "huayuting") {
             if (event.eventState == EventState.PRE && mc.thePlayer.hurtTime > 0) {
                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
