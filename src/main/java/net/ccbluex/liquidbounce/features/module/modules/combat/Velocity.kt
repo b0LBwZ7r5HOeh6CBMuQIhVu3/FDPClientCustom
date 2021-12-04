@@ -523,8 +523,7 @@ class Velocity : Module() {
                     packet.motionX = 0
                     packet.motionZ = 0
                     for (i in 0..redeCount) {
-                        mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
-                        mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
+                        mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                     }
                     if (redeCount> 12) redeCount -= 5
                 }
@@ -567,16 +566,14 @@ class Velocity : Module() {
                             25
                         }
                         for (i in 0..count) {
-                            mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
-                            mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
+                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                         }
                         velocityCalcTimer.reset()
                     } else {
                         packet.motionX = (packet.motionX * 0.6).toInt()
                         packet.motionZ = (packet.motionZ * 0.6).toInt()
                         for (i in 0..4) {
-                            mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
-                            mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
+                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                         }
                     }
                 }
