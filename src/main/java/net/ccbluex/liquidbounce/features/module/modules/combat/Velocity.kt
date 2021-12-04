@@ -116,7 +116,14 @@ class Velocity : Module() {
             usedTimer = false
         }
     }
-
+    @EventTarget
+    fun onMotion(event: MotionEvent) {
+        if (modeValue.get().lowercase() == "huayuting") {
+            if (event.eventState == EventState.PRE && mc.thePlayer.hurtTime > 0) {
+                mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+            }
+        }
+    }
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if(velocityInput) {
@@ -156,12 +163,16 @@ class Velocity : Module() {
                 }
             }
 
-            "simple2" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
+            "simple2" -> if (mc.thePlayer.hurtTime > 0) {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
             }
-
+            "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
+                    mc.thePlayer.motionX *= horizontalValue.get()
+                    mc.thePlayer.motionZ *= horizontalValue.get()
+                    mc.thePlayer.motionY *= verticalValue.get()
+            }
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
             }
@@ -382,7 +393,7 @@ class Velocity : Module() {
         if(packet is C03PacketPlayer && mc.thePlayer.hurtTime > 0){
             when (modeValue.get().lowercase()) {
                 "freeze" -> event.cancelEvent()
-                "huayuting" -> if(!mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) packet.y+=0.135
+                // "huayuting" -> if(!mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) packet.y+=0.135
             }
         }
         if (packet is S12PacketEntityVelocity) {
@@ -494,11 +505,7 @@ class Velocity : Module() {
                     packet.motionZ = 0
                 }
                 "huayuting" -> {
-                    mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.135, mc.thePlayer.posZ, false))
-                    event.cancelEvent()
-                    packet.motionX = 0
-                    packet.motionY = 0
-                    packet.motionZ = 0
+
                 }
                 "glitch" -> {
                     if (!mc.thePlayer.onGround) {
@@ -524,7 +531,7 @@ class Velocity : Module() {
                     packet.motionX = 0
                     packet.motionZ = 0
                     for (i in 0..redeCount) {
-                        mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                        mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                     }
                     if (redeCount> 12) redeCount -= 5
                 }
@@ -567,14 +574,14 @@ class Velocity : Module() {
                             25
                         }
                         for (i in 0..count) {
-                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                         }
                         velocityCalcTimer.reset()
                     } else {
                         packet.motionX = (packet.motionX * 0.6).toInt()
                         packet.motionZ = (packet.motionZ * 0.6).toInt()
                         for (i in 0..4) {
-                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 225, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                         }
                     }
                 }
