@@ -51,13 +51,13 @@ public class MixinModelBiped {
             /* 182 */
             // this.bipedHead.rotateAngleY = 0.75F;
             /* 183 */
-            this.bipedRightArm.rotateAngleX = (-5 + ((5 - -5) * Math.random()));
+            this.bipedRightArm.rotateAngleX = (-5F + ((5F - -5F) * Math.random()));
             /* 184 */
-            this.bipedRightArm.rotateAngleY = (-5 + ((5 - -5) * Math.random()));
+            this.bipedRightArm.rotateAngleY = (-5F + ((5F - -5F) * Math.random()));
             /* 185 */
-            this.bipedLeftArm.rotateAngleX = (-5 + ((5 - -5) * Math.random()));
+            this.bipedLeftArm.rotateAngleX = (-5F + ((5F - -5F) * Math.random()));
             /* 186 */
-            this.bipedLeftArm.rotateAngleY = (-5 + ((5 - -5) * Math.random()));
+            this.bipedLeftArm.rotateAngleY = (-5F + ((5F - -5F) * Math.random()));
          }
     }
 }
