@@ -32,6 +32,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private val switchAnimTypeValue = EaseUtils.getEnumEasingList("SwitchAnimType")
     private val switchAnimOrderValue = EaseUtils.getEnumEasingOrderList("SwitchAnimOrder")
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
+    private val backGroundAlphaValue = IntegerValue("BackGroundAlpha", 170, 0, 255)
     private val fontValue = FontValue("Font", Fonts.font40)
 
     private var prevTarget: EntityLivingBase? = null
@@ -162,7 +163,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             .coerceAtLeast(118)
             .toFloat()
         // Draw rect box
-        RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color.BLACK.rgb, Color.BLACK.rgb)
+        RenderUtils.drawBorderedRect(0F, 0F, width, 36F, 3F, Color(0, 0, 0, backGroundAlphaValue.get()), Color(0, 0, 0, backGroundAlphaValue.get()))
 
         // Damage animation
         if (easingHP > getHealth(target)) {
@@ -172,7 +173,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         // Health bar
         RenderUtils.drawRect(0F, 34F, (getHealth(target) / target.maxHealth) * width,
-            36F, Color(252, 96, 66).rgb)
+            36F, ColorUtils.healthColor(getHealth(target), target.maxHealth))
 
         // Heal animation
         if (easingHP < getHealth(target)) {
