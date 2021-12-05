@@ -538,9 +538,8 @@ class Velocity : Module() {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= horizontalValue.get()
-                    packet.motionZ *= horizontalValue.get()
-                    packet.motionY *= verticalValue.get()
+                    packet.motionX *= 0
+                    packet.motionZ *= 0
                     for (i in 0..redeCount) {
                         mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                     }
@@ -564,9 +563,8 @@ class Velocity : Module() {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= horizontalValue.get()
-                    packet.motionZ *= horizontalValue.get()
-                    packet.motionY *= verticalValue.get()
+                    packet.motionX *= 0
+                    packet.motionZ *= 0
                         // event.cancelEvent() better stuff
                     }
 
@@ -575,9 +573,8 @@ class Velocity : Module() {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= horizontalValue.get()
-                    packet.motionZ *= horizontalValue.get()
-                    packet.motionY *= verticalValue.get()
+                    packet.motionX *= 0
+                    packet.motionZ *= 0
                         }
                         val count = if (!velocityCalcTimer.hasTimePassed(800)) {
                             8
