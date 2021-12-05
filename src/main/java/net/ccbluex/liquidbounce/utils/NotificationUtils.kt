@@ -23,7 +23,11 @@ object NotificationUtils {
         return SystemTray.isSupported()
     }
 
-    fun displayTray(Title: String, Text: String) {
-        trayIcon.displayMessage(Title, Text, TrayIcon.MessageType.INFO)
+    fun displayTray(title: String, text: String) {
+        displayTray(title, text, TrayIcon.MessageType.INFO)
+    }
+
+    fun displayTray(title: String, text: String, messageType: TrayIcon.MessageType) {
+        trayIcon.displayMessage(title, text, messageType)
     }
 }
