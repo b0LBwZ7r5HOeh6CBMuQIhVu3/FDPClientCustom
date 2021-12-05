@@ -409,7 +409,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && (packet.getMotionX()<500 || packet.getMotionZ()<500) ) return
+            if(onlyHitVelocityValue.get() && (packet.getMotionX()<10 || packet.getMotionZ()<10) ) return
             
             velocityTimer.reset()
             velocityTick = 0
@@ -535,10 +535,10 @@ class Velocity : Module() {
                     }
 
                     val target = LiquidBounce.combatManager.getNearByEntity(LiquidBounce.moduleManager[KillAura::class.java]!!.rangeValue.get() + 1) ?: return
-                    mc.thePlayer.motionX = 0.0
-                    mc.thePlayer.motionZ = 0.0
-                    packet.motionX = 0
-                    packet.motionZ = 0
+                    mc.thePlayer.motionX = horizontalValue.get()
+                    mc.thePlayer.motionZ = horizontalValue.get()
+                    packet.motionX = horizontalValue.get()
+                    packet.motionZ = horizontalValue.get()
                     for (i in 0..redeCount) {
                         mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                     }
@@ -559,21 +559,21 @@ class Velocity : Module() {
 
                     val target = LiquidBounce.combatManager.getNearByEntity(LiquidBounce.moduleManager[KillAura::class.java]!!.rangeValue.get()) ?: return
                     if (rspAlwaysValue.get()) {
-                        mc.thePlayer.motionX = 0.0
-                        mc.thePlayer.motionZ = 0.0
+                        mc.thePlayer.motionX = horizontalValue.get()
+                        mc.thePlayer.motionZ = horizontalValue.get()
                         // mc.thePlayer.motionY=(packet.motionY/8000f)*1.0
-                        packet.motionX = 0
-                        packet.motionZ = 0
+                        packet.motionX = horizontalValue.get()
+                        packet.motionZ = horizontalValue.get()
                         // event.cancelEvent() better stuff
                     }
 
                     if (velocityCalcTimer.hasTimePassed(500)) {
                         if (!rspAlwaysValue.get()) {
-                            mc.thePlayer.motionX = 0.0
-                            mc.thePlayer.motionZ = 0.0
+                            mc.thePlayer.motionX = horizontalValue.get()
+                            mc.thePlayer.motionZ = horizontalValue.get()
                             // mc.thePlayer.motionY=(packet.motionY/8000f)*1.0
-                            packet.motionX = 0
-                            packet.motionZ = 0
+                            packet.motionX = horizontalValue.get()
+                            packet.motionZ = horizontalValue.get()
                         }
                         val count = if (!velocityCalcTimer.hasTimePassed(800)) {
                             8
