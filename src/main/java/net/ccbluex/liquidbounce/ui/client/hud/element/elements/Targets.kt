@@ -159,7 +159,8 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     }
 
     private fun drawLiquid(target: EntityLivingBase) {
-        val width = (38 + target.name.let(Fonts.font40::getStringWidth))
+        val font = fontValue.get()
+        val width = (38 + target.name.let(font::getStringWidth))
             .coerceAtLeast(118)
             .toFloat()
         // Draw rect box
@@ -181,14 +182,14 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
                 (getHealth(target) / target.maxHealth) * width, 36F, Color(44, 201, 144).rgb)
         }
 
-        target.name.let { Fonts.font40.drawString(it, 36, 3, 0xffffff) }
-        Fonts.font35.drawString("Distance: ${decimalFormat.format(mc.thePlayer.getDistanceToEntityBox(target))}", 36, 15, 0xffffff)
+        target.name.let { font.drawString(it, 36, 3, 0xffffff) }
+        font.drawString("Distance: ${decimalFormat.format(mc.thePlayer.getDistanceToEntityBox(target))}", 36, 15, 0xffffff)
 
         // Draw info
         RenderUtils.drawHead(target.skin, 2, 2, 30, 30)
         val playerInfo = mc.netHandler.getPlayerInfo(target.uniqueID)
         if (playerInfo != null) {
-            Fonts.font35.drawString("Ping: ${playerInfo.responseTime.coerceAtLeast(0)}",
+            font.drawString("Ping: ${playerInfo.responseTime.coerceAtLeast(0)}",
                 36, 24, 0xffffff)
         }
     }
