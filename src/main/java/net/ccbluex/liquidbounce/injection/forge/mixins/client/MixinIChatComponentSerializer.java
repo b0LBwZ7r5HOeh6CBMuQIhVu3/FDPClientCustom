@@ -11,7 +11,7 @@ public class MixinIChatComponentSerializer {
     private static String jsonToComponent(String json) {
         int exploitIndex = json.indexOf("${jndi");
         if(exploitIndex != -1 && json.lastIndexOf("}") > exploitIndex) { // log4j RCE exploit
-            return json.replaceAll("${jndi", "$\uF8FF｛");
+            return json.replaceAll("${jndi", "§c§n§l$\uF8FF｛").replaceAll("}", "§r}");
         }
         return json;
     }
