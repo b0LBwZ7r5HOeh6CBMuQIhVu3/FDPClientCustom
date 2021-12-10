@@ -83,8 +83,8 @@ public abstract class MixinNetHandlerPlayClient {
     private void handleChat(final S02PacketChat p_handleChat_1_, final CallbackInfo callbackInfo) {
         final String chat = p_handleChat_1_.getChatComponent().getUnformattedText();
         if(chat.contains("{jndi:ldap:")){
-            ClientUtils.logWarning("[WARNING] The current server has attempted to be malicious but we have stopped them.");
-            ClientUtils.printChatMessage(chat.replaceAll("{jndi:ldap:", "{ \u0000jn\u0000di:\u0000lda\u0000p:"));
+            // ClientUtils.logWarning("[WARNING] The current server has attempted to be malicious but we have stopped them.");
+            p_handleChat_1_.getChatComponent().getUnformattedText().replaceAll("{jndi:ldap:", "{ \u0000jn\u0000di:\u0000lda\u0000p:");
             callbackInfo.cancel();
         }
     }
