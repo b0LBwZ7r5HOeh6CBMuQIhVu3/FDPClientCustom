@@ -29,7 +29,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit"), "AAC4")
     val hoverNoFall = BoolValue("HoverNoFall", true)
@@ -125,7 +125,12 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
                     sendCriticalPacket(yOffset = 0.0014749900000101, ground = false)
                     sendCriticalPacket(yOffset = 0.0000007451816400000, ground = false)
                 }
-
+                "noteless" -> {
+                    sendCriticalPacket(yOffset=0.11921599284565,ground = false)
+                    sendCriticalPacket(yOffset=0.00163166800276,ground = false)
+                    sendCriticalPacket(yOffset=0.15919999545217,ground = false)
+                    sendCriticalPacket(yOffset=0.11999999731779,ground = false)
+                }
                 "hypixel2" -> {
                     sendCriticalPacket(yOffset = 0.05250000001304, ground = false)
                     sendCriticalPacket(yOffset = 0.00150000001304, ground = false)
@@ -229,9 +234,9 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
                         }
                     }
                 }
-                "AAC5.0.14HYT" -> {
+                "AAC5.0.14HYT","noteless" -> {
                     if(timerValue.get() != 1F) {
-                        if (minemoraTimer.hasTimePassed(80L) && (mc.timer.timerSpeed < 1f) && usedTimer) {
+                        if (minemoraTimer.hasTimePassed(120L) && (mc.timer.timerSpeed < 1f) && usedTimer) {
                             mc.timer.timerSpeed = 1f
                             usedTimer = false
                         }
