@@ -46,6 +46,7 @@ import net.minecraft.util.*
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 import kotlin.math.*
+import net.minecraft.util.MathHelper
 
 @ModuleInfo(name = "Scaffold", category = ModuleCategory.WORLD, keyBind = Keyboard.KEY_G)
 class Scaffold : Module() {
@@ -73,6 +74,7 @@ class Scaffold : Module() {
     private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val searchValue = BoolValue("Search", true)
     private val downValue = BoolValue("Down", true)
+    private val rotationStrafeValue = BoolValue("rotationStrafe", true)
     private val placeModeValue = ListValue("PlaceTiming", arrayOf("Pre", "Post"), "Post")
 
     // Eagle
@@ -794,7 +796,35 @@ class Scaffold : Module() {
             }
         }
     }
+    @EventTarget
+    fun onStrafe(event: StrafeEvent) {
+        if(!rotationStrafeValue.get())
+            return
+        val (yaw) = RotationUtils.targetRotation ?: return
+        var strafe = event.strafe
+        var forward = event.forward
+        val friction = event.friction
 
+        var f = strafe * strafe + forward * forward
+
+        if (f >= 1.0E-4F) {
+        f = MathHelper.sqrt_float(f)
+
+        if (f < 1.0F) {
+            f = 1.0F
+        }
+        f = friction / f
+        strafe *= f
+        forward *= f
+
+        val yawSin = MathHelper.sin((yaw * Math.PI / 180F).toFloat())
+        val yawCos = MathHelper.cos((yaw * Math.PI / 180F).toFloat())
+        mc.thePlayer.motionX += strafe * yawCos - forward * yawSin
+        mc.thePlayer.motionZ += forward * yawCos + strafe * yawSin
+        }
+        event.cancelEvent()
+    }
+    
     /**
      * Search for placeable block
      *

@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
+import net.ccbluex.liquidbounce.event.StrafeEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -32,6 +33,7 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.Vec3
 import kotlin.math.sqrt
 import java.awt.Color
+import net.minecraft.util.MathHelper
 
 @ModuleInfo(name = "Fucker", category = ModuleCategory.WORLD)
 object Fucker : Module() {
@@ -54,6 +56,7 @@ object Fucker : Module() {
     private val autoToolValue = BoolValue("AutoTool", false)
     private val matrixValue = BoolValue("Matrix", false)
     private val teamsValue = BoolValue("Teams", false)
+    private val rotationStrafeValue = BoolValue("rotationStrafe", true)
 
     /**
      * VALUES
@@ -225,7 +228,34 @@ object Fucker : Module() {
             }
         }
     }
+    @EventTarget
+    fun onStrafe(event: StrafeEvent) {
+        if(!rotationStrafeValue.get())
+            return
+        val (yaw) = RotationUtils.targetRotation ?: return
+        var strafe = event.strafe
+        var forward = event.forward
+        val friction = event.friction
 
+        var f = strafe * strafe + forward * forward
+
+        if (f >= 1.0E-4F) {
+        f = MathHelper.sqrt_float(f)
+
+        if (f < 1.0F) {
+            f = 1.0F
+        }
+        f = friction / f
+        strafe *= f
+        forward *= f
+
+        val yawSin = MathHelper.sin((yaw * Math.PI / 180F).toFloat())
+        val yawCos = MathHelper.cos((yaw * Math.PI / 180F).toFloat())
+        mc.thePlayer.motionX += strafe * yawCos - forward * yawSin
+        mc.thePlayer.motionZ += forward * yawCos + strafe * yawSin
+        }
+        event.cancelEvent()
+    }
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         RenderUtils.drawBlockBox(pos ?: return, Color.RED, false, true, 1F)
