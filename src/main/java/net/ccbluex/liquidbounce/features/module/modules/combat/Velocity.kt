@@ -38,7 +38,7 @@ class Velocity : Module() {
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
     private val modeValue = ListValue("Mode", arrayOf("Simple", "Simple2", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
-                                                      "Redesky1", "Redesky2","huayuting",
+                                                      "Redesky1", "Redesky2","huayuting","HYT1","HYT2","HYT3","HYT4",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "strafe", "SmoothReverse",
@@ -46,6 +46,7 @@ class Velocity : Module() {
                                                       "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove","Freeze",
                                                       "Legit"), "Simple")
     private val velocityTickValue = IntegerValue("VelocityTick", 1, 0, 10).displayable { modeValue.equals("Tick") || modeValue.equals("OldSpartan")}
+    private val velocityDelayValue = IntegerValue("VelocityDelay", 80, 0, 300).displayable { modeValue.equals("Simple2")}
     // Reverse
     private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F).displayable { modeValue.equals("strafe") }
     private val reverse2StrengthValue = FloatValue("SmoothReverseStrength", 0.05F, 0.02F, 0.1F).displayable { modeValue.equals("SmoothReverse") }
@@ -76,6 +77,7 @@ class Velocity : Module() {
     private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
     private val noFireValue = BoolValue("noFire", false)
     private val timerValue = FloatValue("timer", 0.8F, 0.1F, 1F)
+    private val timerOnlyPullUpValue = BoolValue("timerOnlyPullUpValue", true)
     /**
      * VALUES
      */
@@ -154,7 +156,7 @@ class Velocity : Module() {
             usedTimer = false
         }
 
-        if(timerValue.get() < 1F && mc.thePlayer.hurtTime > 0){
+        if(timerValue.get() < 1F && mc.thePlayer.hurtTime > 0 && (mc.thePlayer.motionY > 0 || !timerOnlyPullUpValue.get()) ){
             mc.timer.timerSpeed = timerValue.get()
             usedTimer = true
         }
@@ -172,10 +174,11 @@ class Velocity : Module() {
                 }
             }
 
-            "simple2" -> if (mc.thePlayer.hurtTime > 0) {
+            "simple2" -> if (velocityInput && velocityTimer.hasTimePassed( velocityDelayValue.get().toLong() )) {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
+                    velocityTimer.reset()
             }
             "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
                     mc.thePlayer.motionX *= horizontalValue.get()
@@ -191,6 +194,79 @@ class Velocity : Module() {
                     mc.thePlayer.motionZ *= horizontalValue.get()
                 }
                 mc.thePlayer.onGround = true
+            }
+            "hyt1" ->{
+                if (mc.thePlayer!!.hurtTime > 0) {
+                    if (mc.thePlayer!!.onGround) {
+                        mc.thePlayer!!.motionX *= 0
+                        mc.thePlayer!!.motionZ *= 0
+                        // mc.timer.timerSpeed = 0.9F
+                    } else {
+                        mc.thePlayer!!.motionX *= 0.5
+                        mc.thePlayer!!.motionZ *= 0.5
+                        // mc.timer.timerSpeed = 0.9F
+                    }
+                }
+            }
+            "hyt2" -> {
+                if (mc.thePlayer!!.hurtTime <= 0) {
+                    return
+                }
+                if (thePlayer.onGround) {
+                    thePlayer.motionX *= 0.0
+                    thePlayer.motionZ *= 0.0
+                    // mc.timer.timerSpeed = 0.8F
+                }else{
+                    thePlayer.motionX *= 0.80114514
+                    thePlayer.motionZ *= 0.80114514
+                    thePlayer.motionY *= 0.80114514
+                }
+            }
+            "hyt3" -> if (mc.thePlayer!!.hurtTime > 0) {
+                if (mc.thePlayer!!.onGround) {
+                    mc.thePlayer!!.motionX *= 0
+                    mc.thePlayer!!.motionZ *= 0
+                    // mc.timer.timerSpeed = 0.8F
+                } else {
+                    mc.thePlayer!!.motionX *= 0.5
+                    mc.thePlayer!!.motionZ *= 0.5
+                    // mc.timer.timerSpeed = 0.7F
+                }
+            }
+            "hyt4" -> {
+                if (!thePlayer.onGround) {
+                    if (velocityInput) {
+                        thePlayer.speedInAir = 0.02f
+                        thePlayer.motionX *= 0.6
+                        thePlayer.motionZ *= 0.6
+                    }
+                } else if (velocityTimer.hasTimePassed(80L)) {
+                    velocityInput = false
+                    thePlayer.speedInAir = 0.02f
+                }
+                if(mc.thePlayer!!.hurtTime > 0) {
+                    val QQ = Math.floor(Math.random() * 4)
+                    if(QQ==0.0){
+                        mc.thePlayer!!.motionX = 0.0087048710342
+                        mc.thePlayer!!.motionZ = 0.0087048710342
+                    }
+                    if(QQ==1.0){
+                        mc.thePlayer!!.motionX = 0.0088041410129
+                        mc.thePlayer!!.motionZ = 0.0088041410129
+                    }
+                    if(QQ==2.0){
+                        mc.thePlayer!!.motionX = 0.00951043207
+                        mc.thePlayer!!.motionZ = 0.00951043207
+                    }
+                    if(QQ==3.0){
+                        mc.thePlayer!!.motionX = 0.009545643206
+                        mc.thePlayer!!.motionZ = 0.009545643206
+                    }
+                    if(mc.gameSettings.keyBindForward.isKeyDown || mc.gameSettings.keyBindBack.isKeyDown || mc.gameSettings.keyBindLeft.isKeyDown || mc.gameSettings.keyBindRight.isKeyDown){
+                        mc.thePlayer!!.motionX = 0.0
+                        mc.thePlayer!!.motionZ = 0.0
+                    }
+                }
             }
             "slowdown" -> if (mc.thePlayer.hurtTime > 0) {
                 mc.thePlayer.motionX = 0.0
