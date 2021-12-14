@@ -234,7 +234,7 @@ class Velocity : Module() {
                 }
             }
             "hyt4" -> {
-                if (!thePlayer.onGround) {
+                if (!mc.thePlayer.onGround) {
                     if (velocityInput) {
                         mc.thePlayer!!.speedInAir = 0.02f
                         mc.thePlayer!!.motionX *= 0.6.toDouble()
