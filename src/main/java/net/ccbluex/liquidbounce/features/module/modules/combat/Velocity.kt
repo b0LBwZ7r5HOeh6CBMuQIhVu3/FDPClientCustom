@@ -198,8 +198,8 @@ class Velocity : Module() {
             "hyt1" ->{
                 if (mc.thePlayer!!.hurtTime > 0) {
                     if (mc.thePlayer!!.onGround) {
-                        mc.thePlayer!!.motionX *= 0
-                        mc.thePlayer!!.motionZ *= 0
+                        mc.thePlayer!!.motionX *= 0F
+                        mc.thePlayer!!.motionZ *= 0F
                         // mc.timer.timerSpeed = 0.9F
                     } else {
                         mc.thePlayer!!.motionX *= 0.5
@@ -212,59 +212,59 @@ class Velocity : Module() {
                 if (mc.thePlayer!!.hurtTime <= 0) {
                     return
                 }
-                if (thePlayer.onGround) {
-                    thePlayer.motionX *= 0.0
-                    thePlayer.motionZ *= 0.0
+                if (mc.thePlayer!!.onGround) {
+                    mc.thePlayer!!.motionX *= 0.0F
+                    mc.thePlayer!!.motionZ *= 0.0F
                     // mc.timer.timerSpeed = 0.8F
                 }else{
-                    thePlayer.motionX *= 0.80114514
-                    thePlayer.motionZ *= 0.80114514
-                    thePlayer.motionY *= 0.80114514
+                    mc.thePlayer!!.motionX *= 0.80114514F
+                    mc.thePlayer!!.motionZ *= 0.80114514F
+                    mc.thePlayer!!.motionY *= 0.80114514F
                 }
             }
             "hyt3" -> if (mc.thePlayer!!.hurtTime > 0) {
                 if (mc.thePlayer!!.onGround) {
-                    mc.thePlayer!!.motionX *= 0
-                    mc.thePlayer!!.motionZ *= 0
+                    mc.thePlayer!!.motionX *= 0F
+                    mc.thePlayer!!.motionZ *= 0F
                     // mc.timer.timerSpeed = 0.8F
                 } else {
-                    mc.thePlayer!!.motionX *= 0.5
-                    mc.thePlayer!!.motionZ *= 0.5
+                    mc.thePlayer!!.motionX *= 0.5F
+                    mc.thePlayer!!.motionZ *= 0.5F
                     // mc.timer.timerSpeed = 0.7F
                 }
             }
             "hyt4" -> {
                 if (!thePlayer.onGround) {
                     if (velocityInput) {
-                        thePlayer.speedInAir = 0.02f
-                        thePlayer.motionX *= 0.6
-                        thePlayer.motionZ *= 0.6
+                        mc.thePlayer!!.speedInAir = 0.02f
+                        mc.thePlayer!!.motionX *= 0.6F
+                        mc.thePlayer!!.motionZ *= 0.6F
                     }
                 } else if (velocityTimer.hasTimePassed(80L)) {
                     velocityInput = false
-                    thePlayer.speedInAir = 0.02f
+                    mc.thePlayer!!.speedInAir = 0.02f
                 }
                 if(mc.thePlayer!!.hurtTime > 0) {
                     val QQ = Math.floor(Math.random() * 4)
                     if(QQ==0.0){
-                        mc.thePlayer!!.motionX = 0.0087048710342
-                        mc.thePlayer!!.motionZ = 0.0087048710342
+                        mc.thePlayer!!.motionX = 0.0087048710342F
+                        mc.thePlayer!!.motionZ = 0.0087048710342F
                     }
                     if(QQ==1.0){
-                        mc.thePlayer!!.motionX = 0.0088041410129
-                        mc.thePlayer!!.motionZ = 0.0088041410129
+                        mc.thePlayer!!.motionX = 0.0088041410129F
+                        mc.thePlayer!!.motionZ = 0.0088041410129F
                     }
                     if(QQ==2.0){
-                        mc.thePlayer!!.motionX = 0.00951043207
-                        mc.thePlayer!!.motionZ = 0.00951043207
+                        mc.thePlayer!!.motionX = 0.00951043207F
+                        mc.thePlayer!!.motionZ = 0.00951043207F
                     }
                     if(QQ==3.0){
-                        mc.thePlayer!!.motionX = 0.009545643206
-                        mc.thePlayer!!.motionZ = 0.009545643206
+                        mc.thePlayer!!.motionX = 0.009545643206F
+                        mc.thePlayer!!.motionZ = 0.009545643206F
                     }
                     if(mc.gameSettings.keyBindForward.isKeyDown || mc.gameSettings.keyBindBack.isKeyDown || mc.gameSettings.keyBindLeft.isKeyDown || mc.gameSettings.keyBindRight.isKeyDown){
-                        mc.thePlayer!!.motionX = 0.0
-                        mc.thePlayer!!.motionZ = 0.0
+                        mc.thePlayer!!.motionX = 0.0F
+                        mc.thePlayer!!.motionZ = 0.0F
                     }
                 }
             }
