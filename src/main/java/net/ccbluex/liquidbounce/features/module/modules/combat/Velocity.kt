@@ -198,12 +198,12 @@ class Velocity : Module() {
             "hyt1" ->{
                 if (mc.thePlayer!!.hurtTime > 0) {
                     if (mc.thePlayer!!.onGround) {
-                        mc.thePlayer!!.motionX *= 0D
-                        mc.thePlayer!!.motionZ *= 0D
+                        mc.thePlayer!!.motionX *= 0.0.toDouble()
+                        mc.thePlayer!!.motionZ *= 0.0.toDouble()
                         // mc.timer.timerSpeed = 0.9F
                     } else {
-                        mc.thePlayer!!.motionX *= 0.5
-                        mc.thePlayer!!.motionZ *= 0.5
+                        mc.thePlayer!!.motionX *= 0.5.toDouble()
+                        mc.thePlayer!!.motionZ *= 0.5.toDouble()
                         // mc.timer.timerSpeed = 0.9F
                     }
                 }
@@ -213,32 +213,32 @@ class Velocity : Module() {
                     return
                 }
                 if (mc.thePlayer!!.onGround) {
-                    mc.thePlayer!!.motionX *= 0.0D
-                    mc.thePlayer!!.motionZ *= 0.0D
+                    mc.thePlayer!!.motionX *= 0.0.toDouble()
+                    mc.thePlayer!!.motionZ *= 0.0.toDouble()
                     // mc.timer.timerSpeed = 0.8F
                 }else{
-                    mc.thePlayer!!.motionX *= 0.80114514D
-                    mc.thePlayer!!.motionZ *= 0.80114514D
-                    mc.thePlayer!!.motionY *= 0.80114514D
+                    mc.thePlayer!!.motionX *= 0.80114514.toDouble()
+                    mc.thePlayer!!.motionZ *= 0.80114514.toDouble()
+                    mc.thePlayer!!.motionY *= 0.80114514.toDouble()
                 }
             }
             "hyt3" -> if (mc.thePlayer!!.hurtTime > 0) {
                 if (mc.thePlayer!!.onGround) {
-                    mc.thePlayer!!.motionX *= 0D
-                    mc.thePlayer!!.motionZ *= 0D
+                    mc.thePlayer!!.motionX *= 0.0.toDouble()
+                    mc.thePlayer!!.motionZ *= 0.0.toDouble()
                     // mc.timer.timerSpeed = 0.8F
                 } else {
-                    mc.thePlayer!!.motionX *= 0.5D
-                    mc.thePlayer!!.motionZ *= 0.5D
+                    mc.thePlayer!!.motionX *= 0.5.toDouble()
+                    mc.thePlayer!!.motionZ *= 0.5.toDouble()
                     // mc.timer.timerSpeed = 0.7F
                 }
             }
             "hyt4" -> {
-                if (!mc.thePlayer.onGround) {
+                if (!thePlayer.onGround) {
                     if (velocityInput) {
                         mc.thePlayer!!.speedInAir = 0.02f
-                        mc.thePlayer!!.motionX *= 0.6D
-                        mc.thePlayer!!.motionZ *= 0.6D
+                        mc.thePlayer!!.motionX *= 0.6.toDouble()
+                        mc.thePlayer!!.motionZ *= 0.6.toDouble()
                     }
                 } else if (velocityTimer.hasTimePassed(80L)) {
                     velocityInput = false
@@ -247,24 +247,24 @@ class Velocity : Module() {
                 if(mc.thePlayer!!.hurtTime > 0) {
                     val QQ = Math.floor(Math.random() * 4)
                     if(QQ==0.0){
-                        mc.thePlayer!!.motionX = 0.0087048710342D
-                        mc.thePlayer!!.motionZ = 0.0087048710342D
+                        mc.thePlayer!!.motionX = 0.0087048710342.toDouble()
+                        mc.thePlayer!!.motionZ = 0.0087048710342.toDouble()
                     }
                     if(QQ==1.0){
-                        mc.thePlayer!!.motionX = 0.0088041410129D
-                        mc.thePlayer!!.motionZ = 0.0088041410129D
+                        mc.thePlayer!!.motionX = 0.0088041410129.toDouble()
+                        mc.thePlayer!!.motionZ = 0.0088041410129.toDouble()
                     }
                     if(QQ==2.0){
-                        mc.thePlayer!!.motionX = 0.00951043207D
-                        mc.thePlayer!!.motionZ = 0.00951043207D
+                        mc.thePlayer!!.motionX = 0.00951043207.toDouble()
+                        mc.thePlayer!!.motionZ = 0.00951043207.toDouble()
                     }
                     if(QQ==3.0){
-                        mc.thePlayer!!.motionX = 0.009545643206D
-                        mc.thePlayer!!.motionZ = 0.009545643206D
+                        mc.thePlayer!!.motionX = 0.009545643206.toDouble()
+                        mc.thePlayer!!.motionZ = 0.009545643206.toDouble()
                     }
                     if(mc.gameSettings.keyBindForward.isKeyDown || mc.gameSettings.keyBindBack.isKeyDown || mc.gameSettings.keyBindLeft.isKeyDown || mc.gameSettings.keyBindRight.isKeyDown){
-                        mc.thePlayer!!.motionX = 0.0D
-                        mc.thePlayer!!.motionZ = 0.0D
+                        mc.thePlayer!!.motionX = 0.0.toDouble()
+                        mc.thePlayer!!.motionZ = 0.0.toDouble()
                     }
                 }
             }
