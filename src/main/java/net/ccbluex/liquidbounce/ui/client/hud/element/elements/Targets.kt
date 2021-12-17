@@ -20,11 +20,12 @@ import net.minecraft.entity.EntityLivingBase
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.DecimalFormat
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 @ElementInfo(name = "Targets")
 class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vertical.MIDDLE)) {
-    private val modeValue = ListValue("Mode", arrayOf("Novoline", "Astolfo", "Liquid", "Flux", "Rise", "Zamorozka", "Arris", "Tenacity"), "Rise")
+    private val modeValue = ListValue("Mode", arrayOf("Orange","Novoline","NewNovoline", "Astolfo", "Liquid", "Flux","NewFlux", "Rise", "Zamorozka", "Arris", "Tenacity"), "Rise")
     private val animSpeedValue = IntegerValue("AnimSpeed", 10, 5, 20)
     private val hpAnimTypeValue = EaseUtils.getEnumEasingList("HpAnimType")
     private val hpAnimOrderValue = EaseUtils.getEnumEasingOrderList("HpAnimOrder")
@@ -32,7 +33,6 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private val switchAnimTypeValue = EaseUtils.getEnumEasingList("SwitchAnimType")
     private val switchAnimOrderValue = EaseUtils.getEnumEasingOrderList("SwitchAnimOrder")
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
-    private val backGroundAlphaValue = IntegerValue("BackGroundAlpha", 170, 0, 255)
     private val fontValue = FontValue("Font", Fonts.font40)
 
     private var prevTarget: EntityLivingBase? = null
@@ -58,7 +58,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         }
 
     private fun getHealth(entity: EntityLivingBase?): Float {
-        return entity?.health ?: 0f
+        return if (entity == null || entity.isDead) { 0f } else { entity.health }
     }
 
     override fun drawElement(partialTicks: Float): Border? {
@@ -69,7 +69,8 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         if (mc.currentScreen is GuiHudDesigner) {
             target = mc.thePlayer
-        } else if (target != null) {
+        }
+        if (target != null) {
             prevTarget = target
         }
         prevTarget ?: return getTBorder()
@@ -109,7 +110,9 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         }
 
         when (modeValue.get().lowercase()) {
+            "orange" -> drawOrange(prevTarget!!)
             "novoline" -> drawNovo(prevTarget!!)
+            "newnovoline" -> drawnewNovo(prevTarget!!)
             "astolfo" -> drawAstolfo(prevTarget!!)
             "liquid" -> drawLiquid(prevTarget!!)
             "flux" -> drawFlux(prevTarget!!)
@@ -117,9 +120,57 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "zamorozka" -> drawZamorozka(prevTarget!!)
             "arris" -> drawArris(prevTarget!!)
             "tenacity" -> drawTenacity(prevTarget!!)
+            "newflux" -> drawNewFlux(prevTarget!!)
         }
 
         return getTBorder()
+    }
+
+    private fun drawOrange(target: EntityLivingBase) {
+        val font = fontValue.get()
+        val h = 40f
+
+        val additionalWidth = font.getStringWidth(target.name).coerceAtLeast(75)
+        RenderUtils.drawBorderedRect(0f, 0f, 45f + additionalWidth, h,3F, Color(59, 59, 59).rgb,Color(50,50,50).rgb)
+
+        // Head
+        RenderUtils.drawHead(target.skin, 5, 5, 30, 30)
+
+        // info text
+        font.drawString(target.name, 40F - 0.5F, 5F, Color(0,111,255).rgb, false)
+        font.drawString(target.name, 40F, 5F, Color.WHITE.rgb, false)
+
+        val yPos = 5 + font.FONT_HEIGHT + 3f
+
+        // hp bar
+        RenderUtils.drawRect(40f, yPos, 40F + additionalWidth, yPos + 4, Color.white.rgb)
+        RenderUtils.drawRect(40f, yPos + 9, 40F + additionalWidth, yPos + 13, Color.white.rgb)
+
+        RenderUtils.drawRect(40f, yPos, 40 + (easingHP / target.maxHealth) * additionalWidth, yPos + 4, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
+        RenderUtils.drawRect(40f, yPos + 9, 40 + (target.totalArmorValue / 20F) * additionalWidth, yPos + 13, Color(77, 128, 255).rgb)
+
+    }
+
+    private fun drawnewNovo(target: EntityLivingBase){
+        val font = fontValue.get()
+        font.FONT_HEIGHT
+        val hpcolor = ColorUtils.healthColor(getHealth(target), target.maxHealth)
+        val percent = target.health / target.maxHealth * 100F
+        val nameLength = (font.getStringWidth(target.name)).coerceAtLeast(font.getStringWidth("${decimalFormat.format(percent)}%")).toFloat() + 10F
+        val barWidth = (target.health / target.maxHealth).coerceIn(0F, target.maxHealth) * (nameLength - 2F)
+
+        RenderUtils.drawRect(-2F, -2F, 3F + nameLength + 36F, 2F + 36F, Color(24, 24, 24, 255).rgb)
+        RenderUtils.drawRect(-1F, -1F, 2F + nameLength + 36F, 1F + 36F, Color(31, 31, 31, 255).rgb)
+        RenderUtils.drawHead(target.skin, 0, 0, 36, 36)
+        font.drawStringWithShadow(target.name, 2F + 36F + 1F, 2F, -1)
+        RenderUtils.drawRect(2F + 36F, 15F, 36F + nameLength, 25F, Color(24, 24, 24, 255).rgb)
+
+        val animateThingy = ((getHealth(target) / target.maxHealth).roundToInt() / 100)
+
+        RenderUtils.drawRect(2F + 36F, 15F, 2F + 36F + animateThingy, 25F, Color.black.rgb)
+        RenderUtils.drawRect(2F + 36F, 15F, 2F + 36F + barWidth, 25F, hpcolor)
+
+        font.drawStringWithShadow("${decimalFormat.format(percent)}%", 2F + 36F + (nameLength - 2F) / 2F - font.getStringWidth("${decimalFormat.format(percent)}%").toFloat() / 2F, 16F, -1)
     }
 
     private fun drawAstolfo(target: EntityLivingBase) {
@@ -140,6 +191,35 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         GL11.glScalef(2F, 2F, 2F)
         font.drawString("${getHealth(target).roundToInt()} ❤", 19, 9, color.rgb)
         GL11.glPopMatrix()
+    }
+
+    private fun drawNewFlux(target: EntityLivingBase){
+        val font = fontValue.get()
+        val width = (26F + font.getStringWidth(target.name)).coerceAtLeast(26F + font.getStringWidth("Health: ${decimalFormat.format(target.health)}")) + 15F
+        RenderUtils.drawCircleRect(-1F, -1F, 1F + width, 47F, 1F, Color(35,35,40,230).rgb)
+        //RenderUtils.drawBorder(1F, 1F, 26F, 26F, 1F, Color(115, 255, 115).rgb)
+        RenderUtils.drawHead(target.skin, 1, 1, 26, 26)
+        font.drawString(target.name, 30F, 6F, 0xFFFFFF,true) // Draw target name
+        font.drawString("Health: ${decimalFormat.format(getHealth(target))}", 30F, 18F, 0xFFFFFF,true) // Draw target health
+        // ❤
+        font.drawString("❤",2F,29F,-1,true)
+
+        //drawArmorIcon(2,38,7,7)
+        var hp = ((target.health - target.maxHealth) / 2.0.pow(10.0 - 3.0)).toFloat() * RenderUtils.deltaTime.toFloat()
+        // bar bg
+        RenderUtils.drawRect(12F, 30F, 12F + width - 15F, 33F, Color(20, 20, 20, 255).rgb)
+        RenderUtils.drawRect(12F, 40F, 12F + width - 15F, 43F, Color(20, 20, 20, 255).rgb)
+        // Health bar
+        if (hp < 0 || hp > target.maxHealth) {
+            hp = target.health
+        }
+        if (hp > target.health) {
+            RenderUtils.drawRect(12F, 30F, 12F + (hp / target.maxHealth) * (width - 15F), 33F, Color(231,182,0,255).rgb)
+        } // Damage animation
+        RenderUtils.drawRect(12F, 30F, 12F + (target.health / target.maxHealth) * (width - 15F), 33F, Color(0,224,84,255).rgb)
+        if (target.totalArmorValue != 0) {
+            RenderUtils.drawRect(12F, 40F, 12F + (target.totalArmorValue / 20F) * (width - 15F), 43F, Color(77,128,255,255).rgb) // Draw armor bar
+        }
     }
 
     private fun drawNovo(target: EntityLivingBase) {
@@ -205,8 +285,8 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         // Healthbar
         val barLength = 143 - 7f
         RenderUtils.drawCircleRect(7f, 45f, 143f, 50f, 2.5f, Color(0, 0, 0, 70).rgb)
-        RenderUtils.drawCircleRect(7f, 45f, 7 + ((easingHP / target.maxHealth) * barLength), 50f, 2.5f, ColorUtils.rainbowWithAlpha(90).rgb)
-        RenderUtils.drawCircleRect(7f, 45f, 7 + ((target.health / target.maxHealth) * barLength), 50f, 2.5f, ColorUtils.rainbow().rgb)
+        RenderUtils.drawCircleRect(7f, 45f, 7 + ((easingHP / target.maxHealth) * barLength).coerceAtLeast(5f), 50f, 2.5f, ColorUtils.rainbowWithAlpha(90).rgb)
+        RenderUtils.drawCircleRect(7f, 45f, 7 + ((target.health / target.maxHealth) * barLength).coerceAtLeast(5f), 50f, 2.5f, ColorUtils.rainbow().rgb)
 
         // Info
         RenderUtils.drawCircleRect(43f, 15f - font.FONT_HEIGHT, 143f, 17f, (font.FONT_HEIGHT + 1) * 0.45f, Color(0, 0, 0, 70).rgb)
@@ -265,6 +345,8 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     }
 
     private fun drawFlux(target: EntityLivingBase) {
+        val font = fontValue.get()
+
         val width = (38 + target.name.let(Fonts.font40::getStringWidth))
             .coerceAtLeast(70)
             .toFloat()
@@ -280,10 +362,10 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         RenderUtils.drawRect(2F, 28F, 2 + (target.totalArmorValue / 20F) * (width - 4), 30F, Color(77, 128, 255).rgb)
 
         // draw text
-        Fonts.font40.drawString(target.name, 22, 3, Color.WHITE.rgb)
+        font.drawString(target.name, 22, 3, Color.WHITE.rgb)
         GL11.glPushMatrix()
         GL11.glScaled(0.7, 0.7, 0.7)
-        Fonts.font35.drawString("Health: ${decimalFormat.format(getHealth(target))}", 22 / 0.7F, (4 + Fonts.font40.height) / 0.7F, Color.WHITE.rgb)
+        font.drawString("Health: ${decimalFormat.format(getHealth(target))}", (22 / 0.7F).toInt(), ((4 + Fonts.font40.height) / 0.7F).toInt(), Color.WHITE.rgb)
         GL11.glPopMatrix()
 
         // Draw head
@@ -294,8 +376,8 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         val font = fontValue.get()
 
         val hp = decimalFormat.format(easingHP)
-        val additionalWidth = font.getStringWidth("${target.name}  ${hp} hp").coerceAtLeast(75)
-        RenderUtils.drawCircleRect(0f, 0f, 45f + additionalWidth, 40f, 7f, Color(0, 0, 0, 110).rgb)
+        val additionalWidth = font.getStringWidth("${target.name}  $hp hp").coerceAtLeast(75)
+        RenderUtils.drawCircleRect(0f, 0f, 45f + additionalWidth, 40f, 3f, Color(0, 0, 0, 110).rgb)
 
         RenderUtils.quickDrawHead(target.skin, 5, 5, 30, 30)
 
@@ -315,7 +397,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         val font = fontValue.get()
 
         val additionalWidth = font.getStringWidth(target.name).coerceAtLeast(75)
-        RenderUtils.drawCircleRect(0f, 0f, 45f + additionalWidth, 40f, 7f, Color(0, 0, 0, 110).rgb)
+        RenderUtils.drawCircleRect(0f, 0f, 45f + additionalWidth, 40f, 3f, Color(0, 0, 0, 110).rgb)
 
         // circle player avatar
         mc.textureManager.bindTexture(target.skin)
@@ -335,10 +417,13 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
     private fun getTBorder(): Border? {
         return when (modeValue.get().lowercase()) {
+            "orange" -> Border(0F, 0F, 120F, 40F)
             "novoline" -> Border(0F, 0F, 140F, 40F)
+            "newnovoline" -> Border(-1F, -2F, 90F, 38F)
+            "newflux" -> Border(0F,-1F,90F,47F)
             "astolfo" -> Border(0F, 0F, 140F, 60F)
-            "liquid" -> Border(0F, 0F, (38 + mc.thePlayer.name.let(Fonts.font40::getStringWidth)).coerceAtLeast(118).toFloat(), 36F)
-            "flux" -> Border(0F, 0F, (38 + mc.thePlayer.name.let(Fonts.font40::getStringWidth))
+            "liquid" -> Border(0F, 0F, (38 + mc.thePlayer.name.let(fontValue.get()::getStringWidth)).coerceAtLeast(118).toFloat(), 36F)
+            "flux" -> Border(0F, 0F, (38 + mc.thePlayer.name.let(fontValue.get()::getStringWidth))
                 .coerceAtLeast(70)
                 .toFloat(), 34F)
             "rise" -> Border(0F, 0F, 150F, 50F)
