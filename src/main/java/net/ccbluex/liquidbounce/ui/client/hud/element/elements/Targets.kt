@@ -33,6 +33,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private val switchAnimTypeValue = EaseUtils.getEnumEasingList("SwitchAnimType")
     private val switchAnimOrderValue = EaseUtils.getEnumEasingOrderList("SwitchAnimOrder")
     private val switchAnimSpeedValue = IntegerValue("SwitchAnimSpeed", 20, 5, 40)
+    private val backGroundAlphaValue = IntegerValue("BackGroundAlpha", 170, 0, 255)
     private val fontValue = FontValue("Font", Fonts.font40)
 
     private var prevTarget: EntityLivingBase? = null
@@ -131,7 +132,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         val h = 40f
 
         val additionalWidth = font.getStringWidth(target.name).coerceAtLeast(75)
-        RenderUtils.drawBorderedRect(0f, 0f, 45f + additionalWidth, h,3F, Color(59, 59, 59).rgb,Color(50,50,50).rgb)
+        RenderUtils.drawBorderedRect(0f, 0f, 45f + additionalWidth, h,3F, Color(59, 59, 59, backGroundAlphaValue.get()).rgb,Color(50,50,50).rgb)
 
         // Head
         RenderUtils.drawHead(target.skin, 5, 5, 30, 30)
