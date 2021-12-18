@@ -34,6 +34,8 @@ object AntiBot : Module() {
     private val invalidGroundValue = BoolValue("InvalidGround", true)
     private val swingValue = BoolValue("Swing", false)
     private val healthValue = BoolValue("Health", false)
+    private val maxHealthValue = FloatValue("MaxHealth", 1f, 1f, 40f).displayable { healthValue.get() }
+    private val minHealthValue = FloatValue("MinHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val derpValue = BoolValue("Derp", true)
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
@@ -108,7 +110,7 @@ object AntiBot : Module() {
             return true
         }
 
-        if (healthValue.get() && (entity.health > 20F || entity.health <= 0F)) {
+        if (healthValue.get() && (entity.health > maxHealthValue.get() || entity.health <= minHealthValue.get() )) {
             return true
         }
 
