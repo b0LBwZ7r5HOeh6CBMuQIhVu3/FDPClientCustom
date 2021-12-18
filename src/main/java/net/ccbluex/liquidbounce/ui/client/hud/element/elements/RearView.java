@@ -61,7 +61,7 @@ public class RearView extends Element {
         ScaledResolution sr = new ScaledResolution(mc);
         this.setRendering(true);
         // RenderUtils.drawRect(sr.getScaledWidth() - xOffset - 201, sr.getScaledHeight() - yOffset - 121, sr.getScaledWidth() - xOffset + 1, sr.getScaledHeight() - yOffset + 1, -1);//background
-        if (this.isValid()) {
+        if (this.isValid() && mc.thePlayer!!.ticksExisted % 3 == 0) {
             this.setPos(Minecraft.getMinecraft().thePlayer.getPositionEyes(mc.timer.renderPartialTicks).subtract(0, 1, 0));
             this.setYaw(Minecraft.getMinecraft().thePlayer.rotationYaw - 180.0f);
             this.setPitch(0.0f);
