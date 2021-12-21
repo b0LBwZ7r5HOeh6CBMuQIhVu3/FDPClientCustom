@@ -32,6 +32,7 @@ class Criticals : Module() {
 val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit"), "AAC4")
+    private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off","Normal","Strict"), "Normal")
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
@@ -53,8 +54,14 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
     var aacLastState = false
 
     override fun onEnable() {
-        if (modeValue.equals("NoGround")) {
-            mc.thePlayer.jump()
+        if (modeValue.equals("NoGround") || modeValue.equals("Hover")) {
+            if(mc.thePlayer.onGround && !vanillaCritCheckValue.check().equals('Off')){
+                mc.thePlayer.jump()
+            }else{
+                if(!mc.thePlayer.onGround && vanillaCritCheckValue.check().equals('Strict') && mc.thePlayer.motionY > 0){
+                    mc.thePlayer.motionY = -0.1
+                }
+            }
         }
         jState = 0
     }
@@ -65,12 +72,14 @@ val modeValue = ListValue("Mode", arrayOf("Packet", "NCPPacket", "Hypixel", "Hyp
             val entity = event.targetEntity
             target = entity.entityId
             
-
-            if (!mc.thePlayer.onGround || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
+            if(!vanillaCritCheckValue.check().equals('Off')){
+                if ( (!mc.thePlayer.onGround && (mc.thePlayer.motionY < 0 || vanillaCritCheckValue.check().equals('Normal')) ) || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
                 mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtTime > hurtTimeValue.get() ||
                 LiquidBounce.moduleManager[Fly::class.java]!!.state || !msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get()) {
                 return
+                }
             }
+
             needEdit = true
             fun sendCriticalPacket(xOffset: Double = 0.0, yOffset: Double = 0.0, zOffset: Double = 0.0, ground: Boolean) {
                 val x = mc.thePlayer.posX + xOffset
