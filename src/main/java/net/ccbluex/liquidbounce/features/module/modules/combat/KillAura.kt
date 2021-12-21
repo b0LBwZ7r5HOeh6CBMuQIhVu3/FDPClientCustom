@@ -123,7 +123,8 @@ class KillAura : Module() {
     private val BlockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest","HypixelTest"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
-    private val reblockDelayValue = IntegerValue("ReblockDelay", 100, 0, 850).displayable { autoBlockValue.equals("Range") }
+    private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
+    private val firstBlockDelayValue = IntegerValue("FirstBlockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
 
     // Raycast
     private val raycastValue = BoolValue("RayCast", true)
@@ -222,6 +223,7 @@ class KillAura : Module() {
     private val attackTimer = MSTimer()
     private val switchTimer = MSTimer()
     private val autoBlockTimer = MSTimer()
+    private val firstBlockTimer = MSTimer()
     private var attackDelay = 0L
     private var clicks = 0
 
@@ -242,7 +244,8 @@ class KillAura : Module() {
     override fun onEnable() {
         mc.thePlayer ?: return
         mc.theWorld ?: return
-
+        autoBlockTimer.reset()
+        firstBlockTimer.reset()
         updateTarget()
     }
 
@@ -965,7 +968,7 @@ class KillAura : Module() {
             return
         }
 
-        if(!autoBlockTimer.hasTimePassed(reblockDelayValue.get().toLong())){
+        if(!autoBlockTimer.hasTimePassed(reblockDelayValue.get().toLong()) || !firstBlockTimer.hasTimePassed(firstBlockDelayValue.get().toLong()) ){
             return
         }
         if (interact) {
