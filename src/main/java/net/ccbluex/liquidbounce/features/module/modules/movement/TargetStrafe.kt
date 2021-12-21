@@ -25,7 +25,7 @@ class TargetStrafe : Module() {
     private val onlySpeedValue = BoolValue("OnlySpeed", false)
     private val onlyGroundValue = BoolValue("OnlyGround", false)
     private val renderValue = BoolValue("Render", true)
-    private val testValue = BoolValue("test", false)
+    private val combatCheckValue = BoolValue("combatCheck", false)
     private var direction = true
     private var yaw = 0f
 
@@ -93,6 +93,7 @@ class TargetStrafe : Module() {
     private fun canStrafe(target: EntityLivingBase?): Boolean {
         return target != null &&
                 (!holdSpaceValue.get() || mc.thePlayer.movementInput.jump) &&
-                (!onlySpeedValue.get() || LiquidBounce.moduleManager[Speed::class.java]!!.state)
+                (!onlySpeedValue.get() || LiquidBounce.moduleManager[Speed::class.java]!!.state) &&
+                (!combatCheckValue.get() || LiquidBounce.combatManager.inCombat)
     }
 }

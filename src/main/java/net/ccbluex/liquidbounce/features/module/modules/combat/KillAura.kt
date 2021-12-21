@@ -878,11 +878,6 @@ class KillAura : Module() {
         ) ?: return false
 
         if (rotationModeValue.get() == "OldMatrix") directRotation.pitch = (89.9).toFloat()
-        if (rotationModeValue.get() == "MatrixTest") {
-            val rots = RotationUtils.getVodkaRotations(entity, false);
-            directRotation.yaw = rots[0]
-            directRotation.pitch = rots[1]
-        }
         var diffAngle = RotationUtils.getRotationDifference(RotationUtils.serverRotation, directRotation)
         if (diffAngle <0) diffAngle = -diffAngle
         if (diffAngle> 180.0) diffAngle = 180.0

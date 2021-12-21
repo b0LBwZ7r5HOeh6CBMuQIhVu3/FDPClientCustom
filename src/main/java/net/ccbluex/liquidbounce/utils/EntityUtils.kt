@@ -8,6 +8,7 @@ package net.ccbluex.liquidbounce.utils
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.animal
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.dead
+import net.ccbluex.liquidbounce.features.module.modules.client.Target.realDead
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.invisible
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.mob
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.player
@@ -29,7 +30,7 @@ import net.minecraft.entity.player.EntityPlayer
 
 object EntityUtils : MinecraftInstance() {
     fun isSelected(entity: Entity, canAttackCheck: Boolean): Boolean {
-        if (entity is EntityLivingBase && (dead.get() || entity.isEntityAlive()) && entity !== mc.thePlayer) {
+        if (entity is EntityLivingBase && (dead.get() || entity.isEntityAlive()) && (realDead.get() || entity.deathTime <= 0) && entity !== mc.thePlayer) {
             if (invisible.get() || !entity.isInvisible()) {
                 if (player.get() && entity is EntityPlayer) {
                     if (canAttackCheck) {
