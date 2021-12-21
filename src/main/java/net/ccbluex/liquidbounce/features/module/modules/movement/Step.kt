@@ -29,7 +29,7 @@ class Step : Module() {
      * OPTIONS
      */
 
-    private val modeValue = ListValue("Mode", arrayOf("Vanilla", "Jump",  "TimerJump", "NCP", "MotionNCP", "OldNCP", "OldAAC", "LAAC", "AAC3.3.4", "AAC3.6.4", "AAC4.4.0", "Spartan", "Rewinside"), "NCP")
+    private val modeValue = ListValue("Mode", arrayOf("Vanilla","Vanilla2", "Jump",  "TimerJump", "NCP", "MotionNCP", "OldNCP", "OldAAC", "LAAC", "AAC3.3.4", "AAC3.6.4", "AAC4.4.0", "Spartan", "Rewinside"), "NCP")
     private val heightValue = FloatValue("Height", 1F, 0.6F, 10F)
     private val jumpHeightValue = FloatValue("JumpMotion", 0.42F, 0.37F, 0.42F).displayable { modeValue.equals("Jump") || modeValue.equals("TimerJump") }
     private val delayValue = IntegerValue("Delay", 0, 0, 500)
@@ -66,8 +66,8 @@ class Step : Module() {
         } else if (modeValue.equals("AAC4.4.0")) mc.thePlayer.stepHeight = 2.0F
         if (wasTimer) {
             wasTimer = false
-            mc.thePlayer.motionX *= 0.92
-            mc.thePlayer.motionZ *= 0.92
+            mc.thePlayer.motionX *= 0.72
+            mc.thePlayer.motionZ *= 0.72
             mc.timer.timerSpeed = 1.0F
         }
         val mode = modeValue.get()
@@ -340,13 +340,17 @@ class Step : Module() {
                         // Reset timer
                         timer.reset()
                     }
-
+                    mode.equals("Vanilla2", ignoreCase = true) -> {
+                        fakeJump()
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
+                            stepY + 0.6, stepZ, false))
+                    }
                     mode.equals("AAC4.4.0", ignoreCase = true) -> {
                         val rstepHeight = mc.thePlayer.entityBoundingBox.minY - stepY
                         fakeJump()
                         when {
                             rstepHeight> 1.0 - 0.015625 && rstepHeight <1.0 + 0.015625 -> {
-                                mc.timer.timerSpeed = 0.44F
+                                mc.timer.timerSpeed = 0.28F
                                 wasTimer = true
                                 mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
                                     stepY + 0.4, stepZ, false))
@@ -358,7 +362,7 @@ class Step : Module() {
                                     stepY + 1.0, stepZ, true))
                             }
                             rstepHeight> 1.5 - 0.015625 && rstepHeight <1.5 + 0.015625 -> {
-                                mc.timer.timerSpeed = 0.36F
+                                mc.timer.timerSpeed = 0.28F
                                 wasTimer = true
                                 mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
                                     stepY + 0.42, stepZ, false))
