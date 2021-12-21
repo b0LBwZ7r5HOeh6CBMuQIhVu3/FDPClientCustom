@@ -40,7 +40,7 @@ class FastUse : Module() {
     private val delayValue = IntegerValue("CustomDelay", 0, 0, 300).displayable { modeValue.equals("CustomDelay") }
     private val noMoveValue = BoolValue("NoMove", false)
     private val testValue = BoolValue("test", false)
-    private val bowValue = BoolValue("bow", false)
+    // private val bowValue = BoolValue("bow", false)
 
     private val msTimer = MSTimer()
     private var usedTimer = false
@@ -62,8 +62,8 @@ class FastUse : Module() {
 
         val usingItem = mc.thePlayer.itemInUse.item
 
-        if (usingItem is ItemFood || usingItem is ItemBucketMilk || usingItem is ItemPotion || (usingItem is ItemBow && bowValue.get())) {
-            if(usingItem is ItemBow && bowValue.get()){
+        if (usingItem is ItemFood || usingItem is ItemBucketMilk || usingItem is ItemPotion/* || (usingItem is ItemBow && bowValue.get())*/) {
+/*            if(usingItem is ItemBow && bowValue.get()){
             yaw = if (RotationUtils.targetRotation != null)
                 RotationUtils.targetRotation.yaw
             else
@@ -76,11 +76,11 @@ class FastUse : Module() {
 
             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
             mc.thePlayer.itemInUseCount = mc.thePlayer.inventory.getCurrentItem().maxItemUseDuration - 1
-            }
+            }*/
             when (modeValue.get().lowercase()) {
                 "delayedinstant" -> if (mc.thePlayer.itemInUseDuration > durationValue.get()) {
                     repeat(36 - mc.thePlayer.itemInUseDuration) {
-                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
                     if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -88,7 +88,7 @@ class FastUse : Module() {
 
                 "instant" -> {
                     repeat(35) {
-                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
                     if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -98,7 +98,7 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.itemInUseDuration > 14) {
                     repeat(23) {
-                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
                     if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
@@ -107,7 +107,7 @@ class FastUse : Module() {
                     mc.timer.timerSpeed = 0.49F
                     usedTimer = true
                     repeat(2) {
-                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
                     // mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -122,7 +122,7 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.ticksExisted % 2 == 0) {
                         repeat(2) {
-                        if(usingItem !is ItemBow) if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                         }
                     }
                 }
@@ -134,7 +134,7 @@ class FastUse : Module() {
                         return
                     }
 
-                        if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround)) else mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     msTimer.reset()
                 }
             }
@@ -142,10 +142,10 @@ class FastUse : Module() {
                 if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 c03s = 0
             }
-            if(c05s >= 40){
+/*            if(c05s >= 40){
                 if(usingItem is ItemBow && bowValue.get()) mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
                 c05s = 0
-            }
+            }*/
         }
     }
 
@@ -167,9 +167,9 @@ class FastUse : Module() {
         if (packet is C03PacketPlayer && testValue.get() && packet !is C05PacketPlayerLook && packet !is C04PacketPlayerPosition && packet !is C06PacketPlayerPosLook){
             if(mc.thePlayer.isUsingItem) c03s++ else c03s = 0
         }
-        if (packet is C05PacketPlayerLook && bowValue.get()){
+/*        if (packet is C05PacketPlayerLook && bowValue.get()){
             if(mc.thePlayer.isUsingItem) c05s++ else c05s = 0
-        }
+        }*/
     }
 
     override fun onDisable() {
