@@ -153,7 +153,7 @@ class KillAura : Module() {
         }
     }
 
-    private val rotationSmoothModeValue = ListValue("SmoothMode", arrayOf("Custom", "Line", "Quad", "Sine", "QuadSine"), "Custom")
+    private val rotationSmoothModeValue = ListValue("SmoothMode", arrayOf("Normal","Custom", "Line", "Quad", "Sine", "QuadSine"), "Custom")
 
     private val rotationSmoothValue = FloatValue("CustomSmooth", 2f, 1f, 10f).displayable { rotationSmoothModeValue.equals("Custom") }
 
@@ -875,6 +875,7 @@ class KillAura : Module() {
         if (diffAngle> 180.0) diffAngle = 180.0
 
         var calculateSpeed = when (rotationSmoothModeValue.get()) {
+            "Normal" -> (Math.random() * (maxTurnSpeed.get() - minTurnSpeed.get()) + minTurnSpeed.get())
             "Custom" -> diffAngle / rotationSmoothValue.get()
             "Line" -> (diffAngle / 180) * maxTurnSpeed.get() + (1 - diffAngle / 180) * minTurnSpeed.get()
             "Quad" -> Math.pow((diffAngle / 180.0), 2.0) * maxTurnSpeed.get() + (1 - Math.pow((diffAngle / 180.0), 2.0)) * minTurnSpeed.get()
@@ -884,9 +885,8 @@ class KillAura : Module() {
         }
 
         val rotation = when (rotationModeValue.get()) {
-            "LiquidBounce", "ForceCenter" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation,
-                (Math.random() * (maxTurnSpeed.get() - minTurnSpeed.get()) + minTurnSpeed.get()).toFloat())
-            "LockView" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (180.0).toFloat())
+            "LiquidBounce", "ForceCenter" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
+            "LockView" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "SmoothCenter", "SmoothLiquid", "OldMatrix" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "Test" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             else -> return true
