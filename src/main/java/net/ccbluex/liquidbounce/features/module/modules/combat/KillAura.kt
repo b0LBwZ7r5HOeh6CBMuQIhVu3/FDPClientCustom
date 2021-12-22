@@ -136,7 +136,7 @@ class KillAura : Module() {
     // TODO: Divide AAC Opinion into three separated opinions
 
     // Rotations
-    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","MatrixTest"), "LiquidBounce")
+    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","VerySimple"), "LiquidBounce")
     // TODO: RotationMode Bypass Intave
 
     private val maxTurnSpeed: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 1f, 180f) {
@@ -889,6 +889,7 @@ class KillAura : Module() {
             "LockView" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "SmoothCenter", "SmoothLiquid", "OldMatrix" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "Test" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
+            "VerySimple" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getVerySimpleRotations(entity), (calculateSpeed).toFloat())
             else -> return true
         }
 

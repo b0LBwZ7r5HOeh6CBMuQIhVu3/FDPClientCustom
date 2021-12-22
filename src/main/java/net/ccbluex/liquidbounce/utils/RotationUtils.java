@@ -17,7 +17,7 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.*;
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.util.MathHelper;
 import java.util.Random;
 
 public final class RotationUtils extends MinecraftInstance implements Listenable {
@@ -622,6 +622,21 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         float yaw = (float)(Math.atan2(z, x) * 180.0 / 3.141592653589793) - 90.0f;
         float pitch = (float)(-(Math.atan2(y, dist) * 180.0 / 3.141592653589793));
         return new Rotation(yaw,pitch);
+    }
+
+    public static Rotation getVerySimpleRotations(Entity en) {
+        double xAim = (en.posX - 0.5) + (en.posX - en.lastTickPosX) * 2.5;
+        double yAim = en.posY + (en.getEyeHeight() - en.height / 1.5) - (en.posY - en.lastTickPosY) * 1.5;
+        double zAim = (en.posZ - 0.5) + (en.posZ - en.lastTickPosZ) * 2.5;
+        Vec3 vec = new Vec3(xAim, yAim, zAim);
+        double diffX = vec.xCoord + 0.5 - mc.thePlayer.posX;
+        double diffY = vec.yCoord + 0.5
+                - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+        double diffZ = vec.zCoord + 0.5 - mc.thePlayer.posZ;
+        double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
+        float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / Math.PI) - 90.0F;
+        float pitch = (float) -(Math.atan2(diffY, dist) * 180.0D / Math.PI);
+        return new Rotation(mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw), mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch));
     }
 
     public static Rotation getRotationFromPosition(double x, double z, double y) {
