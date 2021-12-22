@@ -14,7 +14,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 @ModuleInfo(name = "AntiAim", category = ModuleCategory.PLAYER)
 class AntiAim : Module() {
     private val yawMode = ListValue("YawMove", arrayOf("Jitter", "Spin", "Back", "BackJitter"), "Spin")
-    private val pitchMode = ListValue("PitchMode", arrayOf("Down", "Up", "Jitter", "AnotherJitter"), "Down")
+    private val pitchMode = ListValue("PitchMode", arrayOf("Down", "Up", "Jitter", "AnotherJitter","Headless"), "Down")
     private val rotateValue = BoolValue("SilentRotate", true)
 
     private var yaw = 0f
@@ -59,6 +59,9 @@ class AntiAim : Module() {
                 } else if (pitch < -90.0f) {
                     pitch = 90.0f
                 }
+            }
+            "Headless" ->{
+                pitch = 180f
             }
         }
 
