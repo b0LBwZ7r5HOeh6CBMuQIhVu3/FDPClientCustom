@@ -29,7 +29,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix","MiniPhase"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off","Normal","Strict"), "Normal")
@@ -199,6 +199,11 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     if(matrixTPHopValue.get()) mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.4012362343123123126537612537125321671253715623682676, mc.thePlayer.posZ)
                     sendCriticalPacket(yOffset = 0.0672234246, ground = true)
                     sendCriticalPacket(yOffset = 0.00, ground = false)
+                }
+                "miniphase" -> {
+                    sendCriticalPacket(yOffset = -0.0125, ground = false)
+                    sendCriticalPacket(yOffset = 0.01275, ground = false)
+                    sendCriticalPacket(yOffset = -0.00025, ground = true)
                 }
                 "visual" -> mc.thePlayer.onCriticalHit(entity)
 
