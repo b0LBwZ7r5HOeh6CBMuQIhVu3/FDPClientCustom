@@ -174,7 +174,7 @@ class Velocity : Module() {
                 }
             }
 
-            "simple2" -> if (velocityInput && velocityTimer.hasTimePassed( velocityDelayValue.get().toLong() )) {
+            "simple2" -> if (mc.thePlayer.hurtTime > 0 && velocityTimer.hasTimePassed( velocityDelayValue.get().toLong() )) {
                     mc.thePlayer.motionX *= horizontalValue.get()
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
@@ -494,7 +494,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && (packet.getMotionX()<10 || packet.getMotionZ()<10) ) return
+            if(onlyHitVelocityValue.get() && (packet.getMotionX()<1 || packet.getMotionZ()<1) ) return
             
             velocityTimer.reset()
             velocityTick = 0

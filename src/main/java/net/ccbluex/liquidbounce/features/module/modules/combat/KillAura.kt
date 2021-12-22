@@ -286,13 +286,7 @@ class KillAura : Module() {
             if (autoBlockValue.equals("Range") && discoveredTargets.isNotEmpty() && (!autoBlockPacketValue.equals("AfterAttack") || discoveredTargets.filter { mc.thePlayer.getDistanceToEntityBox(it)> maxRange }.isNotEmpty()) && canBlock) {
                 val target = discoveredTargets[0]
                 if (mc.thePlayer.getDistanceToEntityBox(target) < autoBlockRangeValue.get()) {
-                    
-/*            when (autoBlockPacketValue.get().lowercase()) {
-                "afterattack" -> startBlocking(target, interactAutoBlockValue.get() && (mc.thePlayer.getDistanceToEntityBox(target) <maxRange))
-                "vanilla" -> startBlocking(target, interactAutoBlockValue.get() && (mc.thePlayer.getDistanceToEntityBox(target) <maxRange))
-                "ncptest" -> ncpBlocking(target)
-                "hypixeltest" -> hypixelBlocking(target)
-                }*/
+
                  startBlocking(target, interactAutoBlockValue.get() && (mc.thePlayer.getDistanceToEntityBox(target) <maxRange))
                 }
             }
@@ -821,12 +815,7 @@ class KillAura : Module() {
                 return
             }
 
-/*            when (autoBlockPacketValue.get().lowercase()) {
-                "afterattack" -> startBlocking(entity, interactAutoBlockValue.get() && (mc.thePlayer.getDistanceToEntityBox(entity) <maxRange))
-                "vanilla" -> startBlocking(entity, interactAutoBlockValue.get() && (mc.thePlayer.getDistanceToEntityBox(entity) <maxRange))
-                "ncptest" -> ncpBlocking(entity)
-                "hypixeltest" -> hypixelBlocking(entity)
-                }*/
+
                 startBlocking(entity, interactAutoBlockValue.get())
         }
     }
