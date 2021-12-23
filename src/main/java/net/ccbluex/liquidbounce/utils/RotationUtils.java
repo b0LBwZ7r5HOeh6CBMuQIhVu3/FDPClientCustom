@@ -372,7 +372,7 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
     }
 
 
-        public static float[] getVodkaRotations(Entity e, boolean oldPositionUse) {
+        public static Rotation getVodkaRotations(Entity e, boolean oldPositionUse) {
         // Variables
         double diffX = (oldPositionUse ? e.prevPosX : e.posX) - (oldPositionUse ? mc.thePlayer.prevPosX : mc.thePlayer.posX);
         double diffZ = (oldPositionUse ? e.prevPosZ : e.posZ) - (oldPositionUse ? mc.thePlayer.prevPosZ : mc.thePlayer.posZ);
@@ -398,7 +398,7 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         yaw = (mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw));
         pitch = mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch);
         pitch = MathHelper.clamp_float(pitch, -90F, 90F);
-        return new float[] { yaw, pitch };
+        return new Rotation( yaw, pitch );
     }
 
 
@@ -624,7 +624,7 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         return new Rotation(yaw,pitch);
     }
 
-    public static Rotation getVerySimpleRotations(Entity en) {
+    public static Rotation getJigsawRotations(Entity en) {
         double xAim = (en.posX - 0.5) + (en.posX - en.lastTickPosX) * 2.5;
         double yAim = en.posY + (en.getEyeHeight() - en.height / 1.5) - (en.posY - en.lastTickPosY) * 1.5;
         double zAim = (en.posZ - 0.5) + (en.posZ - en.lastTickPosZ) * 2.5;

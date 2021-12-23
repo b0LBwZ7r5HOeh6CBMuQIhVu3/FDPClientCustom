@@ -136,7 +136,7 @@ class KillAura : Module() {
     // TODO: Divide AAC Opinion into three separated opinions
 
     // Rotations
-    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","VerySimple"), "LiquidBounce")
+    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","Jigsaw","Vodka"), "LiquidBounce")
     // TODO: RotationMode Bypass Intave
 
     private val maxTurnSpeed: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 1f, 180f) {
@@ -837,7 +837,7 @@ class KillAura : Module() {
                 (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()))
             }
         }
-        else -> {
+        "Auto", "Head" -> {
         val nmsl = entity.entityBoundingBox
         val predictSize = if(predictValue.get()) floatArrayOf(minPredictSize.get(),maxPredictSize.get()) else floatArrayOf(0.0F,0.0F)
         val predict = doubleArrayOf(
@@ -846,7 +846,7 @@ class KillAura : Module() {
             (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(predictSize[0], predictSize[1]))
         boundingBox = when(boundingBoxModeValue.get()) {
             "Head" -> AxisAlignedBB(max(nmsl.minX,nmsl.minX + predict[0]),max(nmsl.minY,nmsl.minY + predictSize[1]),max(nmsl.minZ,nmsl.minZ + predict[2]),min(nmsl.maxX,nmsl.maxX + predict[0]),min(nmsl.maxY,nmsl.maxY + predictSize[1]),min(nmsl.maxZ,nmsl.maxZ + predict[2]));
-            else -> nmsl.offset(predict[0],predict[1],predict[2])
+            "Auto" -> nmsl.offset(predict[0],predict[1],predict[2])
         }
             }
         }
@@ -889,7 +889,8 @@ class KillAura : Module() {
             "LockView" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "SmoothCenter", "SmoothLiquid", "OldMatrix" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "Test" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
-            "VerySimple" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getVerySimpleRotations(entity), (calculateSpeed).toFloat())
+            "Jigsaw" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getJigsawRotations(entity), (calculateSpeed).toFloat())
+            "Vodka" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getVodkaRotations(entity,false), (calculateSpeed).toFloat())
             else -> return true
         }
 
