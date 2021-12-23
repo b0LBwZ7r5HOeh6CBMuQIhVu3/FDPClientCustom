@@ -160,18 +160,18 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         val nameLength = (font.getStringWidth(target.name)).coerceAtLeast(font.getStringWidth("${decimalFormat.format(percent)}%")).toFloat() + 10F
         val barWidth = (target.health / target.maxHealth).coerceIn(0F, target.maxHealth) * (nameLength - 2F)
 
-        RenderUtils.drawRect(-2F, -2F, 3F + nameLength + 36F, 2F + 36F, Color(24, 24, 24, 255).rgb)
-        RenderUtils.drawRect(-1F, -1F, 2F + nameLength + 36F, 1F + 36F, Color(31, 31, 31, 255).rgb)
+        RenderUtils.drawRect(-2F, -2F, 3F + nameLength + 42F, 2F + 42F, Color(24, 24, 24, 255).rgb)
+        RenderUtils.drawRect(-1F, -1F, 2F + nameLength + 42F, 1F + 42F, Color(31, 31, 31, 255).rgb)
         RenderUtils.drawHead(target.skin, 0, 0, 36, 36)
-        font.drawStringWithShadow(target.name, 2F + 36F + 1F, 2F, -1)
-        RenderUtils.drawRect(2F + 36F, 15F, 36F + nameLength, 25F, Color(24, 24, 24, 255).rgb)
+        font.drawStringWithShadow(target.name, 2F + 42F + 1F, 2F, -1)
+        RenderUtils.drawRect(2F + 42F, 15F, 36F + nameLength, 25F, Color(24, 24, 24, 255).rgb)
 
         val animateThingy = ((getHealth(target) / target.maxHealth).roundToInt() / 100)
 
-        RenderUtils.drawRect(2F + 36F, 15F, 2F + 36F + animateThingy, 25F, Color.black.rgb)
-        RenderUtils.drawRect(2F + 36F, 15F, 2F + 36F + barWidth, 25F, hpcolor)
+        RenderUtils.drawRect(2F + 42F, 15F, 2F + 42F + animateThingy, 25F, Color.black.rgb)
+        RenderUtils.drawRect(2F + 42F, 15F, 2F + 42F + barWidth, 25F, hpcolor)
 
-        font.drawStringWithShadow("${decimalFormat.format(percent)}%", 2F + 36F + (nameLength - 2F) / 2F - font.getStringWidth("${decimalFormat.format(percent)}%").toFloat() / 2F, 16F, -1)
+        font.drawStringWithShadow("${decimalFormat.format(percent)}%", 2F + 42F + (nameLength - 2F) / 2F - font.getStringWidth("${decimalFormat.format(percent)}%").toFloat() / 2F, 16F, -1)
     }
 
     private fun drawAstolfo(target: EntityLivingBase) {
