@@ -55,7 +55,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
 
     override fun onEnable() {
         if (modeValue.equals("NoGround") || modeValue.equals("Hover")) {
-            if(mc.thePlayer.onGround && !vanillaCritCheckValue.get() == "Off"){
+            if(mc.thePlayer.onGround && vanillaCritCheckValue.get() != "Off"){
                 mc.thePlayer.jump()
             }else{
                 if(!mc.thePlayer.onGround && vanillaCritCheckValue.get().equals("Strict") && mc.thePlayer.motionY > 0){

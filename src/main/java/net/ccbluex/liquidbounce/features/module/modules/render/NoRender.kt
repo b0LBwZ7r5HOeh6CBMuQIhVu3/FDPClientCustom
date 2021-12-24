@@ -19,7 +19,7 @@ import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.item.EntityArmorStand
 
-@ModuleInfo(name = "NoRender", spacedName = "No Render", description = "Increase FPS by decreasing or stop rendering visible entities.", category = ModuleCategory.RENDER)
+@ModuleInfo(name = "NoRender", category = ModuleCategory.RENDER)
 class NoRender : Module() {
 
     val allValue = BoolValue("All", true)
