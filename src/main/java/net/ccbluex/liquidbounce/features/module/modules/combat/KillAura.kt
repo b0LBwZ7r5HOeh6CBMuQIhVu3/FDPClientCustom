@@ -120,7 +120,8 @@ class KillAura : Module() {
         }
     }.displayable { autoBlockValue.equals("Range") }
     private val autoBlockPacketValue = ListValue("AutoBlockPacket", arrayOf("AfterTick", "AfterAttack", "Vanilla"), "AfterTick").displayable { autoBlockValue.equals("Range") }
-    private val BlockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest","HypixelTest"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest","HypixelTest"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
@@ -966,7 +967,7 @@ class KillAura : Module() {
             mc.netHandler.addToSendQueue(C02PacketUseEntity(interactEntity, interactEntity.positionVector))
             mc.netHandler.addToSendQueue(C02PacketUseEntity(interactEntity, C02PacketUseEntity.Action.INTERACT))
         }
-            when (BlockingPacketValue.get().lowercase()) {
+            when (blockingPacketValue.get().lowercase()) {
                 "basic" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
                 "ncptest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, null, 0.0f, 0.0f, 0.0f))
                 "hypixeltest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
@@ -979,7 +980,10 @@ class KillAura : Module() {
      */
     private fun stopBlocking() {
         if (blockingStatus) {
-            mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+            when (stopBlockingPacketValue.get().lowercase()) {
+                "basic" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+                "empty" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
+            }
             autoBlockTimer.reset()
             blockingStatus = false
         }
