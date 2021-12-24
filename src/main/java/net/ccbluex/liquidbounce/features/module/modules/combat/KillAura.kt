@@ -829,25 +829,25 @@ class KillAura : Module() {
         }
         var boundingBox = entity.entityBoundingBox
         when(boundingBoxModeValue.get()) {
-        "Old" -> {
-        if (predictValue.get() && rotationModeValue.get() != "Test") {
-            boundingBox = boundingBox.offset(
-                (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
-                (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
-                (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()))
+            "Old" -> {
+            if (predictValue.get() && rotationModeValue.get() != "Test") {
+                boundingBox = boundingBox.offset(
+                    (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
+                    (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
+                    (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()))
+                }
             }
-        }
-        "Auto", "Head" -> {
-        val nmsl = entity.entityBoundingBox
-        val predictSize = if(predictValue.get()) floatArrayOf(minPredictSize.get(),maxPredictSize.get()) else floatArrayOf(0.0F,0.0F)
-        val predict = doubleArrayOf(
-            (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
-            (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
-            (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(predictSize[0], predictSize[1]))
-        boundingBox = when(boundingBoxModeValue.get()) {
-            "Head" -> AxisAlignedBB(max(nmsl.minX,nmsl.minX + predict[0]),max(nmsl.minY,nmsl.minY + predictSize[1]),max(nmsl.minZ,nmsl.minZ + predict[2]),min(nmsl.maxX,nmsl.maxX + predict[0]),min(nmsl.maxY,nmsl.maxY + predictSize[1]),min(nmsl.maxZ,nmsl.maxZ + predict[2]));
-            "Auto" -> nmsl.offset(predict[0],predict[1],predict[2])
-        }
+            else -> {
+            val nmsl = entity.entityBoundingBox
+            val predictSize = if(predictValue.get()) floatArrayOf(minPredictSize.get(),maxPredictSize.get()) else floatArrayOf(0.0F,0.0F)
+            val predict = doubleArrayOf(
+                (entity.posX - entity.prevPosX) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
+                (entity.posY - entity.prevPosY) * RandomUtils.nextFloat(predictSize[0], predictSize[1]),
+                (entity.posZ - entity.prevPosZ) * RandomUtils.nextFloat(predictSize[0], predictSize[1]))
+            boundingBox = when(boundingBoxModeValue.get()) {
+                "Head" -> AxisAlignedBB(max(nmsl.minX,nmsl.minX + predict[0]),max(nmsl.minY,nmsl.minY + predictSize[1]),max(nmsl.minZ,nmsl.minZ + predict[2]),min(nmsl.maxX,nmsl.maxX + predict[0]),min(nmsl.maxY,nmsl.maxY + predictSize[1]),min(nmsl.maxZ,nmsl.maxZ + predict[2]));
+                else -> nmsl.offset(predict[0],predict[1],predict[2])
+                }
             }
         }
 

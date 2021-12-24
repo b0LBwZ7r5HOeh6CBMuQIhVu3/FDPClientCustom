@@ -55,10 +55,10 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
 
     override fun onEnable() {
         if (modeValue.equals("NoGround") || modeValue.equals("Hover")) {
-            if(mc.thePlayer.onGround && !vanillaCritCheckValue.check().equals('Off')){
+            if(mc.thePlayer.onGround && !vanillaCritCheckValue.get() == "Off"){
                 mc.thePlayer.jump()
             }else{
-                if(!mc.thePlayer.onGround && vanillaCritCheckValue.check().equals('Strict') && mc.thePlayer.motionY > 0){
+                if(!mc.thePlayer.onGround && vanillaCritCheckValue.get().equals("Strict") && mc.thePlayer.motionY > 0){
                     mc.thePlayer.motionY = -0.1
                 }
             }
@@ -72,8 +72,8 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
             val entity = event.targetEntity
             target = entity.entityId
             
-            if(!vanillaCritCheckValue.check().equals('Off')){
-                if ( (!mc.thePlayer.onGround && (mc.thePlayer.motionY < 0 || vanillaCritCheckValue.check().equals('Normal')) ) || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
+            if(!vanillaCritCheckValue.get().equals("Off")){
+                if ( (!mc.thePlayer.onGround && (mc.thePlayer.motionY < 0 || vanillaCritCheckValue.get().equals("Normal")) ) || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
                 mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtTime > hurtTimeValue.get() ||
                 LiquidBounce.moduleManager[Fly::class.java]!!.state || !msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get()) {
                 return

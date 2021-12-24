@@ -37,7 +37,7 @@ class Velocity : Module() {
      */
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
-    private val modeValue = ListValue("Mode", arrayOf("Simple", "Simple2", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AACPull","AACUltraPull",
+    private val modeValue = ListValue("Mode", arrayOf("Simple", "Simple2", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AAC5Reduce2",
                                                       "Redesky1", "Redesky2","huayuting","HYT1","HYT2","HYT3","HYT4",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
@@ -404,22 +404,13 @@ class Velocity : Module() {
                 }
            }
 
-           "aacpull" -> {
+           "aac5reduce2" -> {
                 if (mc.thePlayer.hurtTime == 9) {
                     templateXA = mc.thePlayer.motionX;
                     templateZA = mc.thePlayer.motionZ;
                 } else if (mc.thePlayer.hurtTime == 4) {
                     mc.thePlayer.motionX = -templateXA * 0.6;
                     mc.thePlayer.motionZ = -templateZA * 0.6;
-                }
-           }
-           "aacultrapull" -> {
-                if (mc.thePlayer.hurtTime == 9) {
-                    templateXA = mc.thePlayer.motionX;
-                    templateZA = mc.thePlayer.motionZ;
-                } else if (mc.thePlayer.hurtTime == 8) {
-                    mc.thePlayer.motionX = -templateXA * 0.45;
-                    mc.thePlayer.motionZ = -templateZA * 0.45;
                 }
            }
            "matrixnewtest" -> {

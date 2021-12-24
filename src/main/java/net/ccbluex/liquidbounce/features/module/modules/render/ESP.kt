@@ -34,7 +34,7 @@ import java.awt.Color
 class ESP : Module() {
     val modeValue = ListValue(
         "Mode",
-        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D","My2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello"),
+        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello"),
         "Jello"
     )
     private val outlineWidth = FloatValue("Outline-Width", 3f, 0.5f, 5f).displayable { modeValue.equals("Outline") }
@@ -82,32 +82,6 @@ class ESP : Module() {
                     "box", "otherbox" -> RenderUtils.drawEntityBox(entity, color, !mode.equals("otherbox", ignoreCase = true), true, outlineWidth.get())
 
                     "outline" -> RenderUtils.drawEntityBox(entity, color, true, false, outlineWidth.get())
-
-                    "my2d" -> {
-        GlStateManager.pushMatrix();
-        GL11.glTranslated(entityLiving.posX - entityLiving.lastTickPosX,entityLiving.posY - entityLiving.lastTickPosY,entityLiving.posZ - entityLiving.lastTickPosZ);
-        GL11.glRotatef(-renderManager.renderPosY, 0.0f, 1.0f, 0.0f);
-        GL11.glTranslated(-(entityLiving.posX - entityLiving.lastTickPosX), -(entityLiving.posY - entityLiving.lastTickPosY), -(entityLiving.posZ - entityLiving.lastTickPosZ));
-        GL11.glDisable(2896);
-        GL11.glDisable(3553);
-        GL11.glDisable(2929);
-        GL11.glDisable(2912);
-        GlStateManager.color(255.0f, 255.0f, 255.0f);
-        GL11.glColor4f(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get(), 255.0f);
-        GL11.glLineWidth(2.0f);
-        GL11.glBegin(2);
-        GL11.glVertex3d(entityLiving.posX - entityLiving.lastTickPosX -entityLiving.width,entityLiving.posY - entityLiving.lastTickPosY,entityLiving.posZ - entityLiving.lastTickPosZ);
-        GL11.glVertex3d(entityLiving.posX - entityLiving.lastTickPosX +entityLiving.width,entityLiving.posY - entityLiving.lastTickPosY,entityLiving.posZ - entityLiving.lastTickPosZ);
-        GL11.glVertex3d(entityLiving.posX - entityLiving.lastTickPosX +entityLiving.width,entityLiving.posY - entityLiving.lastTickPosY +entityLiving.height,entityLiving.posZ - entityLiving.lastTickPosZ);
-        GL11.glVertex3d(entityLiving.posX - entityLiving.lastTickPosX -entityLiving.width,entityLiving.posY - entityLiving.lastTickPosY +entityLiving.height,entityLiving.posZ - entityLiving.lastTickPosZ);
-        GL11.glEnd();
-        GL11.glRotatef(-renderManager.renderPosY, 0.0f, 1.0f, 0.0f);
-        GL11.glRotatef(renderManager.renderPosX, 1.0f, 0.0f, 0.0f);
-        GL11.glEnable(2929);
-        GL11.glEnable(2912);
-        GL11.glEnable(3553);
-        GlStateManager.popMatrix();
-                    }
 
                     "2d" -> {
                         val renderManager = mc.renderManager

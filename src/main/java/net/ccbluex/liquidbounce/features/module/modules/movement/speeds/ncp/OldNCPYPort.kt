@@ -31,7 +31,7 @@ class OldNCPBHop : SpeedMode("OldNCPBHop") {
                 mc.thePlayer.motionX -= sin(f) * 0.089;
                 mc.thePlayer.motionZ += cos(f) * 0.089;
             }else{
-                if (mc.thePlayer.fallDistance <= 1) mc.thePlayer.motionY = -1
+                if (mc.thePlayer.fallDistance <= (1).toDouble()) mc.thePlayer.motionY = (-1).toDouble()
             }
         } else {
             mc.thePlayer.motionX = 0.0
