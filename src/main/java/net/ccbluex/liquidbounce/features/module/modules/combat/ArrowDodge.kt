@@ -4,7 +4,7 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
-import net.ccbluex.liquidbounce.features.command.commands.HClipCommand
+// import net.ccbluex.liquidbounce.features.command.commands.HClipCommand
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -33,11 +33,7 @@ import java.awt.Color
 import java.util.*
 import kotlin.math.atan2
 
-@ModuleInfo(
-    name = "ArrowDodge",
-    description = "Automatically dodges the coming arrow",
-    category = ModuleCategory.COMBAT
-)
+@ModuleInfo(name = "ArrowDodge", category = ModuleCategory.COMBAT)
 class ArrowDodge : Module() {
 
     private val dodgingMode = ListValue(
@@ -186,7 +182,7 @@ class ArrowDodge : Module() {
                 }
 
                 "HorizontalTp" -> {
-                    HClipCommand().execute(arrayOf(".hclip", "0.6"))
+                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.6,mc.thePlayer.posZ)
                     restore()
                 }
 

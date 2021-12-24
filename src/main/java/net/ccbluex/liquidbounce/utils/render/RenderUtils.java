@@ -24,6 +24,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Timer;
+import net.minecraft.util.Vec3;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.GLUtessellator;
@@ -160,6 +162,35 @@ public final class RenderUtils extends MinecraftInstance {
         if (popPush) glPopMatrix();
     }
     
+    public static void drawPoses(Color color, java.util.List<Vec3> positions) {
+        glPushMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        mc.entityRenderer.disableLightmap();
+        glBegin(GL_LINE_STRIP);
+        RenderUtils.glColor(color);
+        final double renderPosX = mc.getRenderManager().viewerPosX;
+        final double renderPosY = mc.getRenderManager().viewerPosY;
+        final double renderPosZ = mc.getRenderManager().viewerPosZ;
+
+        for(Vec3 pos : positions)
+            glVertex3d(pos.xCoord - renderPosX, pos.yCoord - renderPosY, pos.zCoord - renderPosZ);
+
+        glColor4d(1, 1, 1, 1);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+
+        RenderUtils.glColor(0, 0, 0, 0);
+    }
+
     // rTL = radius top left, rTR = radius top right, rBR = radius bottom right, rBL = radius bottom left
     public static void customRounded(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float rTL, float rTR, float rBR, float rBL, int color) {
         float alpha = (color >> 24 & 0xFF) / 255.0F;
