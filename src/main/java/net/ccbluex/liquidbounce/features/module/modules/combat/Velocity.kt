@@ -620,13 +620,13 @@ class Velocity : Module() {
                     }
 
                     val target = LiquidBounce.combatManager.getNearByEntity(LiquidBounce.moduleManager[KillAura::class.java]!!.rangeValue.get() + 1) ?: return
-                    mc.thePlayer.motionX *= horizontalValue.get()
-                    mc.thePlayer.motionZ *= horizontalValue.get()
-                    mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= 0
-                    packet.motionZ *= 0
+                    mc.thePlayer.motionX = 0.0
+                    mc.thePlayer.motionZ = 0.0
+                    packet.motionX = 0
+                    packet.motionZ = 0
                     for (i in 0..redeCount) {
-                        mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                        // mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
+                        mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
                     }
                     if (redeCount> 12) redeCount -= 5
                 }
@@ -645,21 +645,21 @@ class Velocity : Module() {
 
                     val target = LiquidBounce.combatManager.getNearByEntity(LiquidBounce.moduleManager[KillAura::class.java]!!.rangeValue.get()) ?: return
                     if (rspAlwaysValue.get()) {
-                    mc.thePlayer.motionX *= horizontalValue.get()
-                    mc.thePlayer.motionZ *= horizontalValue.get()
-                    mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= 0
-                    packet.motionZ *= 0
+                        mc.thePlayer.motionX = 0.0
+                        mc.thePlayer.motionZ = 0.0
+                        // mc.thePlayer.motionY=(packet.motionY/8000f)*1.0
+                        packet.motionX = 0
+                        packet.motionZ = 0
                         // event.cancelEvent() better stuff
                     }
 
                     if (velocityCalcTimer.hasTimePassed(500)) {
                         if (!rspAlwaysValue.get()) {
-                    mc.thePlayer.motionX *= horizontalValue.get()
-                    mc.thePlayer.motionZ *= horizontalValue.get()
-                    mc.thePlayer.motionY *= verticalValue.get()
-                    packet.motionX *= 0
-                    packet.motionZ *= 0
+                            mc.thePlayer.motionX = 0.0
+                            mc.thePlayer.motionZ = 0.0
+                            // mc.thePlayer.motionY=(packet.motionY/8000f)*1.0
+                            packet.motionX = 0
+                            packet.motionZ = 0
                         }
                         val count = if (!velocityCalcTimer.hasTimePassed(800)) {
                             8
@@ -669,14 +669,16 @@ class Velocity : Module() {
                             25
                         }
                         for (i in 0..count) {
-                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                            // mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
+                            mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
                         }
                         velocityCalcTimer.reset()
                     } else {
                         packet.motionX = (packet.motionX * 0.6).toInt()
                         packet.motionZ = (packet.motionZ * 0.6).toInt()
                         for (i in 0..4) {
-                             mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                            // mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK))
+                            mc.thePlayer.sendQueue.addToSendQueue(C0APacketAnimation())
                         }
                     }
                 }
