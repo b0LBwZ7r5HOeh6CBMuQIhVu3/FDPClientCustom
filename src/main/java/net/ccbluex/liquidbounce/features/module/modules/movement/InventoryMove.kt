@@ -74,6 +74,9 @@ class InventoryMove : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         updateKeyState()
+        if(invOpen && MovementUtils.isMoving()){
+            sendPacketNoEvent(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
+        }
     }
 
     @EventTarget
@@ -136,9 +139,6 @@ class InventoryMove : Module() {
                         blinkPacketList.clear()
                     }
                 }
-            }
-            "test" -> {
-                sendPacketNoEvent(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
             }
         }
     }
