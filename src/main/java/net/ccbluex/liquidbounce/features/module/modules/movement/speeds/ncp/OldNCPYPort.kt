@@ -10,7 +10,7 @@ import net.ccbluex.liquidbounce.utils.MovementUtils
 import kotlin.math.cos
 import kotlin.math.sin
 
-class OldNCPBHop : SpeedMode("OldNCPBHop") {
+class OldNCPYPort : SpeedMode("OldNCPYPort") {
     override fun onEnable() {
         mc.timer.timerSpeed = 1.0866f
         super.onEnable()
