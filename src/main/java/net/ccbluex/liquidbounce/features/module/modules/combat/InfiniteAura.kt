@@ -33,11 +33,13 @@ import java.awt.Color
 @ModuleInfo(name = "InfiniteAura", category = ModuleCategory.COMBAT)
 class InfiniteAura : Module() {
     private val modeValue = ListValue("Mode", arrayOf("Aura", "Click"), "Aura")
+    private val pathFinderModeValue = ListValue("pathFinderMode", arrayOf("Sigma411","BlinkTeleport"), "Sigma411")
     private val targetsValue = IntegerValue("Targets", 3, 1, 10).displayable { modeValue.equals("Aura") }
     private val cpsValue = IntegerValue("CPS", 1, 1, 10)
     private val distValue = IntegerValue("Distance", 30, 20, 100)
     private val moveDistanceValue = FloatValue("MoveDistance", 5F, 2F, 15F)
     private val noRegen = BoolValue("NoRegen", true)
+    private val tpBack = BoolValue("tpBack", true)
     private val doSwing = BoolValue("Swing", true).displayable { modeValue.equals("Aura") }
     private val path = BoolValue("PathRender", true)
 
@@ -119,7 +121,10 @@ class InfiniteAura : Module() {
     }
 
     private fun hit(entity: EntityLivingBase) {
-        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
+        val path = when(pathFinderModeValue.get().toLowerCase()){
+            "sigma411" -> PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
+            "blinkteleport" -> PathUtils.findBlinkPath2(entity.posX, entity.posY, entity.posZ)
+        }
 
         path.forEach {
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, true))
@@ -137,9 +142,11 @@ class InfiniteAura : Module() {
         }
         mc.playerController.attackEntity(mc.thePlayer, entity)
 
-        for (i in path.size - 1 downTo 0) {
+        if(tpBack.get()){for (i in path.size - 1 downTo 0) {
             val vec = path[i]
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(vec.xCoord, vec.yCoord, vec.zCoord, true))
+        }}else{
+            mc.thePlayer.setPosition(path[path.size - 1].xCoord, path[path.size - 1].yCoord, path[path.size - 1].zCoord)
         }
     }
 
