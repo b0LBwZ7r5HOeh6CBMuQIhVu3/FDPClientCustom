@@ -38,6 +38,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
     val delayValue = IntegerValue("Delay", 0, 0, 500)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
+    private val motionSlowValue = BoolValue("motionSlow", false).displayable { modeValue.equals("Motion") }
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
     private val lookValue = BoolValue("UseC06Packet", false)
@@ -212,6 +213,10 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                         minemoraTimer.reset()
                         usedTimer = true
                         mc.timer.timerSpeed = timerValue.get()
+                    }
+                    if(motionSlowValue.get()){
+                        mc.thePlayer.motionX *= 0.4
+                        mc.thePlayer.motionZ *= 0.4
                     }
                     when (motionValue.get().lowercase()) {
                         "jump" -> mc.thePlayer.motionY = 0.42

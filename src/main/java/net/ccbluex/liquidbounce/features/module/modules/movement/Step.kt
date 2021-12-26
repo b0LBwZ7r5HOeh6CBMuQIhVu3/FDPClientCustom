@@ -358,8 +358,8 @@ class Step : Module() {
                                     stepY + 0.7, stepZ, false))
                                 mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
                                     stepY + 0.9, stepZ, false))
-                                mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX,
-                                    stepY + 1.0, stepZ, true))
+                                mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(stepX + mc.thePlayer.motionX * 0.5,
+                                    stepY + 1.0, stepZ + mc.thePlayer.motionZ * 0.5, true))
                             }
                             rstepHeight> 1.5 - 0.015625 && rstepHeight <1.5 + 0.015625 -> {
                                 mc.timer.timerSpeed = 0.28F
