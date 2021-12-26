@@ -798,8 +798,8 @@ class Scaffold : Module() {
     }
     @EventTarget
     fun onStrafe(event: StrafeEvent) {
-        if(!rotationStrafeValue.get())
-            return
+        if(rotationStrafeValue.get()){
+                    
         val (yaw) = RotationUtils.targetRotation ?: return
         var strafe = event.strafe
         var forward = event.forward
@@ -823,6 +823,8 @@ class Scaffold : Module() {
         mc.thePlayer.motionZ += forward * yawCos + strafe * yawSin
         }
         event.cancelEvent()
+        }
+
     }
     
     /**
