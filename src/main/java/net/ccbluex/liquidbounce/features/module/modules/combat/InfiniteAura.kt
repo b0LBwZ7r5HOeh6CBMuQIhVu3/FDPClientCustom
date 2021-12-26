@@ -124,6 +124,7 @@ class InfiniteAura : Module() {
         val path = when(pathFinderModeValue.get().toLowerCase()){
             "sigma411" -> PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
             "blinkteleport" -> PathUtils.findBlinkPath2(entity.posX, entity.posY, entity.posZ)
+            else -> {}
         }
 
         path.forEach {
