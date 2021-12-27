@@ -7,12 +7,12 @@ package net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.style.styles;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.Panel;
-import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUI;
+// import net.ccbluex.liquidbounce.features.module.modules.client.ClickGUI;
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.elements.ButtonElement;
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.elements.ModuleElement;
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.style.Style;
 import net.ccbluex.liquidbounce.ui.font.GameFontRenderer;
-import net.ccbluex.liquidbounce.ui.font.AWTFontRenderer;
+// import net.ccbluex.liquidbounce.ui.font.AWTFontRenderer;
 import net.ccbluex.liquidbounce.value.*;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.ccbluex.liquidbounce.ui.font.Fonts;
@@ -21,6 +21,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
+import net.ccbluex.liquidbounce.features.module.Module
 
 import java.awt.*;
 import java.util.Collections;
