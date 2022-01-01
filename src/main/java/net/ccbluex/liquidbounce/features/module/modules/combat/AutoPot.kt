@@ -36,7 +36,8 @@ class AutoPot : Module() {
     private val simulateInventory = BoolValue("SimulateInventory", true)
     private val regen = BoolValue("Regen", true)
     private val utility = BoolValue("Utility", true)
-    private val notCombat = BoolValue("NotCombat", true)
+    private val notCombat = BoolValue("NoCombat", true)
+    private val noAir = BoolValue("NoAir", true)
 
     private var throwing = false
     private var throwTime = 0
@@ -45,7 +46,7 @@ class AutoPot : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (notCombat.get() && LiquidBounce.combatManager.inCombat) return
-        if (!mc.thePlayer.onGround) return
+        if (!mc.thePlayer.onGround && noAir.get()) return
 
         if (throwing) {
             throwTime++
