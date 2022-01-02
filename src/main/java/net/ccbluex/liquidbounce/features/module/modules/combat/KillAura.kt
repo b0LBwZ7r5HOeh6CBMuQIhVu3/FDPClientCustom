@@ -682,9 +682,13 @@ class KillAura : Module() {
             if (openInventory) {
                 mc.netHandler.addToSendQueue(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
             }
-        } else if (fakeSwingValue.get()) {
+        } else {
+            if(failHit){
+                updateRotations(entity,true)
+            }
+            if (fakeSwingValue.get()) {
             runSwing()
-        }
+        }}
     }
 
     /**
@@ -825,7 +829,7 @@ class KillAura : Module() {
     /**
      * Update killaura rotations to enemy
      */
-    private fun updateRotations(entity: Entity): Boolean {
+    private fun updateRotations(entity: Entity, failHit: Boolean = false): Boolean {
         if (rotationModeValue.equals("None")) {
             return true
         }
@@ -874,6 +878,10 @@ class KillAura : Module() {
         ) ?: return false
 
         if (rotationModeValue.get() == "OldMatrix") directRotation.pitch = (89.9).toFloat()
+        if (failHit) {
+            directRotation.pitch -= 20F + RandomUtils.nextInt(0,100).toFloat()
+            directRotation.yaw -= 50F + RandomUtils.nextInt(0,40).toFloat()
+        }
         var diffAngle = RotationUtils.getRotationDifference(RotationUtils.serverRotation, directRotation)
         if (diffAngle <0) diffAngle = -diffAngle
         if (diffAngle> 180.0) diffAngle = 180.0
