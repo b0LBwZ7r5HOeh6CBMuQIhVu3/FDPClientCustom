@@ -12,7 +12,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 class Animations : Module() {
     val presetValue = ListValue(
         "Preset", arrayOf(
-            "Akrien", "Avatar", "ETB", "Exhibition", "Push", "Reverse",
+            "Akrien", "Avatar", "ETB", "Exhibition", "Push", "Reverse","Shield","Rotate360",
             "Shield", "SigmaNew", "SigmaOld", "Slide", "SlideDown", "HSlide", "Swong", "VisionFX",
             "Swank", "Jello", "None", "Rotate"
         ),
@@ -27,6 +27,9 @@ class Animations : Module() {
     val itemPosX = FloatValue("ItemPosX", 0.56F, -1.0F, 1.0F)
     val itemPosY = FloatValue("ItemPosY", -0.52F, -1.0F, 1.0F)
     val itemPosZ = FloatValue("ItemPosZ", -0.71999997F, -1.0F, 1.0F)
+    val rotate360c1 = FloatValue("rotate360c1", 2F, -2.0F, 1.0F)
+    val rotate360c2 = FloatValue("rotate360c2", 2F, -2.0F, 1.0F)
+    val rotate360c3 = FloatValue("rotate360c3", 2F, -2.0F, 1.0F)
     val itemScale = FloatValue("ItemScale", 0.4f, 0.0f, 2.0f)
     val swingAnim = BoolValue("SwingAnim", false)
     val swingSpeed = FloatValue("SwingSpeed", 1f, 0.5f, 5.0f)

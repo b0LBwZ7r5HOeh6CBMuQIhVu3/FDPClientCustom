@@ -34,7 +34,7 @@ import java.awt.Color
 class ESP : Module() {
     val modeValue = ListValue(
         "Mode",
-        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello"),
+        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello","Cylinder"),
         "Jello"
     )
     private val outlineWidth = FloatValue("Outline-Width", 3f, 0.5f, 5f).displayable { modeValue.equals("Outline") }
@@ -82,6 +82,17 @@ class ESP : Module() {
                     "box", "otherbox" -> RenderUtils.drawEntityBox(entity, color, !mode.equals("otherbox", ignoreCase = true), true, outlineWidth.get())
 
                     "outline" -> RenderUtils.drawEntityBox(entity, color, true, false, outlineWidth.get())
+
+                    "cylinder" -> {
+                        val renderManager = mc.renderManager
+                        val timer = mc.timer
+                        val posX =
+                            entityLiving.lastTickPosX + (entityLiving.posX - entityLiving.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX
+                        val posY =
+                            entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY
+                        val posZ =
+                            entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ
+                            RenderUtils.drawWolframEntityESP(entityLiving, color, posX,posY,posZ)}
 
                     "2d" -> {
                         val renderManager = mc.renderManager

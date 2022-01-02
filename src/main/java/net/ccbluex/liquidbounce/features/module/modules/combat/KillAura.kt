@@ -137,7 +137,7 @@ class KillAura : Module() {
     // TODO: Divide AAC Opinion into three separated opinions
 
     // Rotations
-    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","Jigsaw","Vodka"), "LiquidBounce")
+    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix","Jigsaw","Vodka","HalfUp","HalfDown"), "LiquidBounce")
     // TODO: RotationMode Bypass Intave
 
     private val maxTurnSpeed: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 1f, 180f) {
@@ -771,7 +771,8 @@ class KillAura : Module() {
         if (event.isCancelled) {
             return
         }
-
+        if (!updateRotations(entity))
+            return
         // Stop blocking
         if (!autoBlockPacketValue.equals("Vanilla") && (mc.thePlayer.isBlocking || blockingStatus)) {
             stopBlocking()
@@ -857,6 +858,8 @@ class KillAura : Module() {
             "ForceCenter", "SmoothCenter", "OldMatrix", "Spin", "FastSpin" -> "CenterLine"
             "LockView" -> "CenterSimple"
             "Test" -> "HalfUp"
+            "HalfUp" -> "HalfUp"
+            "HalfDown" -> "HalfDown"
             else -> "LiquidBounce"
         }
 
