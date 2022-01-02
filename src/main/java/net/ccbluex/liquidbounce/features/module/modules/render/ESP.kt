@@ -92,7 +92,7 @@ class ESP : Module() {
                             entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY
                         val posZ =
                             entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ
-                            RenderUtils.drawWolframEntityESP(entityLiving, color, posX,posY,posZ)}
+                        RenderUtils.drawWolframEntityESP(entityLiving, color, posX,posY,posZ)}
 
                     "2d" -> {
                         val renderManager = mc.renderManager
