@@ -59,7 +59,7 @@ class GlyphFontRenderer(font: Font) : AbstractAwtFontRender(font) {
     }
 
     override fun drawChar(char: String, x: Float, y: Float): Int {
-        val cached = if (cachedChars.containsKey(char)) {
+        val cached = if (false) {
             val cached = cachedChars[char]!! as CachedGlyphFont
             cached.lastUsage = System.currentTimeMillis()
             cached
