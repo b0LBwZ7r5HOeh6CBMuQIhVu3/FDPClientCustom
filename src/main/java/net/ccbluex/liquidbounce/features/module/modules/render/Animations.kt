@@ -34,6 +34,7 @@ class Animations : Module() {
     val swingAnim = BoolValue("SwingAnim", false)
     val swingSpeed = FloatValue("SwingSpeed", 1f, 0.5f, 5.0f)
     val anythingBlock = BoolValue("AnythingBlock", false)
+    val damageMark = BoolValue("damageMark", true)
 
     override val tag: String
         get() = presetValue.get()

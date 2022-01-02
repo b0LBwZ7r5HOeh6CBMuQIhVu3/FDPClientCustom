@@ -131,6 +131,9 @@ public abstract class MixinItemRenderer {
                         break;
                     case BLOCK:
                         if(animations.getState()){
+                            if(animations.getDamageMark().get() && LiquidBounce.combatManager.target != null && LiquidBounce.combatManager.hurtTime > 0){
+                                transformFirstPersonItem(f1, 0.0F);
+                            }
                             GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
                             switch (animations.getPresetValue().get()) {
                                 case "Akrien": {
@@ -185,6 +188,7 @@ public abstract class MixinItemRenderer {
                                     GlStateManager.rotate(-var15 * 45.0F, 1.0F, var15 / 2.0F, -0.0F);
                                     doBlockTransformations();
                                     GL11.glTranslated(1.2D, 0.3D, 0.5D);
+                                    GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
                                     GL11.glTranslatef(-1.0F, mc.thePlayer.isSneaking() ? -0.1F : -0.2F, 0.2F);
                                     GlStateManager.scale(1.2F, 1.2F, 1.2F);
                                     break;
@@ -213,6 +217,7 @@ public abstract class MixinItemRenderer {
                                 }
                                 case "Swank":{
                                     GL11.glTranslated(-0.1, 0.15, 0.0);
+                                    GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
                                     this.transformFirstPersonItem(f / 0.15f, f1);
                                     final float rot = MathHelper.sin(MathHelper.sqrt_float(f2) * 3.1415927f);
                                     GlStateManager.rotate(rot * 30.0f, 2.0f, -rot, 9.0f);

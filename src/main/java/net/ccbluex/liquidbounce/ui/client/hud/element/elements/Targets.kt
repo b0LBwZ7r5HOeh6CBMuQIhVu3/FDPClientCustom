@@ -25,7 +25,7 @@ import kotlin.math.roundToInt
 
 @ElementInfo(name = "Targets")
 class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vertical.MIDDLE)) {
-    private val modeValue = ListValue("Mode", arrayOf("Orange","Novoline","NewNovoline", "Astolfo", "Liquid", "Flux","NewFlux", "Rise", "Zamorozka", "Arris", "Tenacity"), "Rise")
+    private val modeValue = ListValue("Mode", arrayOf("Orange","Novoline","NewNovoline", "Astolfo", "Liquid", "Flux","NewFlux", "Rise", "Zamorozka", "Arris", "Tenacity","Slowly"), "Rise")
     private val animSpeedValue = IntegerValue("AnimSpeed", 10, 5, 20)
     private val hpAnimTypeValue = EaseUtils.getEnumEasingList("HpAnimType")
     private val hpAnimOrderValue = EaseUtils.getEnumEasingOrderList("HpAnimOrder")
@@ -122,6 +122,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "arris" -> drawArris(prevTarget!!)
             "tenacity" -> drawTenacity(prevTarget!!)
             "newflux" -> drawNewFlux(prevTarget!!)
+            "slowly" -> drawSlowly(prevTarget!!)
         }
 
         return getTBorder()
@@ -151,7 +152,21 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         RenderUtils.drawRect(40f, yPos + 9, 40 + (target.totalArmorValue / 20F) * additionalWidth, yPos + 13, Color(77, 128, 255).rgb)
 
     }
+    private fun drawSlowly(target: EntityLivingBase) {
+        val font = fontValue.get()
+        // val font = Fonts.minecraftFont
 
+        val length = 60.coerceAtLeast(font.getStringWidth(target.name)).coerceAtLeast(font.getStringWidth("${decimalFormat2.format(target.health)} ❤")).toFloat() + 10F
+        RenderUtils.drawRect(0F, 0F, 32F + length, 36F, Color(0, 0, 0, backGroundAlphaValue.get()).rgb)
+        if (mc.netHandler.getPlayerInfo(target.uniqueID) != null) drawHead(mc.netHandler.getPlayerInfo(target.uniqueID).locationSkin, 1, 1, 30, 30)
+        font.drawStringWithShadow(target.name, 33F, 2F, -1)
+        font.drawStringWithShadow("${decimalFormat2.format(target.health)} ❤", length + 32F - 1F - font.getStringWidth("${decimalFormat2.format(target.health)} ❤").toFloat(), 22F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
+
+        // easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - fadeSpeed.get())) * RenderUtils.deltaTime
+
+        RenderUtils.drawRect(0F, 32F, (easingHP / target.maxHealth.toFloat()).coerceIn(0F, target.maxHealth.toFloat()) * (length + 32F), 36F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
+
+    }
     private fun drawnewNovo(target: EntityLivingBase){
         val font = fontValue.get()
         font.FONT_HEIGHT
