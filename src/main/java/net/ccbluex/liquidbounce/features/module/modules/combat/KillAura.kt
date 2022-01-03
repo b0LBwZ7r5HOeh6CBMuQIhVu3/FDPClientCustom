@@ -879,8 +879,8 @@ class KillAura : Module() {
 
         if (rotationModeValue.get() == "OldMatrix") directRotation.pitch = (89.9).toFloat()
         if (failHit) {
-            directRotation.pitch -= 20F + RandomUtils.nextInt(0,100).toFloat()
-            directRotation.yaw -= 50F + RandomUtils.nextInt(0,40).toFloat()
+            directRotation.pitch -= 20F + RandomUtils.nextInt(0,40).toFloat()
+            directRotation.yaw -= 50F + RandomUtils.nextInt(0,100).toFloat()
         }
         var diffAngle = RotationUtils.getRotationDifference(RotationUtils.serverRotation, directRotation)
         if (diffAngle <0) diffAngle = -diffAngle
