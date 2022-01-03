@@ -54,6 +54,7 @@ object AntiBot : Module() {
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
     private val fastDamageValue = BoolValue("FastDamage", false)
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
+    private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
     private val alwaysInRadiusValue = BoolValue("AlwaysInRadius", false)
     private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
     private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
@@ -229,7 +230,13 @@ object AntiBot : Module() {
         }
 
         val packet = event.packet
+        if (packet is S18PacketEntityTeleport) {
+            val entity = mc.theWorld.getEntityByID(packet.getEntityId())
 
+            if (hypixelSWBotValue.get() && entity is EntityPlayer && entity.isInvisible() && entity.ticksExisted > 4 && mc.theWorld.getPlayerEntities().contains(entity) && !isInTabList(entity)) {
+                mc.theWorld.removeEntity(entity)
+            }
+        }
         if (packet is S14PacketEntity) {
             val entity = packet.getEntity(mc.theWorld)
 
@@ -323,7 +330,9 @@ object AntiBot : Module() {
     fun onWorld(event: WorldEvent) {
         clearAll()
     }
-
+    fun isInTabList(entity: EntityPlayer): Boolean {
+        return mc.ingameGUI.getTabList().getList().contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
+    }
     private fun clearAll() {
         hitted.clear()
         swing.clear()

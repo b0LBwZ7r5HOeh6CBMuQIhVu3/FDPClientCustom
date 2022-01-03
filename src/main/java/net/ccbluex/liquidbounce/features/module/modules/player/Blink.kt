@@ -72,7 +72,7 @@ class Blink : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
         if (mc.thePlayer == null || disableLogger) return
-        if (packet is C03PacketPlayer) { // Cancel all movement stuff
+        if (packet is C03PacketPlayer && (packet.isMoving() || packet.getRotating())) { // Cancel all movement stuff
             event.cancelEvent()
         }
         if (packet is C04PacketPlayerPosition || packet is C06PacketPlayerPosLook ||
