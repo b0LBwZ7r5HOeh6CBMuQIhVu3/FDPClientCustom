@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.ui.client.hud.element.elements
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -105,7 +113,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             if (displayPercent > 0) {
                 displayPercent -= pct
             }
-            if (displayPercent < 0 || mc.netHandler.getPlayerInfo(prevTarget.uniqueID) == null || !LiquidBounce.combatManager.inCombat) {
+            if (displayPercent < 0 || !LiquidBounce.combatManager.inCombat) {
                 displayPercent = 0f
                 prevTarget = null
                 return getTBorder()
@@ -172,19 +180,19 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
     }
     private fun drawSlowly(target: EntityLivingBase) {
-        val font = fontValue.get()
-        // val font = Fonts.minecraftFont
+        /*      val font = fontValue.get()
+              // val font = Fonts.minecraftFont
 
-        val length = 60.coerceAtLeast(font.getStringWidth(target.name)).coerceAtLeast(font.getStringWidth("${decimalFormat2.format(target.health)} ❤")).toFloat() + 10F
-        RenderUtils.drawRect(0F, 0F, 32F + length, 36F, Color(0, 0, 0, backGroundAlphaValue.get()).rgb)
-        if (mc.netHandler.getPlayerInfo(target.uniqueID) != null) drawHead(mc.netHandler.getPlayerInfo(target.uniqueID).locationSkin, 1, 1, 30, 30)
-        font.drawStringWithShadow(target.name, 33F, 2F, -1)
-        font.drawStringWithShadow("${decimalFormat2.format(target.health)} ❤", length + 32F - 1F - font.getStringWidth("${decimalFormat2.format(target.health)} ❤").toFloat(), 22F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
+              val length = 60.coerceAtLeast(font.getStringWidth(target.name)).coerceAtLeast(font.getStringWidth("${decimalFormat2.format(target.health)} ❤")).toFloat() + 10F
+              RenderUtils.drawRect(0F, 0F, 32F + length, 36F, Color(0, 0, 0, backGroundAlphaValue.get()).rgb)
+              if (mc.netHandler.getPlayerInfo(target.uniqueID) != null) drawHead(mc.netHandler.getPlayerInfo(target.uniqueID).locationSkin, 1, 1, 30, 30)
+              font.drawStringWithShadow(target.name, 33F, 2F, -1)
+              font.drawStringWithShadow("${decimalFormat2.format(target.health)} ❤", length + 32F - 1F - font.getStringWidth("${decimalFormat2.format(target.health)} ❤").toFloat(), 22F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
 
-        // easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - fadeSpeed.get())) * RenderUtils.deltaTime
+              // easingHealth += ((target.health - easingHealth) / 2.0F.pow(10.0F - fadeSpeed.get())) * RenderUtils.deltaTime
 
-        RenderUtils.drawRect(0F, 32F, (easingHP / target.maxHealth.toFloat()).coerceIn(0F, target.maxHealth.toFloat()) * (length + 32F), 36F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
-
+              RenderUtils.drawRect(0F, 32F, (easingHP / target.maxHealth.toFloat()).coerceIn(0F, target.maxHealth.toFloat()) * (length + 32F), 36F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
+      */
     }
 
     private fun drawnewNovo(target: EntityLivingBase){

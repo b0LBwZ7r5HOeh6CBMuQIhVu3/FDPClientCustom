@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -19,7 +27,7 @@ class SafeWalk : Module() {
     private val onlyVoidValue = BoolValue("OnlyPredictVoid", false)
     private val aacapTestValue = BoolValue("aacapTest", false)
 
-    private val sneaked = false
+    private var sneaked = false
 
     @EventTarget
     fun onMove(event: MoveEvent) {
@@ -29,7 +37,7 @@ class SafeWalk : Module() {
             if (airSafeValue.get() || mc.thePlayer.onGround) {
                 event.isSafeWalk = true
             }
-            if (aacapTestValue.get()) if (event.x == 0 && event.y == 0 && event.z == 0) {
+            if (aacapTestValue.get()) if (event.x == (0).toDouble() && event.y == (0).toDouble() && event.z == (0).toDouble()) {
                 if (!sneaked) {
                     mc.gameSettings.keyBindSneak.pressed = true
                     sneaked = true

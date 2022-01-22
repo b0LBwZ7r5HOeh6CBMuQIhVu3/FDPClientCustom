@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -47,6 +55,7 @@ import org.lwjgl.util.glu.Cylinder
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
+import net.minecraft.util.*
 
 @ModuleInfo(name = "KillAura", category = ModuleCategory.COMBAT, keyBind = Keyboard.KEY_R)
 class KillAura : Module() {
@@ -203,7 +212,7 @@ class KillAura : Module() {
     private val limitedTargetsValue = IntegerValue("LimitedTargets", 0, 0, 50)
 
     // Visuals
-    private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Jello2", "Sims", "None"), "FDP")
+    private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Sims", "None"), "FDP")
     private val fakeSharpValue = BoolValue("FakeSharp", true)
     private val circleValue = BoolValue("Circle", false)
     private val oldTagValue = BoolValue("OldTag", false)
@@ -529,15 +538,15 @@ class KillAura : Module() {
                     GL11.glEnable(GL11.GL_TEXTURE_2D)
                     GL11.glPopMatrix()
                 }
-                "jello2" -> {
-                    renderESP()
-                    drawESP(target!!, Color(80, 255, 80).rgb, event)
-                }
+                // "jello2" -> {
+                //     renderESP()
+                //     drawESP(target!!, Color(80, 255, 80).rgb, event)
+                // }
                 "jello" -> {
                     val everyTime = 3000
                     val drawTime = (System.currentTimeMillis() % everyTime).toInt()
-                    val drawMode = drawTime > (everyTime/2)
-                    var drawPercent = drawTime / (everyTime/2.0)
+                    val drawMode = drawTime > (everyTime / 2)
+                    var drawPercent = drawTime / (everyTime / 2.0)
                     // true when goes up
                     if (!drawMode) {
                         drawPercent = 1 - drawPercent
@@ -615,7 +624,7 @@ class KillAura : Module() {
                 }
             }
         }
-    }
+    }/*
     private fun esp(entity : EntityLivingBase, partialTicks : Float, radius : Float) {
         GL11.glPushMatrix()
         GL11.glDisable(3553)
@@ -739,7 +748,7 @@ class KillAura : Module() {
         c.draw(radius, 0F, 0.3f, side, 1)
         RenderUtils.disableSmoothLine()
         GL11.glPopMatrix()
-    }
+    }*/
     /**
      * Handle entity move
      */
@@ -1163,9 +1172,9 @@ class KillAura : Module() {
         if (blockingStatus) {
             when (stopBlockingPacketValue.get().lowercase()) {
                 // "basic" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
-                "basic" -> when (stopBlockingBlockPosValue.lowercase()) {
+                "basic" -> when (stopBlockingBlockPosValue.get().lowercase()) {
                     "origin" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN))
-                    "all-1" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1,-1,-1), EnumFacing.DOWN))
+                    "all-1" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1, -1, -1), EnumFacing.DOWN))
                     "auto" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
                 }
                 "empty" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging())

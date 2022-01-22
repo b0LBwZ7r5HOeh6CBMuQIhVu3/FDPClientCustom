@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -56,7 +64,6 @@ class InventoryCleaner : Module() {
     private val invOpenValue = BoolValue("InvOpen", false)
     private val simulateInventory = BoolValue("SimulateInventory", true)
     private val simulateDelayValue = IntegerValue("SimulateInventoryDelay", 0, 0, 1000).displayable { simulateInventory.get() }
-    private val autoCloseDelayValue = IntegerValue("autoCloseDelay", 0, 0, 400)
     private val noMoveValue = BoolValue("NoMove", false)
     private val hotbarValue = BoolValue("Hotbar", true)
     private val randomSlotValue = BoolValue("RandomSlot", false)
@@ -93,11 +100,7 @@ class InventoryCleaner : Module() {
                 if (value) {
                     InventoryUtils.openPacket()
                 } else {
-                    if (closeDelayTimer.hasTimePassed(autoCloseDelayValue.get().toLong())) {
-                        InventoryUtils.closePacket()
-                    } else {
-                        value = field
-                    }
+                    InventoryUtils.closePacket()
                 }
             }
             field = value
@@ -108,7 +111,6 @@ class InventoryCleaner : Module() {
 
     private var delay = 0L
     private val simDelayTimer = MSTimer()
-    private val closeDelayTimer = MSTimer()
 
     override fun onDisable() {
         invOpened = false
@@ -175,7 +177,7 @@ class InventoryCleaner : Module() {
                 }
 
                 mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, garbageItem, 4, 4, mc.thePlayer)
-                closeDelayTimer.reset()
+
                 delay = TimeUtils.randomDelay(minDelayValue.get(), maxDelayValue.get())
 
                 return
@@ -192,7 +194,7 @@ class InventoryCleaner : Module() {
                     }
 
                     mc.playerController.windowClick(0, if (bestItem < 9) bestItem + 36 else bestItem, index, 2, mc.thePlayer)
-                    closeDelayTimer.reset()
+
                     delay = TimeUtils.randomDelay(minDelayValue.get(), maxDelayValue.get())
                     return
                 }
@@ -474,10 +476,8 @@ class InventoryCleaner : Module() {
             }
             if (throwValue.get() && isArmorSlot) {
                 mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, item, 0, 4, mc.thePlayer)
-            closeDelayTimer.reset()
             }
             mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, if (isArmorSlot) item else if (item < 9) item + 36 else item, 0, 1, mc.thePlayer)
-            closeDelayTimer.reset()
             delay = TimeUtils.randomDelay(minDelayValue.get(), maxDelayValue.get())
             return true
         }

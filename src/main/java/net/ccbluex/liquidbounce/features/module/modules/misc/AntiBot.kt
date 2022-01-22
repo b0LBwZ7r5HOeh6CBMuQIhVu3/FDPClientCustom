@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -139,7 +147,8 @@ object AntiBot : Module() {
             return true
         }
 
-        if (hasCustomNameValue.get() && entity.hasCustomName() && (!hasCustomNameStrictValue.get() || entity.getCustomNameTag().contains(entity.getName()))) ) {
+        if (hasCustomNameValue.get() && entity.hasCustomName() && (!hasCustomNameStrictValue.get() || entity.getCustomNameTag()
+                .contains(entity.getName()))) {
             return true
         }
 
@@ -250,13 +259,7 @@ object AntiBot : Module() {
         }
 
         val packet = event.packet
-        if (packet is S18PacketEntityTeleport) {
-            val entity = mc.theWorld.getEntityByID(packet.getEntityId())
 
-            if (hypixelSWBotValue.get() && entity is EntityPlayer && entity.isInvisible() && entity.ticksExisted > 4 && mc.theWorld.getPlayerEntities().contains(entity) && !isInTabList(entity)) {
-                mc.theWorld.removeEntity(entity)
-            }
-        }
         if (packet is S14PacketEntity) {
             val entity = packet.getEntity(mc.theWorld)
 
@@ -355,9 +358,12 @@ object AntiBot : Module() {
     fun onWorld(event: WorldEvent) {
         clearAll()
     }
-    fun isInTabList(entity: EntityPlayer): Boolean {
-        return mc.ingameGUI.getTabList().getList().contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
+
+    fun isInTabList(player: EntityPlayer): Boolean {
+        return mc.ingameGUI.getTabList().getList()
+            .contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
     }
+
     private fun clearAll() {
         hitted.clear()
         swing.clear()

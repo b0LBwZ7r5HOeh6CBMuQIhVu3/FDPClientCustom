@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -948,7 +956,7 @@ public final class RenderUtils extends MinecraftInstance {
         glColor4f(1F, 1F, 1F, 1F);
         glPopMatrix();
     }
-   public static void drawWolframEntityESP(EntityLivingBase entity, int rgb, double posX, double posY, double posZ) {
+/*   public static void drawWolframEntityESP(EntityLivingBase entity, int rgb, double posX, double posY, double posZ) {
       GL11.glPushMatrix();
       GL11.glTranslated(posX, posY, posZ);
       GL11.glRotatef(-entity.rotationYaw, 0.0F, 1.0F, 0.0F);
@@ -960,7 +968,7 @@ public final class RenderUtils extends MinecraftInstance {
       c.draw(0.5F, 0.5F, entity.height + 0.1F, 18, 1);
       disableGL3D();
       GL11.glPopMatrix();
-   }
+   }*/
     public static void drawLine(final double x, final double y, final double x1, final double y1, final float width) {
         boolean texture2d = GL11.glGetBoolean(GL_TEXTURE_2D);
         setGlCap(GL_TEXTURE_2D, false);

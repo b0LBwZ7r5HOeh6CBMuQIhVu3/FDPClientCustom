@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -111,9 +119,9 @@ class NoFall : Module() {
                 if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3.0645f && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                     when (hypixelSpoofPacketValue.get().lowercase()) {
                         "c03flying" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
-                        "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
-                        "c05look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(packet.yaw, packet.pitch, true))
-                        "c06position_look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C06PacketPlayerPosLook(packet.x, packet.y, packet.z, packet.yaw, packet.pitch, true))
+                        "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true))
+                        "c05look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, true))
+                        "c06position_look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, true))
                     }
                     mc.thePlayer.fallDistance = 0f
                 }
@@ -130,7 +138,7 @@ class NoFall : Module() {
             "oldmatrix2" -> {
                 if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f) {
                     mc.thePlayer.motionX = 0.04
-                    mc.thePlayer.motionY = -55
+                    mc.thePlayer.motionY = (-55).toDouble()
                     mc.netHandler.addToSendQueue(C03PacketPlayer(true))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(true))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(true))

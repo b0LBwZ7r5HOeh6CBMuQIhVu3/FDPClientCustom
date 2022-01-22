@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -86,9 +94,6 @@ open class Module : MinecraftInstance(), Listenable {
     fun onLoad() {
         if (this !is ScriptModule) {
             localizedName = "%module.$name.name%"
-            if(localizedName == "\%module.${name}.name\%"){
-                localizedName = "$name"
-            }
             if(moduleInfo.description != "no description"){
                 description = moduleInfo.description
             }

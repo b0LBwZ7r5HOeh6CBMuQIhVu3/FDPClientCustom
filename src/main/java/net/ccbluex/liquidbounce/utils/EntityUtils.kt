@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -19,6 +27,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.monster.EntityGhast
+import net.minecraft.client.network.NetworkPlayerInfo
 import net.minecraft.entity.monster.EntityGolem
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.entity.monster.EntitySlime

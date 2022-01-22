@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -34,7 +42,7 @@ import java.awt.Color
 class ESP : Module() {
     val modeValue = ListValue(
         "Mode",
-        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello","Cylinder"),
+        arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "CSGO", "Outline", "ShaderOutline", "ShaderGlow", "Jello"/*,"Cylinder"*/),
         "Jello"
     )
     private val outlineWidth = FloatValue("Outline-Width", 3f, 0.5f, 5f).displayable { modeValue.equals("Outline") }
@@ -83,17 +91,17 @@ class ESP : Module() {
 
                     "outline" -> RenderUtils.drawEntityBox(entity, color, true, false, outlineWidth.get())
 
-                    "cylinder" -> {
-                        val renderManager = mc.renderManager
-                        val timer = mc.timer
-                        val posX =
-                            entityLiving.lastTickPosX + (entityLiving.posX - entityLiving.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX
-                        val posY =
-                            entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY
-                        val posZ =
-                            entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ
-                        RenderUtils.drawWolframEntityESP(entityLiving, color, posX,posY,posZ)}
-
+                    /*              "cylinder" -> {
+                                      val renderManager = mc.renderManager
+                                      val timer = mc.timer
+                                      val posX =
+                                          entityLiving.lastTickPosX + (entityLiving.posX - entityLiving.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX
+                                      val posY =
+                                          entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY
+                                      val posZ =
+                                          entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ
+                                      RenderUtils.drawWolframEntityESP(entityLiving, color.rgb, posX,posY,posZ)}
+              */
                     "2d" -> {
                         val renderManager = mc.renderManager
                         val timer = mc.timer
