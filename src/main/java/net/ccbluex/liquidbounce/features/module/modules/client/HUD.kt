@@ -22,6 +22,7 @@ import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.utils.render.Animation
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
 import net.ccbluex.liquidbounce.value.*
+import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.minecraft.client.gui.GuiChat
 import net.minecraft.util.ResourceLocation
 
@@ -36,6 +37,7 @@ object HUD : Module() {
     val inventoryParticle = BoolValue("InventoryParticle", false)
     private val blurValue = BoolValue("Blur", false)
     val fontChatValue = BoolValue("FontChat", false)
+    val fontType = FontValue("Font", Fonts.font40)
     val chatRectValue = BoolValue("ChatRect", true)
     val chatCombineValue = BoolValue("ChatCombine", true)
     val chatPositionValue = BoolValue("chatPosition", true)
@@ -46,7 +48,7 @@ object HUD : Module() {
     val rainbowSaturation = FloatValue("RainbowSaturation", 0.7f, 0f, 1f)
     val rainbowBrightness = FloatValue("RainbowBrightness", 1f, 0f, 1f)
     val rainbowSpeed = IntegerValue("RainbowSpeed", 1500, 500, 7000)
-    val domainValue = TextValue("Scoreboard-Domain", "test.matrix.rip")
+    val domainValue = TextValue("Scoreboard-Domain", "琉璃我爱你我要做你的狗呜呜呜呜我好喜欢琉璃小姐琉璃小姐琉璃小姐琉璃小姐琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃啊啊啊啊啊啊嘚斯")
 
     val arraylistXAxisAnimSpeedValue = IntegerValue("ArraylistXAxisAnimSpeed", 10, 5, 20)
     val arraylistXAxisAnimTypeValue = EaseUtils.getEnumEasingList("ArraylistXAxisAnimType")

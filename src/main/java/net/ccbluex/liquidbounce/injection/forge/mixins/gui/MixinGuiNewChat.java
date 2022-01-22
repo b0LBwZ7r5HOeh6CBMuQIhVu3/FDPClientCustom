@@ -33,8 +33,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Iterator;
 import java.util.List;
 
+import java.awt.Color;
+
 @Mixin(GuiNewChat.class)
 public abstract class MixinGuiNewChat {
+    private float displayPercent, animationPercent = 0F;
+    private int lineBeingDrawn, newLines;
 
     @Shadow
     @Final
@@ -137,7 +141,7 @@ public abstract class MixinGuiNewChat {
         checkHud();
         boolean canFont=hud.getState() && hud.getFontChatValue().get();
 
-        if (hud.chatPositionValue.get()) {
+        if (hud.getChatPositionValue.get()) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, -12, 0);
         }

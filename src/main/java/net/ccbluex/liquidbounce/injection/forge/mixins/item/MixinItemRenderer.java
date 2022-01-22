@@ -131,7 +131,7 @@ public abstract class MixinItemRenderer {
                         break;
                     case BLOCK:
                         if(animations.getState()){
-                            if(animations.getDamageMark().get() && LiquidBounce.combatManager.target != null && LiquidBounce.combatManager.hurtTime > 0){
+                            if(animations.getDamageMark().get() && LiquidBounce.combatManager.INSTANCE.getTarget() != null && LiquidBounce.combatManager.INSTANCE.getTarget().hurtTime > 0){
                                 transformFirstPersonItem(f1, 0.0F);
                             }
                             GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
