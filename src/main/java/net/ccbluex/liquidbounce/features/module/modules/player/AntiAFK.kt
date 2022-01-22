@@ -93,7 +93,6 @@ class AntiAFK : Module() {
                     }
                     3 -> {
                         mc.thePlayer.inventory.currentItem = RandomUtils.nextInt(0, 9)
-                        mc.thePlayer.Controller.updateController()
                         delayTimer.reset()
                     }
                     4 -> {

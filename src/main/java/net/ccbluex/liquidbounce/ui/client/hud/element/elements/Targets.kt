@@ -255,7 +255,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         GL11.glTranslatef(48 + 3 + 3f, 7f, 0f)
 
-        font.drawString(target.name, 0f, 0f, Color.WHITE)
+        font.drawString(target.name, 0, 0, Color.WHITE.rgb)
     }
     private fun drawNewFlux(target: EntityLivingBase){
         val font = fontValue.get()
