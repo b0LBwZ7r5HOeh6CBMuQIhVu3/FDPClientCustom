@@ -1,8 +1,11 @@
 /*
- * FDPClient Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/UnlegitMC/FDPClient/
+ *
+ *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
  */
+
 package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -51,8 +54,8 @@ class Blink : Module() {
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
     private var packetsDuped = 0
-    private var c00PacketToDupe? = null
-    private var c0fPacketToDupe? = null
+    private var c00PacketToDupe = C00PacketKeepAlive()
+    private var c0fPacketToDupe = C0FPacketConfirmTransaction()
 
     override fun onEnable() {
         if (mc.thePlayer == null) return
@@ -122,28 +125,28 @@ class Blink : Module() {
             )
         }
         if (pulseValue.get() && pulseTimer.hasTimePassed((pulseDelayValue.get() - (if (pingCalcValue.get()) EntityUtils.getPing(mc.thePlayer) else 0)).toLong())) {
-            if (pingCalcValue.get() && EntityUtils.getPing(mc.thePlayer) > pulseDelayValue.get() && pingCalcDupePacketValue.get() {
-                    private val packetsAmounts = min(
-                        roundToInt(
-                            (pulseDelayValue.get() - EntityUtils.getPing(mc.thePlayer)) / dupePacketsPerMSValue.get()
-                        ),
-                        if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 800
-                    )
+            if (pingCalcValue.get() && EntityUtils.getPing(mc.thePlayer) > pulseDelayValue.get() && pingCalcDupePacketValue.get()) {
+                val packetsAmounts = min(
+                    ((pulseDelayValue.get() - EntityUtils.getPing(mc.thePlayer)) / dupePacketsPerMSValue.get()).toDouble()
+                        .roundToInt(),
+                    if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 800
+                )
 
-                    repeat(packetsAmounts) {
-                        if (dupeC00Value.get()) {
-                            packets.add(c00PacketToDupe)
-                        }
-                        if (dupeC0FValue.get()) {
-                            packets.add(c0fPacketToDupe)
-                        }
+                repeat(packetsAmounts) {
+                    if (dupeC00Value.get()) {
+                        packets.add(c00PacketToDupe)
                     }
-                    if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to make sure your ping is around " + (if (dupeC0FValue.get() || dupeC00Value.get()) "the Blink value you set" else "your ping(lol)") + " §7("/*please excuse my typing error(s)*/ + EntityUtils.getPing(mc.thePlayer)
-                        .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
-                        .toString() + ")")
+                    if (dupeC0FValue.get()) {
+                        packets.add(c0fPacketToDupe)
+                    }
                 }
-                blink ()
-                fakePlayer !!. setPositionAndRotation (mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
+                if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to make sure your ping is around " + (if (dupeC0FValue.get() || dupeC00Value.get()) "the Blink value you set" else "your ping(lol)") + " §7("/*please excuse my typing error(s)*/ + EntityUtils.getPing(mc.thePlayer)
+                    .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
+                    .toString() + ")")
+            }
+            blink()
+            fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
+//            fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
             fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
             pulseTimer.reset()
         }

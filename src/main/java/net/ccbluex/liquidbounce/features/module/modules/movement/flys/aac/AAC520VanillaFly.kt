@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.aac
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -24,7 +32,7 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
     private val speedValue = FloatValue("${valuePrefix}Speed", 2f, 0f, 5f)
     private val smoothValue = BoolValue("${valuePrefix}Smooth", false)
     private val purseValue = IntegerValue("${valuePrefix}Purse", 7, 3, 20)
-    private val packetModeValue = ListValue("${valuePrefix}PacketMode", arrayOf("Old", "Rise", "Test"), "Old")
+    private val packetModeValue = ListValue("${valuePrefix}PacketMode", arrayOf("Old", "Rise"), "Old")
     private val useC04Value = BoolValue("${valuePrefix}UseC04", false)
 
     private val packets = mutableListOf<C03PacketPlayer>()
@@ -154,7 +162,7 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
                     }
                 }
             }
-            "test" -> {
+/*            "test" -> {
                 for (packet in packets) {
                     if (packet.isMoving) {
                         sendPacketNoEvent(packet)
@@ -171,7 +179,7 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
                         }
                     }
                 }
-            }
+            }*/
         }
         packets.clear()
     }

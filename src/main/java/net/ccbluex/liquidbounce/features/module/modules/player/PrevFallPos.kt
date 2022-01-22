@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.event.EventTarget
@@ -71,7 +79,7 @@ class PrevFallPos : Module() {
                 RenderUtils.drawBlockBox(pos, color, true, false, outlineWidth.get())
             }
         }
-        RenderUtils.renderNameTag(
+/*        RenderUtils.renderNameTag(
             java.lang.Math.round(
                 mc.thePlayer.getDistance(
                     pos.getX().toDouble(),
@@ -80,6 +88,6 @@ class PrevFallPos : Module() {
                 )
             ).toString() + "m",
             pos.getX().toDouble(), pos.getY().toDouble(), pos.getZ().toDouble()
-        )
+        )*/
     }
 }

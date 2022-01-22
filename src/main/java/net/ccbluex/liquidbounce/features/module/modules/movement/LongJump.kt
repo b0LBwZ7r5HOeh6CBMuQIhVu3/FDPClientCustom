@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * LiquidBounce Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
  * http://proxy.liulihaocai.pw/CCBlueX/LiquidBounce/
@@ -51,7 +59,7 @@ class LongJump : Module() {
         "ncpDamageMode",
         arrayOf("Test", "Mini", "OldCubeCraft2", "Vanilla", "MushMC", "OldNCP"),
         "Test"
-    ).display { modeValue.equals("NCPDamage") }
+    ).displayable { modeValue.equals("NCPDamage") }
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
 
     // redesky
@@ -164,7 +172,7 @@ class LongJump : Module() {
                         }
                     }
                     "oldcubecraft2" -> {
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.prevRotationYaw, prevRotationPitch, false))
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.prevRotationYaw, mc.thePlayer.prevRotationPitch, false))
                         repeat(49) {
                             PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.06249, z, false))
                             PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))

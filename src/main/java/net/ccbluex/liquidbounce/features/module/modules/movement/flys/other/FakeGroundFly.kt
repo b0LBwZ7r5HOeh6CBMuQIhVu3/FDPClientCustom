@@ -1,3 +1,11 @@
+/*
+ *
+ *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.other
 
 import net.ccbluex.liquidbounce.event.BlockBBEvent
@@ -25,7 +33,7 @@ class FakeGroundFly : FlyMode("FakeGround") {
     }
 
     override fun onBlockBB(event: BlockBBEvent) {
-        private val blockY = if (useLaunchPosYValue.get()) mc.thePlayer.posY else fly.launchY
+        val blockY = if (useLaunchPosYValue.get()) mc.thePlayer.posY else fly.launchY
         if (event.block is BlockAir && event.y <= blockY) {
             event.boundingBox = AxisAlignedBB.fromBounds(event.x.toDouble(), event.y.toDouble(), event.z.toDouble(), event.x + 1.0, blockY, event.z + 1.0)
         }

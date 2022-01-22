@@ -1,4 +1,20 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * LiquidBounce+ Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
  * https://github.com/WYSI-Foundation/LiquidBouncePlus/
@@ -62,12 +78,12 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         Fonts.font35.drawStringWithShadow("- NOTE: This client is a ▉▉▉▉▉ mod, don't try to run it like a version. Just drop the folders I included (\"mods\" containing  the client, and \"versions\" containing the forge).", 2F, 12F + (11 * 16), Color(255, 128, 128, 240).rgb)
         Fonts.font35.drawStringWithShadow("- Enjoy, I guess..", 2F, 12F + (11 * 17), Color(255, 128, 128, 240).rgb)
         Fonts.font35.drawStringWithShadow("/ ▉▉▉▉▉▉▉▉▉▉▉e▉▉▉▉▉▉▉▉▉", 2F, 12F + (11 * 8), Color(255, 255, 128, 240).rgb)
-        for (i in 0..500 step 11) {
+        for (i in 0..50 step 10) {
             Fonts.font35.drawStringWithShadow("- buy ▉▉▉▉▉▉▉▉▉▉.", 25F, 12F + (11 * i), Color(255, 128, 128, 200).rgb)
         }
-        for (i2 in 500 DownTo 0 step 11) {
-            Fonts.font35.drawStringWithShadow("- cracked by ▉▉▉▉▉▉▉▉▉▉.", 25F + (11 * i2), 12F + i2, Color(255, 128, 128, 200).rgb)
-        }
+//        for (i2 in 500 DownTo 0 step 11) {
+//            Fonts.font35.drawStringWithShadow("- cracked by ▉▉▉▉▉▉▉▉▉▉.", 25F + (11 * i2), 12F + i2, Color(255, 128, 128, 200).rgb)
+//        }
         Fonts.font35.drawStringWithShadow("${LiquidBounce.CLIENT_NAME} build ${LiquidBounce.CLIENT_VERSION}", 2F, height - 12F, -1)
         Fonts.font35.drawStringWithShadow(creditInfo, width - 3F - Fonts.font35.getStringWidth(creditInfo), height - 12F, -1)
         if (useParallax) moveMouseEffect(mouseX, mouseY, 10F)
