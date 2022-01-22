@@ -1,3 +1,11 @@
+/*
+ *
+ *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
 import com.google.gson.JsonParser
@@ -120,7 +128,7 @@ class AuthBypass : Module() {
                 component.siblings.forEach { sib ->
                     val clickEvent = sib.chatStyle.chatClickEvent
                     if (clickEvent != null && (clickEvent.value.startsWith(".") || clickEvent.value.startsWith("${LiquidBounce.commandManager.prefix}"))) {
-                        if (debugValue.get()) alert("AuthBypass §7» " + ClickEvent.toString())
+//prefix                        if (debugValue.get()) alert("AuthBypass §7» " + ClickEvent.value)
                         timer.reset()
                         if (clickEvent.action == ClickEvent.Action.RUN_COMMAND) packets.add(C01PacketChatMessage(clickEvent.value))
                         if (clickEvent.action == ClickEvent.Action.SUGGEST_COMMAND) //?

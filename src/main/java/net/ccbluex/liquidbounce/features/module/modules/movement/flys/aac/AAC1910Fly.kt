@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.aac
 
 import net.ccbluex.liquidbounce.event.UpdateEvent
@@ -23,13 +31,13 @@ class AAC1910Fly : FlyMode("AAC1.9.10") {
 
         if (fly.launchY + aacJump > mc.thePlayer.posY) {
             mc.netHandler.addToSendQueue(C03PacketPlayer(true))
-            mc.thePlayer.motionY = motionYValue.get()
+            mc.thePlayer.motionY = motionYValue.get().toDouble()
             MovementUtils.strafe(speedValue.get())
         }
 
         MovementUtils.strafe()
     }
-    override fun onRender3d(event: Render3DEvent) {
+/*    override fun onRender3d(event: Render3DEvent) {
         RenderUtils.drawPlatform(fly.launchY + aacJump, Color(0, 0, 255, 90), 1)
-    }
+    }*/
 }

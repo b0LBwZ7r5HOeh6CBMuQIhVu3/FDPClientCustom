@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -66,7 +74,7 @@ class PointerESP : Module() {
                     var dist = (mc.thePlayer.getDistanceToEntity(entity) * 2).toInt()
                     if (dist > 255) dist = 255
                     val color = when {
-                        colorMode.equals("Custom") -> Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get(), alphaValue.get())
+                        colorMode.equals("Custom") -> Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get())
                         colorMode.equals("DistanceColor") -> Color(255 - dist, dist, 0, alphaValue.get())
                         else -> Color(255, 255, 255, 150)
                     }

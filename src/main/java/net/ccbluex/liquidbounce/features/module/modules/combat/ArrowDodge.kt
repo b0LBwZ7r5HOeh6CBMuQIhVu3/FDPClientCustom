@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -161,15 +169,15 @@ class ArrowDodge : Module() {
             val posR = FallingPlayer(mc.thePlayer.posX + (-sin(right.yaw) * 4),
                 mc.thePlayer.posY,
                 mc.thePlayer.posZ + cos(right.yaw) * 4,
-                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+                (0).toDouble(), (0).toDouble(), (0).toDouble(), 0f, 0f, 0f, 0f).findCollision(60)
             val posL = FallingPlayer(mc.thePlayer.posX + -sin(left.yaw) * 4,
                 mc.thePlayer.posY,
                 mc.thePlayer.posZ + cos(left.yaw) * 4,
-                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+                (0).toDouble(), (0).toDouble(), (0).toDouble(), 0f, 0f, 0f, 0f).findCollision(60)
             val posB = FallingPlayer(mc.thePlayer.posX + -sin(back.yaw) * 4,
                 mc.thePlayer.posY,
                 mc.thePlayer.posZ + cos(back.yaw) * 4,
-                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+                (0).toDouble(), (0).toDouble(), (0).toDouble(), 0f, 0f, 0f, 0f).findCollision(60)
 
             if (posR != null && posR.y < mc.thePlayer.posY - 7) {
                 right.toPlayer(mc.thePlayer)
