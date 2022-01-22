@@ -1,3 +1,13 @@
+/*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+ |                                                                            |
+ |   MotherF♥♥♥♥♥Client Hacked Client.                                        |
+ |   A shit open source mixin-based injection hacked and shited client for    |
+ |   Minecraft using Minecraft Forge based on Liquidbounce.                   |
+ |  DeleteFDP.today.                                                          |
+ |  2022/1/23.                                                                |
+ |                                                                            |
+ |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*/
+
 /*
  *
  *  * FDPClient Hacked Client
@@ -312,13 +322,15 @@ class HackerDetector : Module() {
 
         // multi attacker may cause false result
         if (attackerCount != 1) return
-        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return // i and my friend(s) are hackers lol
+        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return // this hacker detector in a hacked client so I must be a cheater
         val data = datas[attacker] ?: return
 
         // reach check
         val reach = attacker.getDistanceToEntity(entity)
-        if (reach > if (lagCheck.get()) 3.43 * EntityUtils.getPing(attacker) * 0.01 + 1 else 3.7) {
-            data.flag("reach", 70, "attacks $reach blocks further than normal")
+        val maxRange = if (lagCheck.get()) (1.6 * (EntityUtils.getPing(attacker) * 0.001) + 3).coerceAtLeast(3.2f) else 3.7
+        if (reach > maxRange) {
+            data.flag("reach", 70, "attacks $reach blocks further than normal (limit=$maxRange,Ping=" + EntityUtils.getPing(attacker)
+                .toString() + ")")
         }
 
         // aim check

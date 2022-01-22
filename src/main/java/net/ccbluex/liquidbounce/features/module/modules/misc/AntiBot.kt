@@ -1,3 +1,13 @@
+/*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+ |                                                                            |
+ |   MotherF♥♥♥♥♥Client Hacked Client.                                        |
+ |   A shit open source mixin-based injection hacked and shited client for    |
+ |   Minecraft using Minecraft Forge based on Liquidbounce.                   |
+ |  DeleteFDP.today.                                                          |
+ |  2022/1/23.                                                                |
+ |                                                                            |
+ |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*/
+
 /*
  *
  *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
@@ -72,7 +82,7 @@ object AntiBot : Module() {
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
     private val fastDamageValue = BoolValue("FastDamage", false)
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
-    private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
+    // private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
     private val alwaysInRadiusValue = BoolValue("AlwaysInRadius", false)
     private val alwaysInRadiusOnlyXZValue = BoolValue("AlwaysInRadiusOnlyXZ", false)
     private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
