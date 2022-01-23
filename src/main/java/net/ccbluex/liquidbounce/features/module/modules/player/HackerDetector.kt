@@ -1,20 +1,6 @@
-/*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
- |                                                                            |
- |   MotherF♥♥♥♥♥Client Hacked Client.                                        |
- |   A shit open source mixin-based injection hacked and shited client for    |
- |   Minecraft using Minecraft Forge based on Liquidbounce.                   |
- |  DeleteFDP.today.                                                          |
- |  2022/1/23.                                                                |
- |                                                                            |
- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*/
+//  updated at : 2022/1/23.
+//
 
-/*
- *
- *  * FDPClient Hacked Client
- *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
- *  * DeleteFDP.today
- *
- */
 
 package net.ccbluex.liquidbounce.features.module.modules.player
 
@@ -55,6 +41,7 @@ class HackerDetector : Module() {
     private val notify = BoolValue("Notify", true)
     private val report = BoolValue("AutoReport", true)
     private val lagCheck = BoolValue("LagCheck", true)
+    private val clearValue = BoolValue("clear", true)
     private val vlValue = IntegerValue("VL", 300, 100, 500)
 
     private val datas = HashMap<EntityPlayer, HackerData>()
@@ -64,20 +51,18 @@ class HackerDetector : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         // this takes a bit time so we do it async
-        Thread { doGC() }.start()
+        // ok my compute is so trash so i added this trash delay
+        if (mc.thePlayer!!.ticksExisted % 10 == 0) {
+            Thread { doGC(clearValue.get()) }.start()
+            clearValue.set(false)
+        }
     }
 
-    private fun doGC() {
-        val needRemove = ArrayList<EntityPlayer>()
+    private fun doGC(clearAll: Boolean = false) {
         for ((player, _) in datas) {
-            if (player.isDead) {
-                needRemove.add(player)
-            }
-        }
-        for (player in needRemove) {
-            datas.remove(player)
-            if (debugMode.get()) {
-                alert("[GC] REMOVE ${player.name}")
+            if (player.isDead || clearAll) {
+                datas.remove(player)
+                if (debugMode.get()) alert("[GC] REMOVE ${player.name}")
             }
         }
     }
@@ -191,16 +176,16 @@ class HackerDetector : Module() {
 
         // killaura from jigsaw
         if (data.aps >= 12) {
-            data.flag("killaura", 30, "clicks too fast during combat (aps=${data.aps})")
+            data.flag("autoclicker", 30, "clicks too fast during combat (aps=${data.aps})")
             passed = false
         }
         if (data.aps > 4 && data.aps == data.preAps && data.aps != 0) {
-            data.flag("killaura", 30, "attacks per second is little strange (aps=${data.aps})")
+            data.flag("autoclicker", 30, "attacks per second is little strange (aps=${data.aps})")
             passed = false
         }
         if (abs(player.rotationYaw - player.prevRotationYaw) > 50 && player.swingProgress != 0F &&
             data.aps >= 4) {
-            data.flag("killaura", 30, "performs abnormal head snaps during combat(aps=${data.aps},yawRot=${abs(player.rotationYaw - player.prevRotationYaw)})")
+            data.flag("aimbot", 30, "performs abnormal head snaps during combat(aps=${data.aps},yawRot=${abs(player.rotationYaw - player.prevRotationYaw)})")
             passed = false
         }
 
@@ -267,11 +252,11 @@ class HackerDetector : Module() {
                 data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + " in the air(speed=$distanceXZ,limit=$limit,predict=$predict)")
             }
         }
-//        if (abs(data.motionX) > 0.42
-//            || abs(data.motionZ) > 0.42){
-//            flag("speed",30,data,"HIGH SPEED")
-//            passed=false
-//        }
+        if (abs(data.motionX) > 100
+            || abs(data.motionZ) > 100) {
+            flag("teleport", 30, data, " moved 100+ blocks in a tick")
+            passed = false
+        }
 //        if (player.isBlocking && (abs(data.motionX) > 0.2 || abs(data.motionZ) > 0.2)) {
 //            flag("speed",30,data,"HIGH SPEED(BLOCKING)") //blocking is just noslow lol
 //            passed=false
@@ -287,7 +272,7 @@ class HackerDetector : Module() {
         if (!this.useHacks.contains(type)) this.useHacks.add(type)
         // display debug message
         if (debugMode.get()) {
-            alert("§f${this.player.name} §eis suspected for §2$type §7$msg §c${this.vl}+$vl")
+            alert("§f${this.player.name} §eis suspected for §2$type §7($msg) §c${this.vl}+$vl")
         }
         this.vl += vl
 
@@ -322,14 +307,14 @@ class HackerDetector : Module() {
 
         // multi attacker may cause false result
         if (attackerCount != 1) return
-        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return // this hacker detector in a hacked client so I must be a cheater
+        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return
         val data = datas[attacker] ?: return
 
         // reach check
         val reach = attacker.getDistanceToEntity(entity)
-        val maxRange = if (lagCheck.get()) (1.6 * (EntityUtils.getPing(attacker) * 0.001) + 3).coerceAtLeast(3.2f) else 3.7
-        if (reach > maxRange) {
-            data.flag("reach", 70, "attacks $reach blocks further than normal (limit=$maxRange,Ping=" + EntityUtils.getPing(attacker)
+        val maxRange = if (lagCheck.get()) (1.6 * (EntityUtils.getPing(attacker) * 0.001)) else 0.7
+        if (reach > maxRange + 3) {
+            data.flag("reach", 70, "attacks $reach blocks further than normal (limit=$maxRange+3,Ping=" + EntityUtils.getPing(attacker)
                 .toString() + ")")
         }
 

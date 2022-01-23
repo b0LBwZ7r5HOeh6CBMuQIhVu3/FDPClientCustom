@@ -1,20 +1,7 @@
-/*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
- |                                                                            |
- |   MotherF♥♥♥♥♥Client Hacked Client.                                        |
- |   A shit open source mixin-based injection hacked and shited client for    |
- |   Minecraft using Minecraft Forge based on Liquidbounce.                   |
- |  DeleteFDP.today.                                                          |
- |  2022/1/23.                                                                |
- |                                                                            |
- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*/
+//  updated at : 2022/1/23.
+//
 
-/*
- *
- *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
- *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
- *  * DeleteFDP.today
- *
- */
+
 
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
