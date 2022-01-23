@@ -94,6 +94,7 @@ object AntiBot : Module() {
     private val lastDamage = mutableMapOf<Int, Int>()
     private val lastDamageVl = mutableMapOf<Int, Float>()
     private val duplicate = mutableListOf<UUID>()
+    private val regex = Regex("\\w{3,16}")
 
     @JvmStatic
     fun isBot(entity: EntityLivingBase): Boolean {
@@ -105,6 +106,10 @@ object AntiBot : Module() {
         // Check if anti bot is enabled
         if (!state) {
             return false
+        }
+
+        if (validNameValue.get() && !entity.name.matches(regex)) {
+            return true
         }
 
         // Anti Bot checks
@@ -160,11 +165,9 @@ object AntiBot : Module() {
         if (wasInvisibleValue.get() && invisible.contains(entity.entityId)) {
             return true
         }
-
         if (validNameValue.get() && !entity.name.matches(Regex(validNameRegexValue.get()))) {
             return true
         }
-
         if (armorValue.get()) {
             if (entity.inventory.armorInventory[0] == null && entity.inventory.armorInventory[1] == null &&
                 entity.inventory.armorInventory[2] == null && entity.inventory.armorInventory[3] == null) {

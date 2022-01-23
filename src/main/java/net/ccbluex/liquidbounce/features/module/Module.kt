@@ -17,7 +17,6 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.Listenable
 import net.ccbluex.liquidbounce.features.module.modules.client.HUD
 import net.ccbluex.liquidbounce.features.module.modules.client.Modules
-import net.ccbluex.liquidbounce.script.api.ScriptModule
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.NotifyType
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
@@ -90,14 +89,9 @@ open class Module : MinecraftInstance(), Listenable {
         moduleCommand = moduleInfo.moduleCommand
         triggerType = moduleInfo.triggerType
     }
-
-    fun onLoad() {
-        if (this !is ScriptModule) {
-            localizedName = "%module.$name.name%"
-            if(moduleInfo.description != "no description"){
-                description = moduleInfo.description
-            }
-        }
+    open fun onLoad() {
+        localizedName = "%module.$name.name%"
+    }
     }
 
     // Current state of module

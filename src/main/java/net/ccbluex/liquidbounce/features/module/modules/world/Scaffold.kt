@@ -11,6 +11,7 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.movement.Speed
+import net.ccbluex.liquidbounce.ui.cape.GuiCapeManager
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
 import net.ccbluex.liquidbounce.utils.*
@@ -226,7 +227,7 @@ class Scaffold : Module() {
      * Enable module
      */
     override fun onEnable() {
-        slot = 1145
+        slot = mc.thePlayer.inventory.currentItem
         if (mc.thePlayer == null) return
         lastGroundY = mc.thePlayer.posY.toInt()
         lastPlace = 2
@@ -378,10 +379,12 @@ class Scaffold : Module() {
         if (packet is C09PacketHeldItemChange) {
             if(packet.slotId == slot) {
                 event.cancelEvent()
-            }else slot = packet.slotId
+            } else {
+                slot = packet.slotId
+            }
         } else if (packet is C08PacketPlayerBlockPlacement) {
             // c08 item override to solve issues in scaffold and some other modules, maybe bypass some anticheat in future
-            if(slot < 100) packet.stack = mc.thePlayer.inventory.getStackInSlot(slot)
+            packet.stack = mc.thePlayer.inventory.mainInventory[slot]
         }
     }
 
@@ -771,9 +774,9 @@ class Scaffold : Module() {
                 }
             }
             RenderHelper.enableGUIStandardItemLighting()
-            mc.renderItem.renderItemIntoGUI(stack, width / 2 - Fonts.font40.getStringWidth(info), (height * 0.6 - Fonts.font40.FONT_HEIGHT * 0.5).toInt())
+            mc.renderItem.renderItemIntoGUI(stack, width / 2 - mc.fontRendererObj.getStringWidth(info), (height * 0.6 - mc.fontRendererObj.FONT_HEIGHT * 0.5).toInt())
             RenderHelper.disableStandardItemLighting()
-            Fonts.font40.drawCenteredString(info, width / 2f, height * 0.6f, Color.WHITE.rgb, false)
+            mc.fontRendererObj.drawCenteredString(info, width / 2f, height * 0.6f, Color.WHITE.rgb, false)
             GlStateManager.popMatrix()
         }
     }

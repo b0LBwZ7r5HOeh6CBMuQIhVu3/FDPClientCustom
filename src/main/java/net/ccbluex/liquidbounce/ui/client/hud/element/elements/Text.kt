@@ -68,11 +68,11 @@ class Text(
     private val rectBlueValue = IntegerValue("RectBlue", 0, 0, 255)
     private val rectAlphaValue = IntegerValue("RectAlpha", 255, 0, 255)
     val rectColorModeValue = ListValue("RectColor", arrayOf("Custom", "Rainbow", "AnotherRainbow", "SkyRainbow"), "Custom")
-    val rectValue = ListValue("Rect", arrayOf("Normal", "OneTap", "Skeet", "None"), "None")
+    val rectValue = ListValue("Rect", arrayOf("Normal", "RNormal", "OneTap", "Skeet", "None"), "None")
     private val rectExpandValue = FloatValue("RectExpand", 0.3F, 0F, 1F)
     private val rainbowSpeed = IntegerValue("RainbowSpeed", 10, 1, 10)
     private val rainbowIndex = IntegerValue("RainbowIndex", 1, 1, 20)
-    private var fontValue = FontValue("Font", Fonts.font40)
+    private val fontValue = FontValue("Font", Fonts.font40)
 
     private var editMode = false
     private var editTicks = 0
@@ -183,6 +183,10 @@ class Text(
         val expand = fontRenderer.FONT_HEIGHT * rectExpandValue.get()
         when (rectValue.get().lowercase()) {
             "normal" -> {
+                RenderUtils.drawRect(-expand, -expand, fontRenderer.getStringWidth(displayText) + expand, fontRenderer.FONT_HEIGHT + expand, rectColor)
+            }
+            "rnormal" -> {
+                RenderUtils.drawRect(-expand, -expand - 1, fontRenderer.getStringWidth(displayText) + expand, -expand, ColorUtils.rainbow())
                 RenderUtils.drawRect(-expand, -expand, fontRenderer.getStringWidth(displayText) + expand, fontRenderer.FONT_HEIGHT + expand, rectColor)
             }
             "onetap" -> {
