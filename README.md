@@ -1,5 +1,5 @@
 ### Skid codes
-I skidded LiquidBoune+ and FDPClient.
+I skidded LiquidBoune+, many scripts, Flux, Sigma, Rektsky, Zamorozka, Hanabi, FDPClient and LiquidBounce.
 
 # dogshit client
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
