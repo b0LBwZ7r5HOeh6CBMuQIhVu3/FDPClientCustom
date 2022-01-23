@@ -119,7 +119,10 @@ public abstract class MixinGuiNewChat {
 
         printChatMessageWithOptionalDeletion(chatComponent, this.line);
     }
-
+    @Inject(method = "printChatMessageWithOptionalDeletion", at = @At("HEAD"))
+    private void resetPercentage(CallbackInfo ci) {
+        displayPercent = 0F;
+    }
     private String fixString(String str){
         str=str.replaceAll("\uF8FF","");//remove air chars
 
