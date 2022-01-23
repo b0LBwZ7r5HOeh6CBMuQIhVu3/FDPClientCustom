@@ -1,3 +1,8 @@
+//  updated at : 2022/1/23.
+//
+
+
+
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -14,9 +19,11 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.*
+import net.minecraft.item.ItemArmor
 import java.util.*
 
 @ModuleInfo(name = "AntiBot", category = ModuleCategory.MISC)
@@ -33,22 +40,42 @@ object AntiBot : Module() {
     private val invalidGroundValue = BoolValue("InvalidGround", true)
     private val swingValue = BoolValue("Swing", false)
     private val healthValue = BoolValue("Health", false)
+    private val maxHealthValue = FloatValue("MaxHealth", 1f, 1f, 40f).displayable { healthValue.get() }
+    private val minHealthValue = FloatValue("MinHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val derpValue = BoolValue("Derp", true)
+    private val randomHealthValue = BoolValue("randomHealth", true)
+    private val randomHealthMaxHealthValue = FloatValue("randomHealthMaxHealth", 20f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthMinHealthValue = FloatValue("randomHealthMinHealth", 1f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthLivingTimeTicksValue = IntegerValue("randomHealthLivingTimeTicks", 15, 1, 50).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusCheckOnlyXZValue = BoolValue("randomHealthRadiusCheckOnlyXZ", false).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusValue = FloatValue("randomHealthRadiusCheckBlocks", 20f, 5f, 30f).displayable { randomHealthValue.get() }
+    private val hasCustomNameValue = BoolValue("hasCustomName", false)
+    private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
+    private val validNameRegexValue = TextValue("ValidNameRegex", "[\\w|一-龥]{3,16}").displayable {validNameValue.get()}
     private val armorValue = BoolValue("Armor", false)
+    // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
+    private val matrixBotValue = BoolValue("MatrixBot", false)
+    private val matrixBotStrictValue = BoolValue("MatrixBotStict", false).displayable { matrixBotValue.get() }
     private val needHitValue = BoolValue("NeedHit", false)
-    private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
+    private val lowWidthValue = BoolValue("LowWidth", true)
+    private val neverMoveValue = BoolValue("NeverMove", false)
+    private val neverRotationValue = BoolValue("neverRotation", false)
+    // private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
     private val fastDamageValue = BoolValue("FastDamage", false)
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
+    // private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
     private val alwaysInRadiusValue = BoolValue("AlwaysInRadius", false)
+    private val alwaysInRadiusOnlyXZValue = BoolValue("AlwaysInRadiusOnlyXZ", false)
     private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
-    private val alwaysInRadiusRemoveValue = BoolValue("AlwaysInRadiusRemove", false).displayable { alwaysInRadiusValue.get() }
+    private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
     private val alwaysInRadiusWithTicksCheckValue = BoolValue("AlwaysInRadiusWithTicksCheck", false).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
+    private val alwaysInRadiusInCombatingValue = BoolValue("AlwaysInRadiusOnlyCombating", false).displayable { alwaysInRadiusValue.get()}
 
     private val ground = mutableListOf<Int>()
     private val air = mutableListOf<Int>()
@@ -58,10 +85,15 @@ object AntiBot : Module() {
     private val hitted = mutableListOf<Int>()
     private val spawnInCombat = mutableListOf<Int>()
     private val notAlwaysInRadius = mutableListOf<Int>()
+    private val alwaysInRadius = mutableListOf<Int>()
+    private val noHitDelay = mutableListOf<Int>()
+    private val moved = mutableListOf<Int>()
+    private val randomHealth = mutableListOf<Int>()
+    private val turnHead = mutableListOf<Int>()
+    private val hasHitDelay = mutableListOf<Int>()
     private val lastDamage = mutableMapOf<Int, Int>()
     private val lastDamageVl = mutableMapOf<Int, Float>()
     private val duplicate = mutableListOf<UUID>()
-    private val regex = Regex("\\w{3,16}")
 
     @JvmStatic
     fun isBot(entity: EntityLivingBase): Boolean {
@@ -73,10 +105,6 @@ object AntiBot : Module() {
         // Check if anti bot is enabled
         if (!state) {
             return false
-        }
-
-        if (validNameValue.get() && !entity.name.matches(regex)) {
-            return true
         }
 
         // Anti Bot checks
@@ -100,11 +128,24 @@ object AntiBot : Module() {
             return true
         }
 
-        if (healthValue.get() && (entity.health > 20F || entity.health <= 0F)) {
+        if (healthValue.get() && (entity.health > maxHealthValue.get() || entity.health <= minHealthValue.get() )) {
             return true
         }
 
-        if (spawnInCombatValue.get() && spawnInCombat.contains(entity.entityId)) {
+        if (alwaysInRadiusInCombatingValue.get() && spawnInCombat.contains(entity.entityId)) {
+            return true
+        }
+
+        if (lowWidthValue.get() && entity.width < 0.5F) {
+            return true
+        }
+
+        if(randomHealthValue.get() && randomHealth.contains(entity.entityId)){
+            return true
+        }
+
+        if (hasCustomNameValue.get() && entity.hasCustomName() && (!hasCustomNameStrictValue.get() || entity.getCustomNameTag()
+                .contains(entity.getName()))) {
             return true
         }
 
@@ -120,13 +161,23 @@ object AntiBot : Module() {
             return true
         }
 
+        if (validNameValue.get() && !entity.name.matches(Regex(validNameRegexValue.get()))) {
+            return true
+        }
+
         if (armorValue.get()) {
             if (entity.inventory.armorInventory[0] == null && entity.inventory.armorInventory[1] == null &&
                 entity.inventory.armorInventory[2] == null && entity.inventory.armorInventory[3] == null) {
                 return true
             }
         }
-
+/*        if (invalidArmorValue.get()) {
+            for (it in entity.inventory.armorInventory){
+                if(it != null && it !is ItemArmor){
+                    return true
+                }
+            }
+        }*/
         if (pingValue.get()) {
             if (mc.netHandler.getPlayerInfo(entity.uniqueID)?.responseTime == 0) {
                 return true
@@ -174,10 +225,22 @@ object AntiBot : Module() {
             return true
         }
 
-        if (alwaysInRadiusValue.get() && !notAlwaysInRadius.contains(entity.entityId)) {
+        if (alwaysInRadiusValue.get() && !notAlwaysInRadius.contains(entity.entityId) || alwaysInRadius.contains(entity.entityId)) {
             return true
         }
 
+        if (matrixBotValue.get() && noHitDelay.contains(entity.entityId)) {
+            return true
+        }
+        if (matrixBotValue.get() && matrixBotStrictValue.get() && !hasHitDelay.contains(entity.entityId)) {
+            return true
+        }
+        if (neverMoveValue.get() && !moved.contains(entity.entityId)) {
+            return true
+        }
+        if (neverRotationValue.get() && !turnHead.contains(entity.entityId)) {
+            return true
+        }
         return entity.name.isEmpty() || entity.name == mc.thePlayer.name
     }
 
@@ -222,12 +285,28 @@ object AntiBot : Module() {
                 if (entity.isInvisible && !invisible.contains(entity.entityId)) {
                     invisible.add(entity.entityId)
                 }
-
-                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()) {
+                val dist = mc.thePlayer.getDistance(entity.posX, if (alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                val dist2 = mc.thePlayer.getDistance(entity.posX, if (randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && dist > alwaysRadiusValue.get()) {
                     notAlwaysInRadius.add(entity.entityId)
-                    if (alwaysInRadiusRemoveValue.get()) {
-                        mc.theWorld.removeEntity(entity)
-                    }
+                }
+                if (!notAlwaysInRadius.contains(entity.entityId) && dist < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
+                    alwaysInRadius.add(entity.entityId)
+                }
+                if (!noHitDelay.contains(entity.entityId) && entity.hurtResistantTime < 1 && entity.hurtTime > 9) {
+                    noHitDelay.add(entity.entityId)
+                }
+                if (!hasHitDelay.contains(entity.entityId) && entity.hurtResistantTime > 0 && entity.hurtTime > 9) {
+                    hasHitDelay.add(entity.entityId)
+                }
+                if(!moved.contains(entity.entityId) && (entity.lastTickPosY != entity.posY || entity.lastTickPosX != entity.posX || entity.lastTickPosZ != entity.posZ)){
+                    moved.add(entity.entityId)
+                }
+                if(!turnHead.contains(entity.entityId) && (entity.prevRotationYaw != entity.rotationYaw || entity.prevRotationPitch != entity.rotationPitch)){
+                    turnHead.add(entity.entityId)
+                }
+                if(!randomHealth.contains(entity.entityId) && entity.ticksExisted < randomHealthLivingTimeTicksValue.get() && (entity.health <= maxHealthValue.get() && entity.health >= minHealthValue.get() ) && dist2 < randomHealthRadiusValue.get()){
+                    randomHealth.add(entity.entityId)
                 }
             }
         } else if (packet is S0BPacketAnimation) {
@@ -246,10 +325,6 @@ object AntiBot : Module() {
                         duplicate.add(entry.profile.id)
                     }
                 }
-            }
-        } else if (packet is S0CPacketSpawnPlayer) {
-            if(LiquidBounce.combatManager.inCombat) {
-                spawnInCombat.add(packet.entityID)
             }
         }
 
@@ -281,6 +356,11 @@ object AntiBot : Module() {
         clearAll()
     }
 
+/*    fun isInTabList(player: EntityPlayer): Boolean {
+        return mc.ingameGUI.getTabList().getList()
+            .contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
+    }*/
+
     private fun clearAll() {
         hitted.clear()
         swing.clear()
@@ -290,6 +370,11 @@ object AntiBot : Module() {
         lastDamage.clear()
         lastDamageVl.clear()
         notAlwaysInRadius.clear()
+        alwaysInRadius.clear()
+        noHitDelay.clear()
+        hasHitDelay.clear()
+        moved.clear()
+        turnHead.clear()
         duplicate.clear()
         spawnInCombat.clear()
     }
