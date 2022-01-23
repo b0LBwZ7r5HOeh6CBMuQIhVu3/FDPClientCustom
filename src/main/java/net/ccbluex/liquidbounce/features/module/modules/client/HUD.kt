@@ -1,3 +1,6 @@
+//  updated at : 2022/1/23.
+//
+
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
@@ -53,6 +56,7 @@ object HUD : Module() {
     val fontEpsilonValue = FloatValue("FontVectorEpsilon", 0.5f, 0f, 1.5f)
     val fontDoubleRenderValue = BoolValue("FontDoubleRender", true)
     val fontOnlyASCIIValue = BoolValue("FontOnlyASCII", false)
+    val domainValue = TextValue("domain", "琉璃我爱你我要做你的狗呜呜呜呜我好喜欢琉璃小姐琉璃小姐琉璃小姐琉璃小姐琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃啊啊啊啊啊啊嘚斯")
     private val buttonValue = ListValue("Button", arrayOf("FLine", "Rounded", "Rise", "Vanilla"), "FLine")
 
     private var lastFontEpsilon = 0f
