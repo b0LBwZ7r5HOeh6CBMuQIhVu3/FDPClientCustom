@@ -1,12 +1,4 @@
 /*
- *
- *  * FDPClient Hacked Client
- *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
- *  * DeleteFDP.today
- *
- */
-
-/*
  * LiquidBounce Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
  * http://proxy.liulihaocai.pw/CCBlueX/LiquidBounce/
@@ -30,36 +22,10 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.util.EnumFacing
-import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 
 @ModuleInfo(name = "LongJump", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.FLAG)
 class LongJump : Module() {
-    private val modeValue = ListValue(
-        "Mode",
-        arrayOf(
-            "NCP",
-            "NCPDamage",
-            "AACv1",
-            "AACv2",
-            "AACv3",
-            "Mineplex",
-            "Mineplex2",
-            "Mineplex3",
-            "RedeSkyTest",
-            "RedeSky",
-            "RedeSky2",
-            "RedeSky3",
-            "BlocksMC",
-            "BlocksMC2",
-            "HYT4v4"
-        ),
-        "NCP"
-    )
-    private val ncpDamageMode = ListValue(
-        "ncpDamageMode",
-        arrayOf("Test", "Mini", "OldCubeCraft2", "Vanilla", "MushMC", "OldNCP"),
-        "Test"
-    ).displayable { modeValue.equals("NCPDamage") }
+    private val modeValue = ListValue("Mode", arrayOf("NCP", "NCPDamage", "AACv1", "AACv2", "AACv3", "Mineplex", "Mineplex2", "Mineplex3", "RedeSkyTest", "RedeSky", "RedeSky2", "RedeSky3", "OldBlocksMC", "OldBlocksMC2", "HYT4v4"), "NCP")
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
 
     // redesky
@@ -86,8 +52,6 @@ class LongJump : Module() {
     private val rs3HeightValue = FloatValue("RedeSky3Height", 1F, 0.3F, 1.5F).displayable { modeValue.equals("RedeSky3") }
     private val rs3TimerValue = FloatValue("RedeSky3Timer", 1F, 0.1F, 5F).displayable { modeValue.equals("RedeSky3") }
     private val ncpdInstantValue = BoolValue("NCPDamageInstant", false).displayable { modeValue.equals("NCPDamage") }
-    private val ncpdRandomBoostValue = BoolValue("NCPDamageRandomBoost", false).displayable { modeValue.equals("NCPDamage") }
-
     // settings
     private val autoJumpValue = BoolValue("AutoJump", true)
     private val autoDisableValue = BoolValue("AutoDisable", true)
@@ -138,66 +102,18 @@ class LongJump : Module() {
         if (modeValue.equals("ncpdamage")) {
             if (!damageStat) {
                 mc.thePlayer.setPosition(x, y, z)
-                when (ncpDamageMode.get().lowercase()) {
-                    "test" -> {
-                        if (balance > jumpYPosArr.size * 4) {
-                            repeat(4) {
-                                jumpYPosArr.forEach {
-                                    PacketUtils.sendPacketNoEvent(
-                                        C03PacketPlayer.C04PacketPlayerPosition(
-                                            x,
-                                            y + it,
-                                            z,
-                                            false
-                                        )
-                                    )
-                                }
-                                PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-                            }
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
-                            damageStat = true
+                if (balance > jumpYPosArr.size * 4) {
+                    repeat(4) {
+                        jumpYPosArr.forEach {
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + it, z, false))
                         }
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
                     }
-                    "mini" -> {
-                        repeat(10) {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.3175, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-                        }
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
-                    }
-                    "oldncp" -> {
-                        repeat(3) {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 1.01, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-                        }
-                    }
-                    "oldcubecraft2" -> {
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.prevRotationYaw, mc.thePlayer.prevRotationPitch, false))
-                        repeat(49) {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.06249, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-                        }
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.09, z, false))
-                    }
-                    "vanilla" -> {
-                        repeat(2) {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.00001, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, true))
-                        }
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
-                    }
-                    "mushmc" -> {
-                        repeat(4) {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 1.01, z, false))
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
-
-                        }
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, true))
-                    }
+                    PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
+                    damageStat = true
                 }
             } else {
-                MovementUtils.strafe((if (ncpdRandomBoostValue.get()) RandomUtils.nextFloat(0.20f, 0.50f) else 0.50f) * ncpBoostValue.get())
+                MovementUtils.strafe(0.50f * ncpBoostValue.get())
                 mc.thePlayer.jump()
                 state = false
             }
@@ -334,7 +250,7 @@ class LongJump : Module() {
                         }
                     }
 
-                    "blocksmc" -> {
+                    "oldblocksmc" -> {
                         mc.thePlayer.jumpMovementFactor = 0.1f
                         mc.thePlayer.motionY += 0.0132
                         mc.thePlayer.jumpMovementFactor = 0.09f
@@ -342,7 +258,7 @@ class LongJump : Module() {
                         MovementUtils.strafe()
                     }
 
-                    "blocksmc2" -> {
+                    "oldblocksmc2" -> {
                         mc.thePlayer.motionY += 0.01554
                         MovementUtils.strafe(MovementUtils.getSpeed() * 1.114514f)
                         mc.timer.timerSpeed = 0.917555f
@@ -357,7 +273,7 @@ class LongJump : Module() {
                     "hyt4v4" -> {
                         mc.thePlayer.motionY += 0.031470000997
                         MovementUtils.strafe(MovementUtils.getSpeed() * 1.0114514f)
-                        if(mc.thePlayer.motionY > 0) mc.timer.timerSpeed = 0.8f else mc.timer.timerSpeed = 0.9f
+                        mc.timer.timerSpeed = 1.0114514f
                     }
                 }
             }
@@ -399,9 +315,6 @@ class LongJump : Module() {
             mc.thePlayer.motionX = 0.0
             mc.thePlayer.motionZ = 0.0
             event.zeroXZ()
-        } else if (mode.equals("ncpdamage", ignoreCase = true) && !MovementUtils.isMoving()) {
-            mc.thePlayer.motionX *= 0.6
-            mc.thePlayer.motionZ *= 0.6
         }
     }
 

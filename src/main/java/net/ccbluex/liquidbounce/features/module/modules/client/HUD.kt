@@ -1,12 +1,4 @@
 /*
- *
- *  * FDPClient Hacked Client
- *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
- *  * DeleteFDP.today
- *
- */
-
-/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -18,11 +10,18 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.features.module.modules.client.button.AbstractButtonRenderer
+import net.ccbluex.liquidbounce.features.module.modules.client.button.FLineButtonRenderer
+import net.ccbluex.liquidbounce.features.module.modules.client.button.RiseButtonRenderer
+import net.ccbluex.liquidbounce.features.module.modules.client.button.RoundedButtonRenderer
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.utils.render.Animation
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
-import net.ccbluex.liquidbounce.value.*
-import net.ccbluex.liquidbounce.ui.font.Fonts
+import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.value.FloatValue
+import net.ccbluex.liquidbounce.value.IntegerValue
+import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiChat
 import net.minecraft.util.ResourceLocation
 
@@ -37,25 +36,26 @@ object HUD : Module() {
     val inventoryParticle = BoolValue("InventoryParticle", false)
     private val blurValue = BoolValue("Blur", false)
     val fontChatValue = BoolValue("FontChat", false)
-    val fontType = FontValue("Font", Fonts.font40)
     val chatRectValue = BoolValue("ChatRect", true)
     val chatCombineValue = BoolValue("ChatCombine", true)
-    val chatPositionValue = BoolValue("chatPosition", true)
-    val chatAnimationValue = BoolValue("ChatAnimation", true)
-    val chatAnimationSpeedValue = FloatValue("Chat-AnimationSpeed", 0.1F, 0.01F, 0.1F)
+    val chatAnimValue = BoolValue("ChatAnimation", true)
     val rainbowStart = FloatValue("RainbowStart", 0.41f, 0f, 1f)
     val rainbowStop = FloatValue("RainbowStop", 0.58f, 0f, 1f)
     val rainbowSaturation = FloatValue("RainbowSaturation", 0.7f, 0f, 1f)
     val rainbowBrightness = FloatValue("RainbowBrightness", 1f, 0f, 1f)
     val rainbowSpeed = IntegerValue("RainbowSpeed", 1500, 500, 7000)
-    val domainValue = TextValue("Scoreboard-Domain", "琉璃我爱你我要做你的狗呜呜呜呜我好喜欢琉璃小姐琉璃小姐琉璃小姐琉璃小姐琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃啊啊啊啊啊啊嘚斯")
-
     val arraylistXAxisAnimSpeedValue = IntegerValue("ArraylistXAxisAnimSpeed", 10, 5, 20)
     val arraylistXAxisAnimTypeValue = EaseUtils.getEnumEasingList("ArraylistXAxisAnimType")
     val arraylistXAxisAnimOrderValue = EaseUtils.getEnumEasingOrderList("ArraylistXAxisHotbarAnimOrder")
     val arraylistYAxisAnimSpeedValue = IntegerValue("ArraylistYAxisAnimSpeed", 10, 5, 20)
     val arraylistYAxisAnimTypeValue = EaseUtils.getEnumEasingList("ArraylistYAxisAnimType")
     val arraylistYAxisAnimOrderValue = EaseUtils.getEnumEasingOrderList("ArraylistYAxisHotbarAnimOrder")
+    val fontEpsilonValue = FloatValue("FontVectorEpsilon", 0.5f, 0f, 1.5f)
+    val fontDoubleRenderValue = BoolValue("FontDoubleRender", true)
+    val fontOnlyASCIIValue = BoolValue("FontOnlyASCII", false)
+    private val buttonValue = ListValue("Button", arrayOf("FLine", "Rounded", "Rise", "Vanilla"), "FLine")
+
+    private var lastFontEpsilon = 0f
 
     private var easeAnimation: Animation? = null
     private var easingValue = 0
@@ -83,6 +83,15 @@ object HUD : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         LiquidBounce.hud.update()
+        if(mc.currentScreen == null && lastFontEpsilon != fontEpsilonValue.get()) {
+            lastFontEpsilon = fontEpsilonValue.get()
+            alert("You need to reload FDPClient to apply changes!")
+        }
+    }
+
+    @EventTarget
+    fun onWorld(event: WorldEvent) {
+        lastFontEpsilon = fontEpsilonValue.get()
     }
 
     @EventTarget
@@ -103,9 +112,18 @@ object HUD : Module() {
         LiquidBounce.hud.handleKey('a', event.key)
     }
 
-    fun getEasePos(x: Int): Int {
+    fun getHotbarEasePos(x: Int): Int {
         if(!state || !hotbarEaseValue.get()) return x
         easingValue = x
         return easingValue
+    }
+
+    fun getButtonRenderer(button: GuiButton): AbstractButtonRenderer? {
+        return when (buttonValue.get().lowercase()) {
+            "fline" -> FLineButtonRenderer(button)
+            "rounded" -> RoundedButtonRenderer(button)
+            "rise" -> RiseButtonRenderer(button)
+            else -> null // vanilla or unknown
+        }
     }
 }

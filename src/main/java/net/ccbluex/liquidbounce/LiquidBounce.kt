@@ -1,7 +1,7 @@
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
- * https://github.com/Project-EZ4H/FDPClient/
+ * https://github.com/UnlegitMC/FDPClient/
  */
 package net.ccbluex.liquidbounce
 
@@ -12,6 +12,7 @@ import net.ccbluex.liquidbounce.features.macro.MacroManager
 import net.ccbluex.liquidbounce.features.module.ModuleManager
 import net.ccbluex.liquidbounce.features.special.AntiForge
 import net.ccbluex.liquidbounce.features.special.CombatManager
+import net.ccbluex.liquidbounce.features.special.DiscordRPC
 import net.ccbluex.liquidbounce.features.special.ServerSpoof
 import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.file.MetricsLite
@@ -38,13 +39,14 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import org.apache.commons.io.IOUtils
 import java.nio.charset.StandardCharsets
+import kotlin.concurrent.thread
 
 object LiquidBounce {
 
     // Client information
     const val CLIENT_NAME = "FDPClient"
     const val COLORED_NAME = "§c§lFDP§6§lClient"
-    const val CLIENT_REAL_VERSION = "v2.0.2"
+    const val CLIENT_REAL_VERSION = "v2.1.1"
     const val CLIENT_CREATOR = "CCBlueX & UnlegitMC"
     const val CLIENT_WEBSITE = "GetFDP.Today"
     const val CLIENT_STORAGE = "https://res.getfdp.today/"
@@ -112,8 +114,7 @@ object LiquidBounce {
      * Execute if client will be started
      */
     fun initClient() {
-        ClientUtils.logInfo("«²¿tcoin miner success̀ful loadded with Ô×îĐÂ° mode±¾Á´½ÓÆ÷̀áÈ¡")
-        ClientUtils.logInfo("Loading \"Minecraft hack no virus 2017 free download 100% safe\" 6.9, by zeroCrack")
+        ClientUtils.logInfo("Loading $CLIENT_NAME $CLIENT_VERSION, by $CLIENT_CREATOR")
         val startTime = System.currentTimeMillis()
 
         // Create file manager
@@ -169,7 +170,7 @@ object LiquidBounce {
         keyBindManager = KeyBindManager()
 
         // bstats.org user count display
-        // metricsLite = MetricsLite(11076)
+        metricsLite = MetricsLite(11076)
 
         combatManager = CombatManager()
         eventManager.registerListener(combatManager)
@@ -183,7 +184,15 @@ object LiquidBounce {
 
         fileManager.loadConfigs(fileManager.hudConfig, fileManager.xrayConfig)
 
-        ClientUtils.logInfo("\"Minecraft hack no virus 2017 free download 100% safe\" 6.9 loaded in ${(System.currentTimeMillis() - startTime)}ms!")
+        thread {
+            try {
+                DiscordRPC.run()
+            } catch (e: Throwable) {
+                ClientUtils.logError("Failed to load DiscordRPC.", e)
+            }
+        }
+
+        ClientUtils.logInfo("$CLIENT_NAME $CLIENT_VERSION loaded in ${(System.currentTimeMillis() - startTime)}ms!")
     }
 
     /**
@@ -202,7 +211,7 @@ object LiquidBounce {
         isStarting = false
         isLoadingConfig = false
 
-        ClientUtils.logInfo("\"Minecraft hack no virus 2017 free download 100% safe\" 6.9 started!")
+        ClientUtils.logInfo("$CLIENT_NAME $CLIENT_VERSION started!")
     }
 
     /**
@@ -210,7 +219,7 @@ object LiquidBounce {
      */
     fun stopClient() {
         if (!isStarting && !isLoadingConfig) {
-            ClientUtils.logInfo("Shutting down \"Minecraft hack no virus 2017 free download 100% safe\" 6.9!")
+            ClientUtils.logInfo("Shutting down $CLIENT_NAME $CLIENT_VERSION!")
 
             // Call client shutdown
             eventManager.callEvent(ClientShutdownEvent())
@@ -223,6 +232,11 @@ object LiquidBounce {
             dynamicLaunchOptions.forEach {
                 it.stop()
             }
+        }
+        try {
+            DiscordRPC.stop()
+        } catch (e: Throwable) {
+            ClientUtils.logError("Failed to shutdown DiscordRPC.", e)
         }
     }
 }
