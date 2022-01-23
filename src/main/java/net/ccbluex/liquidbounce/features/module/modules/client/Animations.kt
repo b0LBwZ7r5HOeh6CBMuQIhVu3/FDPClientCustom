@@ -15,7 +15,7 @@ object Animations : Module() {
         "BlockingMode", arrayOf(
             "Akrien", "Avatar", "ETB", "Exhibition", "Push", "Reverse",
             "Shield", "SigmaNew", "SigmaOld", "Slide", "SlideDown", "HSlide", "Swong", "VisionFX",
-            "Swank", "Jello", "Rotate", "Liquid", "None"
+            "Swank", "Jello", "Rotate", "Rotate360", "Liquid", "None"
         ),
         "SlideDown"
     )

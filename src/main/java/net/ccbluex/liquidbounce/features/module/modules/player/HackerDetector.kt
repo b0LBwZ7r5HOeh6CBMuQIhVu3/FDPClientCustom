@@ -272,7 +272,7 @@ class HackerDetector : Module() {
         if (!this.useHacks.contains(type)) this.useHacks.add(type)
         // display debug message
         if (debugMode.get()) {
-            alert("§f${this.player.name} §eis suspected for §2$type §7($msg) §c${this.vl}+$vl")
+            alert("§f${this.player.name} §e$msg ($type) §c${this.vl}+$vl")
         }
         this.vl += vl
 
@@ -282,9 +282,9 @@ class HackerDetector : Module() {
                 use += "$typ,"
             }
             use = use.substring(0, use.length - 1)
-            alert("§f${this.player.name} §eis suspected for §a$use §e#2")
+            alert("§f${this.player.name} §eis suspected for §a$use §e")
             if (notify.get()) {
-                LiquidBounce.hud.addNotification(Notification(name, "${this.player.name} is suspected for ($use) #2", NotifyType.WARNING))
+                LiquidBounce.hud.addNotification(Notification(name, "${this.player.name} is suspected for ($use)", NotifyType.WARNING))
             }
             this.vl = -vlValue.get()
 

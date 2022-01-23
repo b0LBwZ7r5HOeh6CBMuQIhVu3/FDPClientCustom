@@ -242,6 +242,10 @@ public abstract class MixinItemRenderer {
                                 rotateSword(f1);
                                 break;
                             }
+                            case "Rotate360":{
+                                rotateSword360(f1);
+                                break;
+                            }
                             case "Liquid": {
                                 this.transformFirstPersonItem(f + 0.1F, f1);
                                 this.doBlockTransformations();
@@ -319,7 +323,15 @@ public abstract class MixinItemRenderer {
         GlStateManager.translate(-0.5F, 0.2F, 0.0F);
         GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, -0.0F, 2.0F);
     }
-
+    private void rotateSword360(float f1){
+        genCustom(0.0F, 0.0F);
+        doBlockTransformations();
+        GlStateManager.translate(-0.5F, 0.2F, 0.0F);
+        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, -0.0F, 2.0F);
+        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, 1.0F, 0.0F);
+        // GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, 1.0F, 0.0F);
+    }
     private void genCustom(float p_178096_1_, float p_178096_2_) {
         GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
         GlStateManager.translate(0.0F, p_178096_1_ * -0.6F, 0.0F);
