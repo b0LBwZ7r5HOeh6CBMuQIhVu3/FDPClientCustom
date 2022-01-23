@@ -20,11 +20,8 @@ import net.ccbluex.liquidbounce.features.module.modules.client.button.RoundedBut
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.utils.render.Animation
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
-import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.value.FloatValue
-import net.ccbluex.liquidbounce.value.IntegerValue
-import net.ccbluex.liquidbounce.value.ListValue
-import net.ccbluex.liquidbounce.value.TextValue
+import net.ccbluex.liquidbounce.value.*
+import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiChat
 import net.minecraft.util.ResourceLocation
@@ -41,8 +38,12 @@ object HUD : Module() {
     private val blurValue = BoolValue("Blur", false)
     val fontChatValue = BoolValue("FontChat", false)
     val chatRectValue = BoolValue("ChatRect", true)
+    val chatPositionValue = BoolValue("chatPositionValue", true)
+    val fontType = FontValue("Font", Fonts.font40)
     val chatCombineValue = BoolValue("ChatCombine", true)
-    val chatAnimValue = BoolValue("ChatAnimation", true)
+    val chatAnimationValue = BoolValue("ChatAnimation", true)
+    val chatAnimationSpeedValue = FloatValue("Chat-AnimationSpeed", 0.1F, 0.01F, 0.1F)
+    
     val rainbowStart = FloatValue("RainbowStart", 0.41f, 0f, 1f)
     val rainbowStop = FloatValue("RainbowStop", 0.58f, 0f, 1f)
     val rainbowSaturation = FloatValue("RainbowSaturation", 0.7f, 0f, 1f)
