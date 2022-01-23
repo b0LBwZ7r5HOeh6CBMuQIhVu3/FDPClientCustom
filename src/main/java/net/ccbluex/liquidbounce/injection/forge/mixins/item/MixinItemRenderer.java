@@ -131,9 +131,9 @@ public abstract class MixinItemRenderer {
                         break;
                     case BLOCK:
                         if(animations.getState()){
-                            if(animations.getDamageMark().get() && LiquidBounce.combatManager.INSTANCE.getTarget() != null && LiquidBounce.combatManager.INSTANCE.getTarget().hurtTime > 0){
-                                transformFirstPersonItem(f1, 0.0F);
-                            }
+                            /// if(animations.getDamageMark().get() && LiquidBounce.combatManager.INSTANCE.getTarget() != null && LiquidBounce.combatManager.INSTANCE.getTarget().hurtTime > 0){
+                            ///     transformFirstPersonItem(f1, 0.0F);
+                            /// }
                             GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
                             switch (animations.getPresetValue().get()) {
                                 case "Akrien": {
