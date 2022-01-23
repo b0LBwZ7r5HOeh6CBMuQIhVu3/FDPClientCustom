@@ -24,6 +24,7 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiChat
 import net.minecraft.util.ResourceLocation
