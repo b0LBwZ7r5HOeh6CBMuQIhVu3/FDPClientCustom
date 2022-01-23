@@ -252,11 +252,11 @@ class HackerDetector : Module() {
                 data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + " in the air(speed=$distanceXZ,limit=$limit,predict=$predict)")
             }
         }
-        if (abs(data.motionX) > 100
-            || abs(data.motionZ) > 100) {
-            flag("teleport", 30, data, " moved 100+ blocks in a tick")
-            passed = false
-        }
+        // if (abs(data.motionX) > 100
+        //     || abs(data.motionZ) > 100) {
+        //     flag("teleport", 30, data, " moved 100+ blocks in a tick")
+        //     passed = false
+        // }
 //        if (player.isBlocking && (abs(data.motionX) > 0.2 || abs(data.motionZ) > 0.2)) {
 //            flag("speed",30,data,"HIGH SPEED(BLOCKING)") //blocking is just noslow lol
 //            passed=false
