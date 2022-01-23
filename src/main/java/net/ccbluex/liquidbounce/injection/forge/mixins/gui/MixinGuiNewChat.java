@@ -141,7 +141,7 @@ public abstract class MixinGuiNewChat {
         checkHud();
         boolean canFont=hud.getState() && hud.getFontChatValue().get();
 
-        if (hud.getChatPositionValue.get()) {
+        if (hud.getChatPositionValue().get()) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, -12, 0);
         }
@@ -244,7 +244,7 @@ public abstract class MixinGuiNewChat {
             }
         }
 
-        if (Patcher.chatPosition.get())
+        if(hud.getChatPositionValue().get())
             GlStateManager.popMatrix();
     }
 
