@@ -1,3 +1,6 @@
+//  updated at : 2022/1/24.
+//
+
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
@@ -498,8 +501,7 @@ class Velocity : Module() {
             if (onlyHitVelocityValue.get() && (packet.getMotionX() < 1 || packet.getMotionZ() < 1)) return
             if (alertValue.get()) {
                 alert(
-                    "Velocity §7» " + packet.getMotionX().toString() + packet.getMotionY()
-                        .toString() + packet.getMotionZ().toString()
+                    "Velocity §7» " + (packet.getMotionX() + packet.getMotionY() + packet.getMotionZ()).toString()
                 )
             }
             velocityTimer.reset()
