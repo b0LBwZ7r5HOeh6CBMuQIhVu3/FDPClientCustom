@@ -516,7 +516,7 @@ class NoFall : Module() {
                 packet.onGround = true
                 needSpoof = false
             } else if (mode.equals("Damage", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 3.5) {
-                packet.onGround = true
+                packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
             } else if (mode.equals("Packet1", ignoreCase = true) && packetModify) {
                 packet.onGround = true
                 packetModify = false
