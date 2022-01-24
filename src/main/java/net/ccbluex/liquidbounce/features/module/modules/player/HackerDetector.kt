@@ -1,4 +1,4 @@
-//  updated at : 2022/1/23.
+//  updated at : 2022/1/24.
 //
 
 
@@ -52,7 +52,7 @@ class HackerDetector : Module() {
     fun onUpdate(event: UpdateEvent) {
         // this takes a bit time so we do it async
         // ok my compute is so trash so i added this trash delay
-        if (mc.thePlayer!!.ticksExisted % 10 == 0) {
+        if (mc.thePlayer!!.ticksExisted % 3 == 0) {
             Thread { doGC(clearValue.get()) }.start()
             clearValue.set(false)
         }
