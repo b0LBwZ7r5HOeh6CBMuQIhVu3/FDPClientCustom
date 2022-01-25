@@ -95,7 +95,6 @@ object AntiBot : Module() {
     private val lastDamageVl = mutableMapOf<Int, Float>()
     private val duplicate = mutableListOf<UUID>()
 
-    @JvmStatic
     fun isBot(entity: EntityLivingBase): Boolean {
         // Check if entity is a player
         if (entity !is EntityPlayer) {
