@@ -28,9 +28,11 @@ public class MixinNetworkPlayerInfo {
     private void injectSkinProtect(CallbackInfoReturnable<ResourceLocation> cir) {
         NameProtect nameProtect = LiquidBounce.moduleManager.getModule(NameProtect.class);
 
+
         if (nameProtect.getState() && nameProtect.skinProtectValue.get()) {
             if (nameProtect.allPlayersValue.get() || Objects.equals(gameProfile.getId(), Minecraft.getMinecraft().getSession().getProfile().getId())) {
                 cir.setReturnValue(DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) == "default" ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
+
                 cir.cancel();
             }
         }

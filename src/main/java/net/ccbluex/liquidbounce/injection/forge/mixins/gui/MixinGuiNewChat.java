@@ -209,11 +209,13 @@ public abstract class MixinGuiNewChat {
                                 int i2 = 0;
                                 int j2 = -i1 * 9;
 
+
                                 if(hud.getState() && hud.getChatRectValue().get()) {
                                     if (hud.getChatAnimationValue().get() && lineBeingDrawn <= newLines && !flag)
                                         RenderUtils.drawRect(i2, j2 - 9, i2 + l + 4, j2, new Color(0F, 0F, 0F, animationPercent * ((float)d0 / 2F)).getRGB());
                                     else
                                         RenderUtils.drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
+
                                 }
 
                                 GlStateManager.resetColor();
@@ -221,10 +223,12 @@ public abstract class MixinGuiNewChat {
 
                                 String s = fixString(chatline.getChatComponent().getFormattedText());
                                 GlStateManager.enableBlend();
+
                                 if (hud.getState() && hud.getChatAnimationValue().get() && lineBeingDrawn <= newLines) 
                                     (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), new Color(1F, 1F, 1F, animationPercent * (float)d0).getRGB(), true);
                                 else
                                     (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), 16777215 + (l1 << 24), true);
+
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
                             }
