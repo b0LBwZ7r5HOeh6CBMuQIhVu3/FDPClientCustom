@@ -24,10 +24,12 @@ import net.minecraft.util.BlockPos
 
 @ModuleInfo(name = "Jesus", category = ModuleCategory.MOVEMENT)
 class Jesus : Module() {
-    val modeValue = ListValue("Mode", arrayOf("Vanilla", "NCP", "Jump", "AAC", "AACFly", "AAC3.3.11", "AAC4.2.1","AACTest" , "Horizon1.4.6", "Spartan", "Twilight", "Matrix", "Dolphin", "Legit"), "Vanilla")
+    val modeValue = ListValue("Mode", arrayOf("Vanilla", "NCP", "Jump", "AAC", "AACFly", "AAC3.3.11", "AAC4.2.1","AACTest" , "Horizon1.4.6", "Spartan", "Twilight", "Matrix", "Dolphin", "Legit","Speed"), "Vanilla")
     private val noJumpValue = BoolValue("NoJump", false)
     private val jumpMotionValue = FloatValue("JumpMotion", 0.5f, 0.1f, 1f)
         .displayable { modeValue.equals("Jump") || modeValue.equals("AACFly") }
+    private val speedValue = FloatValue("Speed", 1.3f, 1f, 1.5f)
+        .displayable { modeValue.equals("Speed") }
 
     private var nextTick = false
 
@@ -47,6 +49,12 @@ class Jesus : Module() {
             "ncp" -> {
                 if (isLiquidBlock() && mc.thePlayer.isInsideOfMaterial(Material.air)) {
                     mc.thePlayer.motionY = 0.08
+                }
+            }
+            "speed" -> {
+                if (isLiquidBlock() && mc.thePlayer.isInsideOfMaterial(Material.air)) {
+                    mc.thePlayer.motionX *= speedValue.get()
+                    mc.thePlayer.motionZ *= speedValue.get()
                 }
             }
             "jump" -> {
