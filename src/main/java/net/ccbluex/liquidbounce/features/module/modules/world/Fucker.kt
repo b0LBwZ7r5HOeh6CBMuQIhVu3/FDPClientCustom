@@ -82,7 +82,7 @@ object Fucker : Module() {
             return
         }
         if(BlockUtils.getCenterDistance(teamPos?:BlockPos(0,0,0)) > rangeValue.get()+3 && teamsValue.get()){
-            return
+            continue
         }
         if(delayValue.get() && !delayTimer.hasTimePassed(delayTimeValue.get().toLong()) ){
             return
