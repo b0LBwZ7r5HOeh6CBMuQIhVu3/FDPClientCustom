@@ -3,6 +3,7 @@ package net.ccbluex.liquidbounce.features.module.modules.movement
 import net.ccbluex.liquidbounce.event.BlockBBEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.UpdateEvent
+import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -63,7 +64,7 @@ class Spider : Module() {
         val packet = event.packet
         if (packet is C03PacketPlayer && glitch) {
             glitch = false
-            val yaw = MovementUtils.direction.toFloat()
+            val yaw = MovementUtils.direction
             packet.x = packet.x - sin(yaw) * 0.00000001
             packet.z = packet.z + cos(yaw) * 0.00000001
         }
