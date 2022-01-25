@@ -86,6 +86,8 @@ class Matrix117Fly : FlyMode("Matrix1.17") {
                     yChanged = true
                     fly.launchY -= 1
                 }
+            } else {
+                yChanged = false
             }
             mc.thePlayer.jump()
             if(yChanged) {
@@ -99,7 +101,6 @@ class Matrix117Fly : FlyMode("Matrix1.17") {
         if(mc.thePlayer.motionY < 0) {
             mc.thePlayer.motionX *= 0.7
             mc.thePlayer.motionZ *= 0.7
-            yChanged = false
         }
         mc.timer.timerSpeed = 1.7f
         if(ySpoofValue.get()){
