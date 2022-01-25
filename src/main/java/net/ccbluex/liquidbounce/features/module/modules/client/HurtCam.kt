@@ -59,7 +59,7 @@ class HurtCam : Module() {
         when (modeValue.get().lowercase()) {
             "fps" -> {
                 if (packet is S19PacketEntityStatus) {
-                    if (packet.opCode.toInt() == 2 && packet.getEntity(mc.theWorld).equals(mc.thePlayer)) {
+                    if (packet.opCode.toInt() == 2 && packet.getEntity(mc.theWorld!!).equals(mc.thePlayer!!)) {
                         hurt = System.currentTimeMillis()
                     }
                 }

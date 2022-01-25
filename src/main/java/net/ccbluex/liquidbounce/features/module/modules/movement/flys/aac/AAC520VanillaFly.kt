@@ -1,3 +1,11 @@
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.aac
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -17,6 +25,7 @@ import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.minecraft.util.AxisAlignedBB
 
 class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
@@ -119,40 +128,61 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
     private fun sendPackets() {
         var yaw = mc.thePlayer.rotationYaw
         var pitch = mc.thePlayer.rotationPitch
-        if (packetModeValue.get() == "Old") {
-            for (packet in packets) {
-                if (packet.isMoving) {
-                    sendPacketNoEvent(packet)
-                    if (packet.getRotating()) {
-                        yaw = packet.yaw
-                        pitch = packet.pitch
-                    }
-                    if (useC04Value.get()) {
-                        sendPacketNoEvent(C04PacketPlayerPosition(packet.x, 1e+308, packet.z, true))
-                        sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
-                    } else {
-                        sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, 1e+308, packet.z, yaw, pitch, true))
-                        sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, true))
-                    }
-                }
-            }
-        } else {
-            for (packet in packets) {
-                if (packet.isMoving) {
-                    sendPacketNoEvent(packet)
-                    if (packet.getRotating()) {
-                        yaw = packet.yaw
-                        pitch = packet.pitch
-                    }
-                    if (useC04Value.get()) {
-                        sendPacketNoEvent(C04PacketPlayerPosition(packet.x, -1e+159, packet.z + 10, true))
-                        sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
-                    } else {
-                        sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, -1e+159, packet.z + 10, yaw, pitch, true))
-                        sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, true))
+        when (packetModeValue.get().lowercase()) {
+            "old" -> {
+                for (packet in packets) {
+                    if (packet.isMoving) {
+                        sendPacketNoEvent(packet)
+                        if (packet.getRotating()) {
+                            yaw = packet.yaw
+                            pitch = packet.pitch
+                        }
+                        if (useC04Value.get()) {
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, 1e+308, packet.z, true))
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
+                        } else {
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, 1e+308, packet.z, yaw, pitch, true))
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, true))
+                        }
                     }
                 }
             }
+            "rise" -> {
+                for (packet in packets) {
+                    if (packet.isMoving) {
+                        sendPacketNoEvent(packet)
+                        if (packet.getRotating()) {
+                            yaw = packet.yaw
+                            pitch = packet.pitch
+                        }
+                        if (useC04Value.get()) {
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, -1e+159, packet.z + 10, true))
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
+                        } else {
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, -1e+159, packet.z + 10, yaw, pitch, true))
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, true))
+                        }
+                    }
+                }
+            }
+/*            "test" -> {
+                for (packet in packets) {
+                    if (packet.isMoving) {
+                        sendPacketNoEvent(packet)
+                        if (packet.getRotating()) {
+                            yaw = packet.yaw
+                            pitch = packet.pitch
+                        }
+                        if (useC04Value.get()) {
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, -8.0E+307 + RandomUtils.nextDouble(43.469983, 69), packet.z, true))
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, false))
+                        } else {
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, -8.0E+307 + RandomUtils.nextDouble(43.469983, 69), packet.z, yaw, pitch, true))
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, false))
+                        }
+                    }
+                }
+            }*/
         }
         packets.clear()
     }

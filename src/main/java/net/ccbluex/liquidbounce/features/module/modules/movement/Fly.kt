@@ -1,3 +1,14 @@
+//  updated at : 2022/1/24.
+//
+
+/*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
 package net.ccbluex.liquidbounce.features.module.modules.movement
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -14,6 +25,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.server.S19PacketEntityStatus
 import org.lwjgl.input.Keyboard
 import java.awt.Color
+import kotlin.math.sqrt
 
 @ModuleInfo(name = "Fly", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.FLAG, keyBind = Keyboard.KEY_F)
 class Fly : Module() {
@@ -71,6 +83,7 @@ class Fly : Module() {
 
         mc.timer.timerSpeed = 1F
         mc.thePlayer.speedInAir = 0.02F
+        mc.thePlayer.speedOnGround = 0.1F
 
         if (motionResetValue.get()) {
             mc.thePlayer.motionX = 0.0
@@ -91,6 +104,7 @@ class Fly : Module() {
             if (markValue.equals("Up")) launchY + 2.0 else launchY,
             if (mc.thePlayer.entityBoundingBox.maxY < launchY + 2.0) Color(0, 255, 0, 90) else Color(255, 0, 0, 90),
             1.0)
+        mode.onRender3d(event)
     }
 
     @EventTarget

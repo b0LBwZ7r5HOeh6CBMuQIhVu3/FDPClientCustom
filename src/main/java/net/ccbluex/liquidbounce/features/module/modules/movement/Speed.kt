@@ -94,6 +94,8 @@ class Speed : Module() {
     override fun onDisable() {
         if (mc.thePlayer == null) return
         mc.timer.timerSpeed = 1f
+        mc.thePlayer.speedInAir = 0.02F
+        mc.thePlayer.speedOnGround = 0.1F
         mode.onDisable()
     }
 

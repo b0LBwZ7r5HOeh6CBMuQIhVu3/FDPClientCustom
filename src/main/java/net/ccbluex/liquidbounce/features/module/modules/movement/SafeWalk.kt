@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -17,6 +25,9 @@ class SafeWalk : Module() {
 
     private val airSafeValue = BoolValue("AirSafe", false)
     private val onlyVoidValue = BoolValue("OnlyPredictVoid", false)
+    private val aacapTestValue = BoolValue("aacapTest", false)
+
+    private var sneaked = false
 
     @EventTarget
     fun onMove(event: MoveEvent) {
@@ -26,17 +37,28 @@ class SafeWalk : Module() {
             if (airSafeValue.get() || mc.thePlayer.onGround) {
                 event.isSafeWalk = true
             }
+            if (aacapTestValue.get()) if (event.x == (0).toDouble() && event.y == (0).toDouble() && event.z == (0).toDouble()) {
+                if (!sneaked) {
+                    mc.gameSettings.keyBindSneak.pressed = true
+                    sneaked = true
+                }
+            } else if (sneaked) {
+                mc.gameSettings.keyBindSneak.pressed = false
+                sneaked = false
+            }
+
         }
     }
 
     private fun checkVoid(): Boolean {
-        var i = (-(mc.thePlayer.posY-1.4857625)).toInt()
+        var i = (-(mc.thePlayer.posY - 1.4857625)).toInt()
         var dangerous = true
-		while (i <= 0) {
-			dangerous = mc.theWorld.getCollisionBoxes(mc.thePlayer.entityBoundingBox.offset(mc.thePlayer.motionX * 1.4, i.toDouble(), mc.thePlayer.motionZ * 1.4)).isEmpty()
-			i++
-			if (!dangerous) break
-		}
+        while (i <= 0) {
+            dangerous = mc.theWorld.getCollisionBoxes(mc.thePlayer.entityBoundingBox.offset(mc.thePlayer.motionX * 1.4, i.toDouble(), mc.thePlayer.motionZ * 1.4))
+                .isEmpty()
+            i++
+            if (!dangerous) break
+        }
         return dangerous
     }
 }

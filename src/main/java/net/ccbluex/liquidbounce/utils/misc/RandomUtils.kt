@@ -5,6 +5,7 @@
  */
 package net.ccbluex.liquidbounce.utils.misc
 
+import java.lang.StringBuilder
 import java.util.*
 
 object RandomUtils {

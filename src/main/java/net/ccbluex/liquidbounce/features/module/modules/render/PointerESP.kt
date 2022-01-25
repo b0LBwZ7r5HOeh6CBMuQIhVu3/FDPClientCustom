@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -27,6 +35,7 @@ import kotlin.math.*
 
 @ModuleInfo(name = "PointerESP", category = ModuleCategory.RENDER)
 class PointerESP : Module() {
+
     private val dimensionValue = ListValue("Dimension", arrayOf("2d", "3d"), "2d")
     private val modeValue = ListValue("Mode", arrayOf("Solid", "Line", "LoopLine"), "Solid")
     private val lineWidthValue = FloatValue("LineWidth", 4f, 1f, 10f).displayable { modeValue.get().contains("Line") }
@@ -54,6 +63,7 @@ class PointerESP : Module() {
             return
 
         val sr = ScaledResolution(mc)
+
 
         GL11.glPushMatrix()
         GL11.glTranslatef(sr.scaledWidth / 2f, sr.scaledHeight / 2f, 0.0f)
@@ -112,6 +122,7 @@ class PointerESP : Module() {
                 val sin = sin(mc.thePlayer.rotationYaw * (Math.PI / 180))
                 val rotY = -(pos2 * cos - pos1 * sin)
                 val rotX = -(pos1 * cos + pos2 * sin)
+
                 val angle = (atan2(rotY, rotX) * 180 / Math.PI).toFloat() + 90f
                 RenderUtils.glColor(if(entity.hurtTime > 0) { if(smoothDamageColorValue.get()) {
                     val percent = entity.hurtPercent.let { if(it > 0.5) { it - 0.5f } else { 0.5f - it } } * 2
@@ -140,6 +151,7 @@ class PointerESP : Module() {
                         GL11.glVertex2d(sin(halfAngle * Math.PI / 180) * size, radius + cos(halfAngle * Math.PI / 180) * size)
                         if(modeValue.equals("LoopLine")) {
                             GL11.glVertex2d(sin(-halfAngle * Math.PI / 180) * size, radius + cos(-halfAngle * Math.PI / 180) * size)
+
                         }
                     }
                 }

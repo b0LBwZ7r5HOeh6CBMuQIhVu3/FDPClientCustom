@@ -36,7 +36,8 @@ class AutoPot : Module() {
     private val simulateInventory = BoolValue("SimulateInventory", true)
     private val regen = BoolValue("Regen", true)
     private val utility = BoolValue("Utility", true)
-    private val notCombat = BoolValue("NotCombat", true)
+    private val notCombat = BoolValue("NoCombat", true)
+    private val noAir = BoolValue("NoAir", true)
 
     private var throwing = false
     private var throwTime = 0
@@ -45,11 +46,11 @@ class AutoPot : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (notCombat.get() && LiquidBounce.combatManager.inCombat) return
-        if (!mc.thePlayer.onGround) return
+        if (!mc.thePlayer.onGround && noAir.get()) return
 
         if (throwing) {
             throwTime++
-            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.rotationYaw, 90F))
+            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.prevRotationYaw + 180, 88F))
             if (throwTime == throwTickValue.get()) {
                 mc.netHandler.addToSendQueue(C09PacketHeldItemChange(pot - 36))
                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.heldItem))

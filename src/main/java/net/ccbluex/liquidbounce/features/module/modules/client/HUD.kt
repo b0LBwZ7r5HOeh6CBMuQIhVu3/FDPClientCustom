@@ -1,3 +1,6 @@
+//  updated at : 2022/1/23.
+//
+
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
@@ -17,10 +20,8 @@ import net.ccbluex.liquidbounce.features.module.modules.client.button.RoundedBut
 import net.ccbluex.liquidbounce.ui.client.hud.designer.GuiHudDesigner
 import net.ccbluex.liquidbounce.utils.render.Animation
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
-import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.value.FloatValue
-import net.ccbluex.liquidbounce.value.IntegerValue
-import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.*
+import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiChat
 import net.minecraft.util.ResourceLocation
@@ -37,8 +38,12 @@ object HUD : Module() {
     private val blurValue = BoolValue("Blur", false)
     val fontChatValue = BoolValue("FontChat", false)
     val chatRectValue = BoolValue("ChatRect", true)
+    val chatPositionValue = BoolValue("chatPositionValue", true)
+    val fontType = FontValue("Font", Fonts.font40)
     val chatCombineValue = BoolValue("ChatCombine", true)
-    val chatAnimValue = BoolValue("ChatAnimation", true)
+    val chatAnimationValue = BoolValue("ChatAnimation", true)
+    val chatAnimationSpeedValue = FloatValue("Chat-AnimationSpeed", 0.1F, 0.01F, 0.1F)
+    
     val rainbowStart = FloatValue("RainbowStart", 0.41f, 0f, 1f)
     val rainbowStop = FloatValue("RainbowStop", 0.58f, 0f, 1f)
     val rainbowSaturation = FloatValue("RainbowSaturation", 0.7f, 0f, 1f)
@@ -53,6 +58,7 @@ object HUD : Module() {
     val fontEpsilonValue = FloatValue("FontVectorEpsilon", 0.5f, 0f, 1.5f)
     val fontDoubleRenderValue = BoolValue("FontDoubleRender", true)
     val fontOnlyASCIIValue = BoolValue("FontOnlyASCII", false)
+    val domainValue = TextValue("domain", "琉璃我爱你我要做你的狗呜呜呜呜我好喜欢琉璃小姐琉璃小姐琉璃小姐琉璃小姐琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃琉璃啊啊啊啊啊啊嘚斯")
     private val buttonValue = ListValue("Button", arrayOf("FLine", "Rounded", "Rise", "Vanilla"), "FLine")
 
     private var lastFontEpsilon = 0f

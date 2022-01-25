@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -45,6 +53,7 @@ class Text(
         val HOUR_FORMAT = SimpleDateFormat("HH:mm")
 
         val DECIMAL_FORMAT = DecimalFormat("#.##")
+        val DECIMAL_FORMAT_INT = DecimalFormat("0")
     }
 
     val displayString = TextValue("DisplayText", "")
@@ -88,13 +97,26 @@ class Text(
                 "x" -> return DECIMAL_FORMAT.format(mc.thePlayer.posX)
                 "y" -> return DECIMAL_FORMAT.format(mc.thePlayer.posY)
                 "z" -> return DECIMAL_FORMAT.format(mc.thePlayer.posZ)
+                "xInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.posX)
+                "yInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.posY)
+                "zInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.posZ)
                 "xdp" -> return mc.thePlayer.posX.toString()
                 "ydp" -> return mc.thePlayer.posY.toString()
                 "zdp" -> return mc.thePlayer.posZ.toString()
                 "velocity" -> return DECIMAL_FORMAT.format(sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ))
                 "ping" -> return "${mc.thePlayer.ping}"
+                "health" -> return DECIMAL_FORMAT.format(mc.thePlayer.health)
+                "maxHealth" -> return DECIMAL_FORMAT.format(mc.thePlayer.maxHealth)
+                "healthInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.health)
+                "maxHealthInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.maxHealth)
+                "yaw" -> return DECIMAL_FORMAT.format(mc.thePlayer.rotationYaw)
+                "pitch" -> return DECIMAL_FORMAT.format(mc.thePlayer.rotationPitch)
+                "yawInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.rotationYaw)
+                "pitchInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.rotationPitch)
                 "speed" -> return DECIMAL_FORMAT.format(MovementUtils.bps)
-                "attackDist" -> return if (LiquidBounce.combatManager.target != null) mc.thePlayer.getDistanceToEntity(LiquidBounce.combatManager.target).toString() + " Blocks" else "Hasn't attacked"
+                "hurtTime" -> return mc.thePlayer.hurtTime.toString()
+                "onGround" -> return if (mc.thePlayer.onGround) "OnGround" else "OffGround"
+                "attackDist" -> return if (LiquidBounce.combatManager.target != null) LiquidBounce.combatManager.attackRange.toString() + " Blocks" else "Hasn't attacked"
             }
         }
 

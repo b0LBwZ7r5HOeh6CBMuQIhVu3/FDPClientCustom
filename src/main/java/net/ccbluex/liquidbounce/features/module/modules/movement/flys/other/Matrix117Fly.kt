@@ -18,6 +18,7 @@ class Matrix117Fly : FlyMode("Matrix1.17") {
      * 在空中发送onGround包会增加FakeGround VL
      */
     private val resetFallDistValue = BoolValue("${valuePrefix}-SpoofGround", true)
+    private val ySpoofValue = BoolValue("${valuePrefix}-ySpoof", true)
 
     private var dontPlace = false
     private var airCount = 0
@@ -101,6 +102,11 @@ class Matrix117Fly : FlyMode("Matrix1.17") {
             yChanged = false
         }
         mc.timer.timerSpeed = 1.7f
+        if(ySpoofValue.get()){
+            mc.thePlayer.posY = fly.launchY+0.2
+            mc.thePlayer.prevPosY = fly.launchY+0.2
+            mc.thePlayer.lastTickPosY = fly.launchY+0.2
+        }
     }
 
     override fun onPacket(event: PacketEvent) {

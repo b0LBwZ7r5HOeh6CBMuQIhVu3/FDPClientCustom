@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -19,6 +27,8 @@ import net.minecraft.network.play.server.S08PacketPlayerPosLook
 class NoRotateSet : Module() {
 
     private val confirmValue = BoolValue("Confirm", true)
+    private val confirmBackValue = BoolValue("ConfirmBack", true)
+    private val usePrevRotationValue = BoolValue("usePrevRotation", true)
     private val illegalRotationValue = BoolValue("ConfirmIllegalRotation", false)
     private val noZeroValue = BoolValue("NoZero", false)
 
@@ -32,18 +42,23 @@ class NoRotateSet : Module() {
             if (noZeroValue.get() && packet.getYaw() == 0F && packet.getPitch() == 0F) {
                 return
             }
+            val yaw = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationYaw else mc.thePlayer.rotationYaw
+            val pitch = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationPitch else mc.thePlayer.rotationPitch
 
             if (illegalRotationValue.get() || packet.getPitch() <= 90 && packet.getPitch() >= -90 &&
-                    RotationUtils.serverRotation != null && packet.getYaw() != RotationUtils.serverRotation.yaw &&
-                    packet.getPitch() != RotationUtils.serverRotation.pitch) {
+                RotationUtils.serverRotation != null && packet.getYaw() != RotationUtils.serverRotation.yaw &&
+                packet.getPitch() != RotationUtils.serverRotation.pitch) {
 
                 if (confirmValue.get()) {
                     mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw(), packet.getPitch(), mc.thePlayer.onGround))
                 }
+                if (confirmBackValue.get()) {
+                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround))
+                }
             }
 
-            packet.yaw = mc.thePlayer.rotationYaw
-            packet.pitch = mc.thePlayer.rotationPitch
+            packet.yaw = yaw
+            packet.pitch = pitch
         }
     }
 }

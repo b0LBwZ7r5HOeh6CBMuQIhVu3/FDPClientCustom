@@ -1,3 +1,6 @@
+//  updated at : 2022/1/25.
+//
+
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
@@ -18,11 +21,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import java.util.Random;
 import java.util.Objects;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
+
+    private static final ResourceLocation TEXTURE_LIULIAQUI = new ResourceLocation("fdpclient/skin/TEXTURE_LIULIAQUI.png");
+    private static final ResourceLocation TEXTURE_PIGEON233 = new ResourceLocation("fdpclient/skin/TEXTURE_PIGEON233.png");
 
     @Inject(method = "getLocationCape", at = @At("HEAD"), cancellable = true)
     private void getCape(CallbackInfoReturnable<ResourceLocation> callbackInfoReturnable) {
@@ -67,7 +73,8 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
             if (!nameProtect.getAllPlayersValue().get() && !Objects.equals(getGameProfile().getName(), Minecraft.getMinecraft().thePlayer.getGameProfile().getName()))
                 return;
 
-            callbackInfoReturnable.setReturnValue(DefaultPlayerSkin.getDefaultSkin(getUniqueID()));
+            callbackInfoReturnable.setReturnValue(DefaultPlayerSkin.getSkinType(getUniqueID()) == "default" ? TEXTURE_LIULIAQUI : TEXTURE_PIGEON233);
+            // callbackInfoReturnable.setReturnValue(DefaultPlayerSkin.getDefaultSkin(getUniqueID()));
         }
     }
 }

@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -8,6 +16,7 @@ package net.ccbluex.liquidbounce.utils
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.animal
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.dead
+import net.ccbluex.liquidbounce.features.module.modules.client.Target.realDead
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.invisible
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.mob
 import net.ccbluex.liquidbounce.features.module.modules.client.Target.player
@@ -18,6 +27,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.monster.EntityGhast
+import net.minecraft.client.network.NetworkPlayerInfo
 import net.minecraft.entity.monster.EntityGolem
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.entity.monster.EntitySlime
@@ -29,7 +39,7 @@ import net.minecraft.entity.player.EntityPlayer
 
 object EntityUtils : MinecraftInstance() {
     fun isSelected(entity: Entity, canAttackCheck: Boolean): Boolean {
-        if (entity is EntityLivingBase && (dead.get() || entity.isEntityAlive()) && entity !== mc.thePlayer) {
+        if (entity is EntityLivingBase && (dead.get() || entity.isEntityAlive()) && (realDead.get() || entity.deathTime <= 0) && entity !== mc.thePlayer) {
             if (invisible.get() || !entity.isInvisible()) {
                 if (player.get() && entity is EntityPlayer) {
                     if (canAttackCheck) {
@@ -79,5 +89,11 @@ object EntityUtils : MinecraftInstance() {
 
     fun isMob(entity: Entity): Boolean {
         return entity is EntityMob || entity is EntitySlime || entity is EntityGhast || entity is EntityDragon
+    }
+
+    fun getPing(entityPlayer: EntityPlayer?): Int {
+        if (entityPlayer == null) return 0
+        val networkPlayerInfo: NetworkPlayerInfo = mc.getNetHandler().getPlayerInfo(entityPlayer.getUniqueID())
+        return if (networkPlayerInfo == null) 0 else networkPlayerInfo.getResponseTime()
     }
 }

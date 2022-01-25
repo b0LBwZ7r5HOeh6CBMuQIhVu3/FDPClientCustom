@@ -24,7 +24,7 @@ import net.minecraft.util.BlockPos
 
 @ModuleInfo(name = "Jesus", category = ModuleCategory.MOVEMENT)
 class Jesus : Module() {
-    val modeValue = ListValue("Mode", arrayOf("Vanilla", "NCP", "Jump", "AAC", "AACFly", "AAC3.3.11", "AAC4.2.1", "Horizon1.4.6", "Spartan", "Twilight", "Matrix", "Dolphin", "Legit"), "Vanilla")
+    val modeValue = ListValue("Mode", arrayOf("Vanilla", "NCP", "Jump", "AAC", "AACFly", "AAC3.3.11", "AAC4.2.1","AACTest" , "Horizon1.4.6", "Spartan", "Twilight", "Matrix", "Dolphin", "Legit"), "Vanilla")
     private val noJumpValue = BoolValue("NoJump", false)
     private val jumpMotionValue = FloatValue("JumpMotion", 0.5f, 0.1f, 1f)
         .displayable { modeValue.equals("Jump") || modeValue.equals("AACFly") }
@@ -137,6 +137,15 @@ class Jesus : Module() {
                         return
                     } else if (mc.thePlayer.isInWater) {
                         mc.gameSettings.keyBindJump.pressed = true
+                    }
+                }
+            }
+            "aactest" -> {
+                if (BlockUtils.getBlock(blockPos) === Blocks.water || mc.thePlayer.isInWater) {
+                    if (mc.thePlayer.ticksExisted % 2 == 0) {
+                        mc.thePlayer.motionY += 0.05
+                    } else {
+                        mc.thePlayer.motionY -= 0.05
                     }
                 }
             }

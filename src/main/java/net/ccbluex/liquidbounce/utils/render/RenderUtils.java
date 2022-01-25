@@ -1,4 +1,12 @@
 /*
+ *
+ *  * FDPClient Hacked Client
+ *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
+ *  * DeleteFDP.today
+ *
+ */
+
+/*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
@@ -25,6 +33,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Timer;
+import net.minecraft.util.Vec3;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.GLUtessellator;
@@ -105,6 +115,148 @@ public final class RenderUtils extends MinecraftInstance {
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         glDisable(GL_LINE_SMOOTH);
         glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+    }
+    public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color) {
+        drawRoundedRect(paramXStart, paramYStart, paramXEnd, paramYEnd, radius, color, true);
+    }
+
+    public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color, boolean popPush) {
+        float alpha = (color >> 24 & 0xFF) / 255.0F;
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+
+        float z = 0;
+        if (paramXStart > paramXEnd) {
+            z = paramXStart;
+            paramXStart = paramXEnd;
+            paramXEnd = z;
+        }
+
+        if (paramYStart > paramYEnd) {
+            z = paramYStart;
+            paramYStart = paramYEnd;
+            paramYEnd = z;
+        }
+
+        double x1 = (double)(paramXStart + radius);
+        double y1 = (double)(paramYStart + radius);
+        double x2 = (double)(paramXEnd - radius);
+        double y2 = (double)(paramYEnd - radius);
+
+        if (popPush) glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(1);
+
+        glColor4f(red, green, blue, alpha);
+        glBegin(GL_POLYGON);
+    
+        double degree = Math.PI / 180;
+        for (double i = 0; i <= 90; i += 0.25)
+            glVertex2d(x2 + Math.sin(i * degree) * radius, y2 + Math.cos(i * degree) * radius);
+        for (double i = 90; i <= 180; i += 0.25)
+            glVertex2d(x2 + Math.sin(i * degree) * radius, y1 + Math.cos(i * degree) * radius);
+        for (double i = 180; i <= 270; i += 0.25)
+            glVertex2d(x1 + Math.sin(i * degree) * radius, y1 + Math.cos(i * degree) * radius);
+        for (double i = 270; i <= 360; i += 0.25)
+            glVertex2d(x1 + Math.sin(i * degree) * radius, y2 + Math.cos(i * degree) * radius);
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        if (popPush) glPopMatrix();
+    }
+    
+    public static void drawPoses(Color color, java.util.List<Vec3> positions) {
+        glPushMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        mc.entityRenderer.disableLightmap();
+        glBegin(GL_LINE_STRIP);
+        RenderUtils.glColor(color);
+        final double renderPosX = mc.getRenderManager().viewerPosX;
+        final double renderPosY = mc.getRenderManager().viewerPosY;
+        final double renderPosZ = mc.getRenderManager().viewerPosZ;
+
+        for(Vec3 pos : positions)
+            glVertex3d(pos.xCoord - renderPosX, pos.yCoord - renderPosY, pos.zCoord - renderPosZ);
+
+        glColor4d(1, 1, 1, 1);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+
+        RenderUtils.glColor(0, 0, 0, 0);
+    }
+
+    // rTL = radius top left, rTR = radius top right, rBR = radius bottom right, rBL = radius bottom left
+    public static void customRounded(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float rTL, float rTR, float rBR, float rBL, int color) {
+        float alpha = (color >> 24 & 0xFF) / 255.0F;
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+
+        float z = 0;
+        if (paramXStart > paramXEnd) {
+            z = paramXStart;
+            paramXStart = paramXEnd;
+            paramXEnd = z;
+        }
+
+        if (paramYStart > paramYEnd) {
+            z = paramYStart;
+            paramYStart = paramYEnd;
+            paramYEnd = z;
+        }
+
+        double xTL = paramXStart + rTL;
+        double yTL = paramYStart + rTL;
+
+        double xTR = paramXEnd - rTR;
+        double yTR = paramYStart + rTR;
+
+        double xBR = paramXEnd - rBR;
+        double yBR = paramYEnd - rBR;
+
+        double xBL = paramXStart + rBL;
+        double yBL = paramYEnd - rBL;
+
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(1);
+
+        glColor4f(red, green, blue, alpha);
+        glBegin(GL_POLYGON);
+    
+        double degree = Math.PI / 180;
+        for (double i = 0; i <= 90; i += 0.25)
+            glVertex2d(xBR + Math.sin(i * degree) * rBR, yBR + Math.cos(i * degree) * rBR);
+        for (double i = 90; i <= 180; i += 0.25)
+            glVertex2d(xTR + Math.sin(i * degree) * rTR, yTR + Math.cos(i * degree) * rTR);
+        for (double i = 180; i <= 270; i += 0.25)
+            glVertex2d(xTL + Math.sin(i * degree) * rTL, yTL + Math.cos(i * degree) * rTL);
+        for (double i = 270; i <= 360; i += 0.25)
+            glVertex2d(xBL + Math.sin(i * degree) * rBL, yBL + Math.cos(i * degree) * rBL);
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
         glPopMatrix();
     }
 
@@ -525,7 +677,35 @@ public final class RenderUtils extends MinecraftInstance {
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
     }
-
+    public static void drawGradientSidewaysLBP(final double left, final double top, final double right, final double bottom, final int col1, final int col2) {
+        final float f = (col1 >> 24 & 0xFF) / 255.0f;
+        final float f2 = (col1 >> 16 & 0xFF) / 255.0f;
+        final float f3 = (col1 >> 8 & 0xFF) / 255.0f;
+        final float f4 = (col1 & 0xFF) / 255.0f;
+        final float f5 = (col2 >> 24 & 0xFF) / 255.0f;
+        final float f6 = (col2 >> 16 & 0xFF) / 255.0f;
+        final float f7 = (col2 >> 8 & 0xFF) / 255.0f;
+        final float f8 = (col2 & 0xFF) / 255.0f;
+        glEnable(3042);
+        glDisable(3553);
+        glBlendFunc(770, 771);
+        glEnable(2848);
+        glShadeModel(7425);
+        glPushMatrix();
+        glBegin(7);
+        glColor4f(f2, f3, f4, f);
+        glVertex2d(left, top);
+        glVertex2d(left, bottom);
+        glColor4f(f6, f7, f8, f5);
+        glVertex2d(right, bottom);
+        glVertex2d(right, top);
+        glEnd();
+        glPopMatrix();
+        glEnable(3553);
+        glDisable(3042);
+        glDisable(2848);
+        glShadeModel(7424);
+    }
     public static void drawLoadingCircle(float x, float y) {
         for (int i = 0; i < 4; i++) {
             int rot = (int) ((System.nanoTime() / 5000000 * i) % 360);
@@ -618,7 +798,20 @@ public final class RenderUtils extends MinecraftInstance {
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
     }
-
+    public static void drawImage2(ResourceLocation image, float x, float y, int width, int height) {
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glDepthMask(false);
+        OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glTranslatef(x, y, x);
+        mc.getTextureManager().bindTexture(image);
+        Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width, height, width, height);
+        glTranslatef(-x, -y, -x);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+    }
     public static void glColor(final int red, final int green, final int blue, final int alpha) {
         GlStateManager.color(red / 255F, green / 255F, blue / 255F, alpha / 255F);
     }
@@ -774,7 +967,19 @@ public final class RenderUtils extends MinecraftInstance {
         glColor4f(1F, 1F, 1F, 1F);
         glPopMatrix();
     }
-
+/*   public static void drawWolframEntityESP(EntityLivingBase entity, int rgb, double posX, double posY, double posZ) {
+      GL11.glPushMatrix();
+      GL11.glTranslated(posX, posY, posZ);
+      GL11.glRotatef(-entity.rotationYaw, 0.0F, 1.0F, 0.0F);
+      setColor(rgb);
+      enableGL3D(1.0F);
+      Cylinder c = new Cylinder();
+      GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+      c.setDrawStyle(100011);
+      c.draw(0.5F, 0.5F, entity.height + 0.1F, 18, 1);
+      disableGL3D();
+      GL11.glPopMatrix();
+   }*/
     public static void drawLine(final double x, final double y, final double x1, final double y1, final float width) {
         boolean texture2d = GL11.glGetBoolean(GL_TEXTURE_2D);
         setGlCap(GL_TEXTURE_2D, false);
@@ -1008,7 +1213,36 @@ public final class RenderUtils extends MinecraftInstance {
         drawRect(x + width, y1 - width, x1 - width, y1, borderColor);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
+       public static void drawExhiRect(float x, float y, float x2, float y2) {
+       drawRect(x - 3.5F, y - 3.5F, x2 + 3.5F, y2 + 3.5F, Color.black.getRGB());
+       drawRect(x - 3F, y - 3F, x2 + 3F, y2 + 3F, new Color(50, 50, 50).getRGB());
+       drawBorder(x - 1.5F, y - 1.5F, x2 + 1.5F, y2 + 1.5F, 2.5F, new Color(26, 26, 26).getRGB());
+       drawRect(x, y, x2, y2, new Color(18, 18, 18).getRGB());
+   }
 
+
+    // public static void drawBorder(float x, float y, float x2, float y2, float width, int color1) {
+    //     glEnable(GL_BLEND);
+    //     glDisable(GL_TEXTURE_2D);
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //     glEnable(GL_LINE_SMOOTH);
+
+    //     glColor(color1);
+    //     glLineWidth(width);
+
+    //     glBegin(GL_LINE_LOOP);
+
+    //     glVertex2d(x2, y);
+    //     glVertex2d(x, y);
+    //     glVertex2d(x, y2);
+    //     glVertex2d(x2, y2);
+
+    //     glEnd();
+
+    //     glEnable(GL_TEXTURE_2D);
+    //     glDisable(GL_BLEND);
+    //     glDisable(GL_LINE_SMOOTH);
+    // }
     public static void enableSmoothLine(float width) {
         GL11.glDisable(3008);
         GL11.glEnable(3042);

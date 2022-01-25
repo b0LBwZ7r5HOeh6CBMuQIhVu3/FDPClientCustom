@@ -1,3 +1,6 @@
+//  updated at : 2022/1/23.
+//
+
 /*
  * FDPClient Hacked Client
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
@@ -29,12 +32,17 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Iterator;
 import java.util.List;
 
+import java.awt.Color;
+
 @Mixin(GuiNewChat.class)
 public abstract class MixinGuiNewChat {
+    private float displayPercent, animationPercent = 0F;
+    private int lineBeingDrawn, newLines;
 
     @Shadow
     @Final
@@ -115,7 +123,10 @@ public abstract class MixinGuiNewChat {
 
         printChatMessageWithOptionalDeletion(chatComponent, this.line);
     }
-
+    @Inject(method = "printChatMessageWithOptionalDeletion", at = @At("HEAD"))
+    private void resetPercentage(CallbackInfo ci) {
+        displayPercent = 0F;
+    }
     private String fixString(String str){
         str=str.replaceAll("\uF8FF","");//remove air chars
 
@@ -132,13 +143,15 @@ public abstract class MixinGuiNewChat {
     }
 
 
-    /**
-     * @author Liuli
-     */
     @Overwrite
     public void drawChat(int updateCounter) {
         checkHud();
         boolean canFont=hud.getState() && hud.getFontChatValue().get();
+
+        if (hud.getChatPositionValue().get()) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, -12, 0);
+        }
 
         if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
             int i = this.getLineCount();
@@ -151,9 +164,21 @@ public abstract class MixinGuiNewChat {
                     flag = true;
                 }
 
+                if (this.isScrolled || !hud.getState() || !hud.getChatAnimationValue().get()) {
+                    displayPercent = 1F;
+                } else if (displayPercent < 1F) {
+                    displayPercent += hud.getChatAnimationSpeedValue().get() / 10F * RenderUtils.deltaTime;
+                    displayPercent = MathHelper.clamp_float(displayPercent, 0F, 1F);
+                }
+
+                float t = displayPercent;
+                animationPercent = MathHelper.clamp_float(1F - (--t) * t * t * t, 0F, 1F);
+
                 float f1 = this.getChatScale();
                 int l = MathHelper.ceiling_float_int((float)this.getChatWidth() / f1);
                 GlStateManager.pushMatrix();
+                if (hud.getState() && hud.getChatAnimationValue().get())
+                    GlStateManager.translate(0F, (1F - animationPercent) * 9F * this.getChatScale(), 0F);
                 GlStateManager.translate(2.0F, 20.0F, 0.0F);
                 GlStateManager.scale(f1, f1, 1.0F);
 
@@ -162,6 +187,7 @@ public abstract class MixinGuiNewChat {
                 int l1;
                 for(i1 = 0; i1 + this.scrollPos < this.drawnChatLines.size() && i1 < i; ++i1) {
                     ChatLine chatline = this.drawnChatLines.get(i1 + this.scrollPos);
+                    lineBeingDrawn = i1 + this.scrollPos;
                     if (chatline != null) {
                         j1 = updateCounter - chatline.getUpdatedCounter();
                         if (j1 < 200 || flag) {
@@ -178,30 +204,33 @@ public abstract class MixinGuiNewChat {
                             l1 = (int)((float)l1 * f);
                             ++j;
 
+                            //Animation part
                             if (l1 > 3) {
-                                GL11.glPushMatrix();
-
                                 int i2 = 0;
                                 int j2 = -i1 * 9;
 
-                                if(hud.getChatAnimValue().get()&&!flag) {
-                                    if (j1 <= 20) {
-                                        GL11.glTranslatef((float) (-(l + 4) * EaseUtils.INSTANCE.easeInQuart(1 - ((j1+mc.timer.renderPartialTicks) / 20.0))), 0F, 0F);
-                                    }
-                                    if (j1 >= 180) {
-                                        GL11.glTranslatef((float) (-(l + 4) * EaseUtils.INSTANCE.easeInQuart(((j1+mc.timer.renderPartialTicks) - 180) / 20.0)), 0F, 0F);
-                                    }
+
+                                if(hud.getState() && hud.getChatRectValue().get()) {
+                                    if (hud.getChatAnimationValue().get() && lineBeingDrawn <= newLines && !flag)
+                                        RenderUtils.drawRect(i2, j2 - 9, i2 + l + 4, j2, new Color(0F, 0F, 0F, animationPercent * ((float)d0 / 2F)).getRGB());
+                                    else
+                                        RenderUtils.drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
+
                                 }
 
-                                if(hud.getChatRectValue().get()) {
-                                    RenderUtils.drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
-                                }
+                                GlStateManager.resetColor();
+                                GlStateManager.color(1F, 1F, 1F, 1F);
+
+                                String s = fixString(chatline.getChatComponent().getFormattedText());
                                 GlStateManager.enableBlend();
-                                (canFont ? Fonts.font40 : this.mc.fontRendererObj).drawString(chatline.getChatComponent().getFormattedText(), (float)i2, (float)(j2 - 8), 16777215 + (l1 << 24), false);
+
+                                if (hud.getState() && hud.getChatAnimationValue().get() && lineBeingDrawn <= newLines) 
+                                    (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), new Color(1F, 1F, 1F, animationPercent * (float)d0).getRGB(), true);
+                                else
+                                    (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), 16777215 + (l1 << 24), true);
+
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
-
-                                GL11.glPopMatrix();
                             }
                         }
                     }
@@ -225,6 +254,9 @@ public abstract class MixinGuiNewChat {
                 GlStateManager.popMatrix();
             }
         }
+
+        if(hud.getChatPositionValue().get())
+            GlStateManager.popMatrix();
     }
 
     @Inject(method = "getChatComponent", at = @At("HEAD"), cancellable = true)

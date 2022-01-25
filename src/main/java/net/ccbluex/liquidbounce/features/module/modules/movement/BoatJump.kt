@@ -27,6 +27,7 @@ class BoatJump : Module() {
     private val launchRadius = FloatValue("LaunchRadius", 4F, 3F, 10F).displayable { mode.equals("Launch") }
     private val delay = IntegerValue("Delay", 200, 100, 500)
     private val autoHit = BoolValue("AutoHit", true)
+    private val autoDestroy = BoolValue("AutoDestroy", true)
 
     private var jumpState = 1
     private val timer = MSTimer()
@@ -53,7 +54,14 @@ class BoatJump : Module() {
             mc.timer.timerSpeed = 1f
             mc.thePlayer.speedInAir = 0.02f
         }
-
+        if (!mc.thePlayer.isRiding && jumpState == 2 && autoDestroy.get()) {
+            for (entity in mc.theWorld.loadedEntityList) {
+                if (entity is EntityBoat && mc.thePlayer.getDistanceToEntity(entity) < 2.5) {
+                    mc.thePlayer.swingItem()
+                    mc.playerController.attackEntity(mc.thePlayer, entity)
+                }
+            }
+        }
         when (mode.get().lowercase()) {
             "matrix" -> {
                 if (hasStopped) {
@@ -140,6 +148,7 @@ class BoatJump : Module() {
         if (autoHit.get() && !mc.thePlayer.isRiding && hitTimer.hasTimePassed(1500)) {
             for (entity in mc.theWorld.loadedEntityList) {
                 if (entity is EntityBoat && mc.thePlayer.getDistanceToEntity(entity) < 3) {
+                    mc.thePlayer.swingItem()
                     mc.netHandler.addToSendQueue(C02PacketUseEntity(entity, Vec3(0.5, 0.5, 0.5)))
                     mc.netHandler.addToSendQueue(C02PacketUseEntity(entity, C02PacketUseEntity.Action.INTERACT))
                     hitTimer.reset()

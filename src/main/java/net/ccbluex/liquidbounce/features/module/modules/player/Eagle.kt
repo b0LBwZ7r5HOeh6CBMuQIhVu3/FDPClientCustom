@@ -13,12 +13,17 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.minecraft.client.settings.GameSettings
 import net.minecraft.init.Blocks
 import net.minecraft.util.BlockPos
+import net.ccbluex.liquidbounce.value.BoolValue
 
 @ModuleInfo(name = "Eagle", category = ModuleCategory.PLAYER)
 class Eagle : Module() {
+    private val onlyGroundValue = BoolValue("OnlyGround", false)
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if (onlyGroundValue.get() && !mc.thePlayer.onGround) {
+            return
+        }
         mc.gameSettings.keyBindSneak.pressed =
                 mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY - 1.0, mc.thePlayer.posZ)).block == Blocks.air
     }

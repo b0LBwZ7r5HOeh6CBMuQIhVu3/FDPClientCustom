@@ -18,7 +18,7 @@ ui.background.particles=Particles
 ui.background.change=Change wallpaper
 ui.background.reset=Reset wallpaper
 
-ui.chest.stealing=Stealing Chest
+ui.chest.stealing=Stealing... Press Esc to stop.
 ui.chest.disable=Disable %s
 
 ui.gameover.close=Hide This Screen

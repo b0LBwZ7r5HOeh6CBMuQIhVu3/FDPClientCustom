@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement
 
 import net.ccbluex.liquidbounce.event.*
+import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacketNoEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -28,7 +29,8 @@ import org.lwjgl.input.Keyboard
 class InventoryMove : Module() {
 
     private val noDetectableValue = BoolValue("NoDetectable", false)
-    private val bypassValue = ListValue("Bypass", arrayOf("NoOpenPacket", "Blink", "None"), "None")
+    private val bypassValue = ListValue("Bypass", arrayOf("NoOpenPacket", "Blink", "test", "None"), "None")
+    private val testPreValue = BoolValue("testPre", false).displayable { bypassValue.equals("test") }
     private val rotateValue = BoolValue("Rotate", true)
     private val noMoveClicksValue = BoolValue("NoMoveClicks", false)
     val noSprint = ListValue("NoSprint", arrayOf("Real", "PacketSpoof", "None"), "None")
@@ -72,6 +74,12 @@ class InventoryMove : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         updateKeyState()
+        if (invOpen && MovementUtils.isMoving() && bypassValue.equals("test") &&
+            ((event.eventState == EventState.POST && !testPreValue.get()) ||
+                    (event.eventState == EventState.PRE && testPreValue.get()))
+        ) {
+            sendPacketNoEvent(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
+        }
     }
 
     @EventTarget

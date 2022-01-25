@@ -12,6 +12,7 @@ object Target : Module() {
     val mob = BoolValue("Mob", true)
     val invisible = BoolValue("Invisible", false)
     val dead = BoolValue("Dead", false)
+    val realDead = BoolValue("RealDead", false)
 
     // always handle event
     override fun handleEvents() = true

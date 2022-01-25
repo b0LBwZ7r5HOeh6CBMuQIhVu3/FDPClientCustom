@@ -20,7 +20,7 @@ import net.minecraft.util.BlockPos
 
 @ModuleInfo(name = "AntiVoid", category = ModuleCategory.PLAYER)
 class AntiVoid : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("Blink", "TPBack", "MotionFlag", "PacketFlag", "GroundSpoof", "OldHypixel", "Jartex", "OldCubecraft"), "Blink")
+    private val modeValue = ListValue("Mode", arrayOf("Blink", "TPBack", "MotionFlag", "PacketFlag", "GroundSpoof", "OldHypixel", "Jartex", "OldCubecraft", "MinemoraTest", "OldRedesky", "MatrixFlag"), "Blink")
     private val maxFallDistValue = FloatValue("MaxFallDistance", 10F, 5F, 20F)
     private val resetMotion = BoolValue("ResetMotion", false).displayable { modeValue.equals("Blink") }
     private val startFallDistValue = FloatValue("BlinkStartFallDistance", 2F, 0F, 5F).displayable { modeValue.equals("Blink") }
@@ -75,6 +75,33 @@ class AntiVoid : Module() {
                 }
             }
 
+            "minemoratest" -> {
+                if (mc.thePlayer.onGround && BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY - 1.0, mc.thePlayer.posZ)) !is BlockAir) {
+                    posX = mc.thePlayer.prevPosX
+                    posY = mc.thePlayer.prevPosY
+                    posZ = mc.thePlayer.prevPosZ
+                }
+                if (!voidOnly.get() || checkVoid()) {
+                    if (mc.thePlayer.fallDistance > maxFallDistValue.get() && !tried) {
+                        mc.thePlayer.motionX = 0.0
+                        mc.thePlayer.motionY = 0.0
+                        mc.thePlayer.motionZ = 0.0
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, 1.7976931348623157E+308, mc.thePlayer.posZ + 10, false))
+                        mc.thePlayer.setPositionAndUpdate(posX, posY + 0.42, posZ)
+                        mc.thePlayer.fallDistance = 0.0F
+                        tried = true
+                    }
+                }
+            }
+            "oldredesky" -> {
+                if (!voidOnly.get() || checkVoid()) {
+                    if (mc.thePlayer.fallDistance > maxFallDistValue.get() && mc.thePlayer.motionY < 0.2) {
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.5, mc.thePlayer.posZ, false))
+                        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 50, mc.thePlayer.posZ, false))
+                        mc.thePlayer.fallDistance = 0.0F
+                    }
+                }
+            }
             "packetflag" -> {
                 if (!voidOnly.get() || checkVoid()) {
                     if (mc.thePlayer.fallDistance > maxFallDistValue.get() && !tried) {
@@ -83,7 +110,17 @@ class AntiVoid : Module() {
                     }
                 }
             }
-
+            "matrixflag" -> {
+                if (!voidOnly.get() || checkVoid()) {
+                    if (mc.thePlayer.fallDistance > maxFallDistValue.get() && !tried) {
+                        repeat(10) {
+                            mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX + 257, mc.thePlayer.posY - 4567, mc.thePlayer.posZ + 257, false))
+                            mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX - 257, mc.thePlayer.posY - 0, mc.thePlayer.posZ - 257, true))
+                        }
+                        tried = true
+                    }
+                }
+            }
             "tpback" -> {
                 if (mc.thePlayer.onGround && BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY - 1.0, mc.thePlayer.posZ)) !is BlockAir) {
                     posX = mc.thePlayer.prevPosX

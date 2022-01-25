@@ -15,6 +15,27 @@ import java.util.function.Consumer
 import javax.swing.JFileChooser
 import javax.swing.JFrame
 import javax.swing.JOptionPane
+import net.minecraft.util.MinecraftError
+import net.minecraft.world.MinecraftException
+import net.minecraft.util.ReportedException
+import net.minecraft.util.ChatComponentTranslationFormatException
+import net.minecraft.network.ThreadQuickExitException
+import net.minecraft.nbt.NBTException
+import net.minecraft.command.WrongUsageException
+import net.minecraft.command.SyntaxErrorException
+import net.minecraft.command.PlayerNotFoundException
+import net.minecraft.command.NumberInvalidException
+import net.minecraft.command.EntityNotFoundException
+import net.minecraft.command.CommandNotFoundException
+import net.minecraft.command.CommandException
+import net.minecraft.client.util.JsonException
+import net.minecraft.client.resources.ResourcePackFileNotFoundException
+import net.minecraft.client.renderer.StitcherException
+import net.minecraft.client.AnvilConverterException
+import net.minecraft.crash.CrashReport
+import net.minecraft.crash.CrashReportCategory
+import net.minecraft.init.Bootstrap
+import net.ccbluex.liquidbounce.utils.ClientUtils
 
 object MiscUtils : MinecraftInstance() {
     fun showErrorPopup(message: String) {
@@ -34,7 +55,6 @@ object MiscUtils : MinecraftInstance() {
             e.printStackTrace()
         }
     }
-
     fun openFileChooser(): File? {
         if (mc.isFullScreen) mc.toggleFullscreen()
         val fileChooser = JFileChooser()

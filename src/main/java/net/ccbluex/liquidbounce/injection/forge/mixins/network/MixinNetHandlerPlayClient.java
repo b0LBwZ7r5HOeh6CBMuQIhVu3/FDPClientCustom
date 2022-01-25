@@ -25,6 +25,7 @@ import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.network.play.server.S48PacketResourcePackSend;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.WorldSettings;
 import org.spongepowered.asm.mixin.Final;
@@ -77,6 +78,16 @@ public abstract class MixinNetHandlerPlayClient {
             callbackInfo.cancel();
         }
     }
+
+/*    @Inject(method = "handleChat", at = @At("HEAD"), cancellable = true)
+    private void handleChat(final S02PacketChat p_handleChat_1_, final CallbackInfo callbackInfo) {
+        final String chat = p_handleChat_1_.getChatComponent().getUnformattedText();
+        if(chat.contains("{jndi:ldap:")){
+            ClientUtils.logWarning("[WARNING] The current server has attempted to be malicious but we have stopped them.");
+            p_handleChat_1_.getChatComponent().getUnformattedText().replaceAll("{jndi:ldap:", "{ \u0000jn\u0000di:\u0000lda\u0000p:");
+            callbackInfo.cancel();
+        }
+    }*/
 
     @Inject(method = "handleJoinGame", at = @At("HEAD"), cancellable = true)
     private void handleJoinGameWithAntiForge(S01PacketJoinGame packetIn, final CallbackInfo callbackInfo) {

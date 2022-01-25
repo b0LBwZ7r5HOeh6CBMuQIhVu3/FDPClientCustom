@@ -26,6 +26,8 @@ import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.network.play.client.C0APacketAnimation
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
+import net.minecraft.entity.Entity
+import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.Vec3
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -40,6 +42,7 @@ class InfiniteAura : Module() {
     private val noRegen = BoolValue("NoRegen", true)
     private val doSwing = BoolValue("Swing", true).displayable { modeValue.equals("Aura") }
     private val path = BoolValue("PathRender", true)
+    private val voidCheck=BoolValue("VoidCheck",true)
 
     private val timer = MSTimer()
     private var points = ArrayList<Vec3>()
@@ -117,8 +120,25 @@ class InfiniteAura : Module() {
             hit(entity)
         }
     }
-
+    private fun isVoid(entity: EntityLivingBase): Boolean {
+        if (entity.posY < 0.0) {
+            return true
+        }
+        var off = 0
+        while (off < entity.posY.toInt() + 2) {
+            val bb: AxisAlignedBB = mc.thePlayer.entityBoundingBox.offset(entity.posX.toDouble(), (-off).toDouble(), entity.posZ.toDouble())
+            if (mc.theWorld!!.getCollidingBoundingBoxes(entity as Entity, bb).isEmpty()) {
+                off += 2
+                continue
+            }
+            return false
+            off += 2
+        }
+        return true
+    }
     private fun hit(entity: EntityLivingBase) {
+        if(isVoid(entity) && voidCheck.get())
+            return
         val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
 
         path.forEach {

@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
+import net.ccbluex.liquidbounce.event.StrafeEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -19,6 +20,7 @@ import net.ccbluex.liquidbounce.utils.block.BlockUtils
 import net.ccbluex.liquidbounce.utils.extensions.getBlock
 import net.ccbluex.liquidbounce.utils.extensions.getEyeVec3
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
+import net.ccbluex.liquidbounce.event.WorldEvent
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.block.Block
@@ -29,7 +31,9 @@ import net.minecraft.network.play.client.C0APacketAnimation
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.Vec3
+import kotlin.math.sqrt
 import java.awt.Color
+import net.minecraft.util.MathHelper
 
 @ModuleInfo(name = "Fucker", category = ModuleCategory.WORLD)
 object Fucker : Module() {
@@ -46,9 +50,16 @@ object Fucker : Module() {
     private val instantValue = BoolValue("Instant", false)
     private val switchValue = IntegerValue("SwitchDelay", 250, 0, 1000)
     private val rotationsValue = BoolValue("Rotations", true)
+    private val otherRatationsValue = BoolValue("otherRatations", false)
     private val surroundingsValue = BoolValue("Surroundings", true)
     private val noHitValue = BoolValue("NoHit", false)
     private val bypassValue = BoolValue("Bypass", false)
+    private val autoToolValue = BoolValue("AutoTool", false)
+    private val matrixValue = BoolValue("Matrix", false)
+    private val teamsValue = BoolValue("Teams", false)
+    private val rotationStrafeValue = BoolValue("rotationStrafe", true)
+    private val delayValue = BoolValue("Delay", false)
+    private val delayTimeValue = IntegerValue("DelayTime", 10000, 0, 30000)
 
     /**
      * VALUES
@@ -56,13 +67,26 @@ object Fucker : Module() {
 
     private var pos: BlockPos? = null
     private var oldPos: BlockPos? = null
+    private var teamPos: BlockPos? = null
     private var blockHitDelay = 0
     private val switchTimer = MSTimer()
+    private val delayTimer = MSTimer()
     private var isRealBlock = false
     var currentDamage = 0F
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        val targetId = blockValue.get()
+        if(teamPos == null && teamsValue.get()){
+            teamPos = find(targetId)
+            return
+        }
+        if(BlockUtils.getCenterDistance(teamPos?:BlockPos(0,0,0)) > rangeValue.get()+3 && teamsValue.get()){
+            return
+        }
+        if(delayValue.get() && !delayTimer.hasTimePassed(delayTimeValue.get().toLong()) ){
+            return
+        }
         if (noHitValue.get()) {
             val killAura = LiquidBounce.moduleManager[KillAura::class.java]!!
 
@@ -71,7 +95,7 @@ object Fucker : Module() {
             }
         }
 
-        val targetId = blockValue.get()
+        
 
         if (pos == null || Block.getIdFromBlock(BlockUtils.getBlock(pos)) != targetId ||
             BlockUtils.getCenterDistance(pos!!) > rangeValue.get()) {
@@ -132,12 +156,13 @@ object Fucker : Module() {
         when {
             // Destory block
             actionValue.equals("destroy") || surroundings || !isRealBlock -> {
+                mc.thePlayer.isSprinting = false
                 // Auto Tool
                 val autoTool = LiquidBounce.moduleManager[AutoTool::class.java]!!
-                if (autoTool.state) {
+                if (autoTool.state && autoToolValue.get()) {
                     autoTool.switchSlot(currentPos)
                 }
-
+                if(matrixValue.get()) mc.gameSettings.keyBindUseItem.pressed = true
                 // Break block
                 if (instantValue.get()) {
                     // CivBreak style block breaking
@@ -191,7 +216,9 @@ object Fucker : Module() {
                     blockHitDelay = 4
                     currentDamage = 0F
                     pos = null
+                    mc.thePlayer.isSprinting = true
                 }
+                if(matrixValue.get()) mc.gameSettings.keyBindUseItem.pressed = false
             }
 
             // Use block
@@ -210,12 +237,47 @@ object Fucker : Module() {
             }
         }
     }
+    @EventTarget
+    fun onStrafe(event: StrafeEvent) {
+        if(!rotationStrafeValue.get())
+            return
+        val (yaw) = RotationUtils.targetRotation ?: return
+        var strafe = event.strafe
+        var forward = event.forward
+        val friction = event.friction
 
+        var f = strafe * strafe + forward * forward
+
+        if (f >= 1.0E-4F) {
+        f = MathHelper.sqrt_float(f)
+
+        if (f < 1.0F) {
+            f = 1.0F
+        }
+        f = friction / f
+        strafe *= f
+        forward *= f
+
+        val yawSin = MathHelper.sin((yaw * Math.PI / 180F).toFloat())
+        val yawCos = MathHelper.cos((yaw * Math.PI / 180F).toFloat())
+        mc.thePlayer.motionX += strafe * yawCos - forward * yawSin
+        mc.thePlayer.motionZ += forward * yawCos + strafe * yawSin
+        }
+        event.cancelEvent()
+    }
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         RenderUtils.drawBlockBox(pos ?: return, Color.RED, false, true, 1F)
     }
 
+    @EventTarget
+    fun onWorld(event: WorldEvent) {
+        teamPos = null
+        delayTimer.reset()
+    }
+    override fun onEnable() {
+        teamPos = null
+    }
     /**
      * Find new target block by [targetID]
      */
@@ -236,7 +298,7 @@ object Fucker : Module() {
         }
 
         isRealBlock = true
-        return block
+        return if (otherRatationsValue.get()) block.add(0.5, 0.5, 0.5) else block
     }
 
     /**

@@ -5,7 +5,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 import kotlin.math.*
 
 /***
- * Skid from https://github.com/ai/easings.net
+ * Thanks https://github.com/ai/easings.net for this util, converted to Kotlin.
  */
 object EaseUtils {
     fun easeInSine(x: Double): Double {

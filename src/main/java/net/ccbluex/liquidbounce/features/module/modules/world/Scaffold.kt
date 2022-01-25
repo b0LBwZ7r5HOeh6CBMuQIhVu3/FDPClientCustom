@@ -45,6 +45,7 @@ import net.minecraft.util.*
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 import kotlin.math.*
+import net.minecraft.util.MathHelper
 
 @ModuleInfo(name = "Scaffold", category = ModuleCategory.WORLD, keyBind = Keyboard.KEY_G)
 class Scaffold : Module() {
@@ -68,10 +69,11 @@ class Scaffold : Module() {
     private val autoBlockValue = ListValue("AutoBlock", arrayOf("Spoof", "LiteSpoof", "Switch", "OFF"), "LiteSpoof")
 
     // Basic stuff
-    private val sprintValue = ListValue("Sprint", arrayOf("Always", "Dynamic", "OnGround", "OffGround", "OFF"), "Always")
+    private val sprintValue = ListValue("Sprint", arrayOf("Always", "Dynamic", "OnGround", "OffGround", "MotionY>0", "OFF"), "Always")
     private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val searchValue = BoolValue("Search", true)
     private val downValue = BoolValue("Down", true)
+    private val rotationStrafeValue = BoolValue("rotationStrafe", true)
     private val placeModeValue = ListValue("PlaceTiming", arrayOf("Pre", "Post"), "Post")
 
     // Eagle
@@ -88,6 +90,7 @@ class Scaffold : Module() {
     private val customPitch = IntegerValue("CustomPitch", 79, -90, 90).displayable { rotationsValue.equals("Custom") }
     // private val tolleyBridgeValue = IntegerValue("TolleyBridgeTick", 0, 0, 10)
     // private val tolleyYawValue = IntegerValue("TolleyYaw", 0, 0, 90)
+    private val tolleyRotationValue = BoolValue("tolleyRotation", false).displayable { !rotationsValue.equals("None") }
     private val silentRotationValue = BoolValue("SilentRotation", true).displayable { !rotationsValue.equals("None") }
     private val minRotationSpeedValue: IntegerValue = object : IntegerValue("MinRotationSpeed", 180, 0, 180) {
         override fun onChanged(oldValue: Int, newValue: Int) {
@@ -276,6 +279,11 @@ class Scaffold : Module() {
                     PacketUtils.sendPacketNoEvent(c08)
                 }
                 PacketUtils.sendPacketNoEvent(c08)
+            if (swingValue.equals("packet")) {
+                mc.netHandler.addToSendQueue(C0APacketAnimation())
+            } else if (swingValue.equals("normal")) {
+                mc.thePlayer.swingItem()
+            }
             }
             when (extraClickValue.get().lowercase()) {
                 "emptyc08" -> sendPacket(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getStackInSlot(slot)))
@@ -303,6 +311,7 @@ class Scaffold : Module() {
                     }
                 }
             }
+
             clickDelay = TimeUtils.randomDelay(extraClickMinDelayValue.get(), extraClickMaxDelayValue.get())
             clickTimer.reset()
         }
@@ -406,7 +415,7 @@ class Scaffold : Module() {
         if (towerStatus) move()
 
         // Lock Rotation
-        if (rotationsValue.get() != "None" && keepLengthValue.get()> 0 && lockRotation != null && silentRotationValue.get()) {
+        if (rotationsValue.get() != "None" && keepLengthValue.get()> 0 && lockRotation != null && silentRotationValue.get() && (!tolleyRotationValue.get() || mc.thePlayer.motionY < 0)) {
             val limitedRotation = RotationUtils.limitAngleChange(RotationUtils.serverRotation, lockRotation, rotationSpeed)
             RotationUtils.setTargetRotation(limitedRotation, keepLengthValue.get())
         }
@@ -655,7 +664,8 @@ class Scaffold : Module() {
             itemStack = mc.thePlayer.inventoryContainer.getSlot(blockSlot).stack
         }
         if (isDynamicSprint) {
-            mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING))
+            mc.thePlayer.isSprinting = false
+            //mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING))
         }
         if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld, itemStack, targetPlace!!.blockPos, targetPlace!!.enumFacing, targetPlace!!.vec3)) {
             // delayTimer.reset()
@@ -681,9 +691,15 @@ class Scaffold : Module() {
                     afterPlaceC08 = C08PacketPlayerBlockPlacement(targetPlace!!.blockPos, targetPlace!!.enumFacing.index, itemStack, (hitVec.xCoord - blockPos.x.toDouble()).toFloat(), (hitVec.yCoord - blockPos.y.toDouble()).toFloat(), (hitVec.zCoord - blockPos.z.toDouble()).toFloat())
                 }
             }
+            if (swingValue.equals("packet")) {
+                mc.netHandler.addToSendQueue(C0APacketAnimation())
+            } else if (swingValue.equals("normal")) {
+                mc.thePlayer.swingItem()
+            }
         }
         if (isDynamicSprint) {
-            mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
+            mc.thePlayer.isSprinting = true
+            //mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
         }
 
         if (autoBlockValue.equals("LiteSpoof") && blockSlot >= 0) {
@@ -784,7 +800,37 @@ class Scaffold : Module() {
             }
         }
     }
+    @EventTarget
+    fun onStrafe(event: StrafeEvent) {
+        if(rotationStrafeValue.get()){
+                    
+        val (yaw) = RotationUtils.targetRotation ?: return
+        var strafe = event.strafe
+        var forward = event.forward
+        val friction = event.friction
 
+        var f = strafe * strafe + forward * forward
+
+        if (f >= 1.0E-4F) {
+        f = MathHelper.sqrt_float(f)
+
+        if (f < 1.0F) {
+            f = 1.0F
+        }
+        f = friction / f
+        strafe *= f
+        forward *= f
+
+        val yawSin = MathHelper.sin((yaw * Math.PI / 180F).toFloat())
+        val yawCos = MathHelper.cos((yaw * Math.PI / 180F).toFloat())
+        mc.thePlayer.motionX += strafe * yawCos - forward * yawSin
+        mc.thePlayer.motionZ += forward * yawCos + strafe * yawSin
+        }
+        event.cancelEvent()
+        }
+
+    }
+    
     /**
      * Search for placeable block
      *
@@ -889,7 +935,7 @@ class Scaffold : Module() {
                     mc.thePlayer.rotationYaw + tolleyYawValue.get(),
                     placeRotation.rotation.pitch
                 )*/
-            if (silentRotationValue.get()) {
+            if (silentRotationValue.get() && (!tolleyRotationValue.get() || mc.thePlayer.motionY < 0)) {
                 val limitedRotation =
                     RotationUtils.limitAngleChange(RotationUtils.serverRotation, lockRotation!!, rotationSpeed)
                 RotationUtils.setTargetRotation(limitedRotation, keepLengthValue.get())
@@ -992,6 +1038,7 @@ class Scaffold : Module() {
             "always", "dynamic" -> true
             "onground" -> mc.thePlayer.onGround
             "offground" -> !mc.thePlayer.onGround
+            "motiony>0" -> mc.thePlayer.motionY > 0
             else -> false
         }
 
