@@ -1,6 +1,3 @@
-//  updated at : 2022/1/24.
-//
-
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -29,5 +26,4 @@ abstract class FlyMode(val modeName: String) : MinecraftInstance() {
     open fun onBlockBB(event: BlockBBEvent) {}
     open fun onJump(event: JumpEvent) {}
     open fun onStep(event: StepEvent) {}
-    open fun onRender3d(event: Render3DEvent) {}
 }

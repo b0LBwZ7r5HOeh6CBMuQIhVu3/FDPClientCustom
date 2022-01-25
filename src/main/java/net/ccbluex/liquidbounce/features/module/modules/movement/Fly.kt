@@ -1,6 +1,3 @@
-//  updated at : 2022/1/24.
-//
-
 /*
  *
  *  * FDPClient Hacked Client
@@ -104,7 +101,7 @@ class Fly : Module() {
             if (markValue.equals("Up")) launchY + 2.0 else launchY,
             if (mc.thePlayer.entityBoundingBox.maxY < launchY + 2.0) Color(0, 255, 0, 90) else Color(255, 0, 0, 90),
             1.0)
-        mode.onRender3d(event)
+//        mode.onRender3d(event)
     }
 
     @EventTarget
