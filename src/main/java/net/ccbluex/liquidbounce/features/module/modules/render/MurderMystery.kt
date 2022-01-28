@@ -26,7 +26,7 @@ class MurderMystery : Module() {
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         if (sus != null && mc.thePlayer != null && mc.thePlayer.ticksExisted > 2) {
-            RenderUtils.drawEntityBox(sus!!, Color(255, 0, 0), true, true, 2)
+            RenderUtils.drawEntityBox(sus!!, Color(255, 0, 0), true, true, 2F)
         }
 
         @EventTarget
