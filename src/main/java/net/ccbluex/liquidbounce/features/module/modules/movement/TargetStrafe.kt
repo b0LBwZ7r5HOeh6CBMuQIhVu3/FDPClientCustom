@@ -2,6 +2,7 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement
 
 import net.ccbluex.liquidbounce.LiquidBounce
+import net.minecraft.util.AxisAlignedBB
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
@@ -39,7 +40,7 @@ class TargetStrafe : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         if (event.eventState === EventState.PRE) {
-            if ((voidCheckValue.get() && isVoid()) || (fallCheckValue.get() && isDanger())) {
+            if ((voidCheckValue.get() && (isVoid() || checkVoid())) || (fallCheckValue.get() && isDanger())) {
                 direction = !direction
                 return
             }
@@ -76,23 +77,22 @@ class TargetStrafe : Module() {
         }
     }
     fun isVoid(): Boolean {
-        val pos = FallingPlayer(mc.thePlayer.posX + mc.thePlayer.motionX * 2,
-            mc.thePlayer.posY,
-            mc.thePlayer.posZ + mc.thePlayer.motionZ * 2,
-            mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
+        val pos = FallingPlayer(mc.thePlayer!!).findCollision(60)
         return (pos == null)
     }
 
     fun isDanger(): Boolean {
-        val pos = FallingPlayer(mc.thePlayer.posX + mc.thePlayer.motionX * 2,
-            mc.thePlayer.posY,
-            mc.thePlayer.posZ + mc.thePlayer.motionZ * 2,
-            mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
+        val pos = FallingPlayer(mc.thePlayer!!).findCollision(60)
         if (pos == null) {
             return true
         } else {
             return (pos.y < (mc.thePlayer.posY - 7))
         }
+    }
+    @EventTarget
+    fun onMove(event: MoveEvent) {
+        if (canStrafe(LiquidBounce.combatManager.target) && ((voidCheckValue.get() && (isVoid() || checkVoid())) || (fallCheckValue.get() && isDanger())) )
+            event.isSafeWalk = true
     }
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
@@ -159,5 +159,32 @@ class TargetStrafe : Module() {
                 (!holdSpaceValue.get() || mc.thePlayer.movementInput.jump) &&
                 (!onlySpeedValue.get() || LiquidBounce.moduleManager[Speed::class.java]!!.state) &&
                 (!combatCheckValue.get() || LiquidBounce.combatManager.inCombat)
+    }
+    private fun checkVoid(): Boolean {
+        for (x in -1..0) {
+            for (z in -1..0) {
+                if (isVoid(x, z)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun isVoid(X: Int, Z: Int): Boolean {
+        if (mc.thePlayer.posY < 0.0) {
+            return true
+        }
+        var off = 0
+        while (off < mc.thePlayer.posY.toInt() + 2) {
+            val bb: AxisAlignedBB = mc.thePlayer.entityBoundingBox.offset(X.toDouble(), (-off).toDouble(), Z.toDouble())
+            if (mc.theWorld!!.getCollidingBoundingBoxes(mc.thePlayer as Entity, bb).isEmpty()) {
+                off += 2
+                continue
+            }
+            return false
+            off += 2
+        }
+        return true
     }
 }

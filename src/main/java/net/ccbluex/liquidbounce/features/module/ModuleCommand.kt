@@ -54,9 +54,9 @@ class ModuleCommand(val module: Module, val values: List<Value<*>> = module.valu
         } else {
             if (args.size < 3) {
                 if (value is IntegerValue || value is FloatValue || value is TextValue)
-                    chatSyntax("$moduleName ${args[1].lowercase()} <value>")
+                    chatSyntax("$moduleName ${args[1].lowercase()} "+value.get())
                 else if (value is ListValue)
-                    chatSyntax("$moduleName ${args[1].lowercase()} <${value.values.joinToString(separator = "/").lowercase()}>")
+                    chatSyntax("$moduleName ${args[1].lowercase()} "+value.get()+" <${value.values.joinToString(separator = "/").lowercase()}>")
                 return
             }
 
