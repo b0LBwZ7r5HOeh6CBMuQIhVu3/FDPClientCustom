@@ -15,6 +15,7 @@ import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.Entity
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import org.lwjgl.opengl.GL11
 import java.awt.Color
