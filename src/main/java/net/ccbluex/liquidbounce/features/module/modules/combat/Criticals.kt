@@ -37,7 +37,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -152,7 +152,17 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     }
                     sendCriticalPacket(yOffset = -0.000000433, ground = false)
                 }
-
+                "aac5.0.14hyt2" -> { 
+                    if (timerValue.get() != 1F) {
+                        minemoraTimer.reset()
+                        usedTimer = true
+                        mc.timer.timerSpeed = timerValue.get()
+                    }
+                    sendCriticalPacket(yOffset = 0.05250000001304, ground = false)
+                    sendCriticalPacket(yOffset = 0.02324649713461, ground = false)
+                    sendCriticalPacket(yOffset = 0.0014749900000101, ground = false)
+                    sendCriticalPacket(yOffset = 0.12, ground = false)
+                }
                 "hypixel" -> {
                     sendCriticalPacket(yOffset = 0.04132332, ground = false)
                     sendCriticalPacket(yOffset = 0.023243243674, ground = false)
