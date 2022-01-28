@@ -207,7 +207,7 @@ class KillAura : Module() {
     private val noInventoryDelayValue = IntegerValue("NoInvDelay", 200, 0, 500)
     private val switchDelayValue = IntegerValue("SwitchDelay", 300, 1, 2000).displayable { targetModeValue.equals("Switch") }
     private val limitedTargetsValue = IntegerValue("LimitedTargets", 0, 0, 50)
-
+    private val usingCheckValue = BoolValue("usingCheck", true)
     // Visuals
     private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Sims", "None"), "FDP")
     private val fakeSharpValue = BoolValue("FakeSharp", true)
@@ -380,7 +380,7 @@ class KillAura : Module() {
 
     fun update() {
         if (cancelRun || (noInventoryAttackValue.equals("CancelRun") && (mc.currentScreen is GuiContainer ||
-                    System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get()))) {
+                    System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get())) || (usingCheckValue.get() && mc.thePlayer.isUsingItem()) ) {
             return
         }
 
@@ -416,7 +416,7 @@ class KillAura : Module() {
         }
 
         if (noInventoryAttackValue.equals("CancelRun") && (mc.currentScreen is GuiContainer ||
-                    System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get())) {
+                    System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get()) || (usingCheckValue.get() && mc.thePlayer.isUsingItem())) {
             target = null
             currentTarget = null
             hitable = false
