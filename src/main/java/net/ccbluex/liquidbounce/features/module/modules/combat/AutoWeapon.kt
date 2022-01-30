@@ -24,6 +24,7 @@ import net.minecraft.network.play.client.C09PacketHeldItemChange
 @ModuleInfo(name = "AutoWeapon", category = ModuleCategory.COMBAT)
 class AutoWeapon : Module() {
     private val onlySwordValue = BoolValue("OnlySword", false)
+    private val swordBetterValue = BoolValue("I_love_sword", false)
     private val silentValue = BoolValue("SpoofItem", false)
     private val ticksValue = IntegerValue("SpoofTicks", 10, 1, 20)
     private var attackEnemy = false
@@ -47,7 +48,7 @@ class AutoWeapon : Module() {
                 .filter { it.second != null && (it.second.item is ItemSword || (it.second.item is ItemTool && !onlySwordValue.get())) }
                 .maxByOrNull {
                     (it.second.attributeModifiers["generic.attackDamage"].first()?.amount
-                        ?: 0.0) + 1.25 * ItemUtils.getEnchantment(it.second, Enchantment.sharpness)
+                        ?: 0.0) + 1.25 * ItemUtils.getEnchantment(it.second, Enchantment.sharpness) + if(swordBetterValue.get() && it.second.item is ItemSword) 1.0 else 0
                 } ?: return
 
             if (slot == mc.thePlayer.inventory.currentItem) { // If in hand no need to swap
