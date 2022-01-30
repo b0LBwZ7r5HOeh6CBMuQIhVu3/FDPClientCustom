@@ -253,7 +253,10 @@ object AntiBot : Module() {
     fun onUpdate(event: UpdateEvent) {
         if (mc.thePlayer!!.ticksExisted % 3 == 0 && hideBotValue.get()) {
             for (en in mc.theWorld.loadedEntityList) {
-                en.setInvisible(isBot(en))
+                if (en is EntityLivingBase) {
+                    val enL = en as EntityLivingBase
+                    enL.setInvisible(isBot(enL))
+                }
             }
         }
     }
