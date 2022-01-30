@@ -10,6 +10,7 @@ import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.WorldEvent
+import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -76,6 +77,7 @@ object AntiBot : Module() {
     private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
     private val alwaysInRadiusWithTicksCheckValue = BoolValue("AlwaysInRadiusWithTicksCheck", false).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
     private val alwaysInRadiusInCombatingValue = BoolValue("AlwaysInRadiusOnlyCombating", false).displayable { alwaysInRadiusValue.get()}
+    private val hideBotValue = BoolValue("HideBot", false)
 
     private val ground = mutableListOf<Int>()
     private val air = mutableListOf<Int>()
@@ -247,7 +249,14 @@ object AntiBot : Module() {
         clearAll()
         super.onDisable()
     }
-
+    @EventTarget
+    fun onUpdate(event: UpdateEvent) {
+        if (mc.thePlayer!!.ticksExisted % 3 == 0 && hideBotValue.get()) {
+            for (en in mc.theWorld.loadedEntityList) {
+                en.setInvisible(isBot(en))
+            }
+        }
+    }
     @EventTarget
     fun onPacket(event: PacketEvent) {
         if (mc.thePlayer == null || mc.theWorld == null) {

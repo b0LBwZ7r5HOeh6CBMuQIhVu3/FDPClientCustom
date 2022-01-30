@@ -148,6 +148,7 @@ class Blink : Module() {
             fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
 //            fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
             fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
+            fakePlayer!!.renderDistanceWeight = if(mc.gameSettings.thirdPersonView == 0) 1.0 else 0.0
             pulseTimer.reset()
         }
     }
