@@ -59,8 +59,6 @@ class NoSlow : Module() {
         msTimer.reset()
         pendingFlagApplyPacket = false
     }
-    override val tag: String
-        get() = modeValue.get()
     private fun sendPacket(
         event: MotionEvent,
         sendC07: Boolean,
