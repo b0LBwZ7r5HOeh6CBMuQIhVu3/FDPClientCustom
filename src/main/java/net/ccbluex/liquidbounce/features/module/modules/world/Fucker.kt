@@ -69,6 +69,7 @@ object Fucker : Module() {
     private var oldPos: BlockPos? = null
     private var teamPos: BlockPos? = null
     private var blockHitDelay = 0
+    private var breaking = false
     private val switchTimer = MSTimer()
     private val delayTimer = MSTimer()
     private var isRealBlock = false
@@ -76,6 +77,9 @@ object Fucker : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if(breaking){
+            breaking = false
+        }
         val targetId = blockValue.get()
         if(teamPos == null && teamsValue.get()){
             teamPos = find(targetId)
@@ -147,7 +151,7 @@ object Fucker : Module() {
             blockHitDelay--
             return
         }
-
+        breaking = true
         // Face block
         if (rotationsValue.get()) {
             RotationUtils.setTargetRotation(rotations.rotation)
@@ -239,7 +243,7 @@ object Fucker : Module() {
     }
     @EventTarget
     fun onStrafe(event: StrafeEvent) {
-        if(!rotationStrafeValue.get())
+        if(!rotationStrafeValue.get() && !breaking)
             return
         val (yaw) = RotationUtils.targetRotation ?: return
         var strafe = event.strafe
