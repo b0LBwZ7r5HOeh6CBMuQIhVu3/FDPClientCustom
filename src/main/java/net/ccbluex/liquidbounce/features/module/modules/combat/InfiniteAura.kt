@@ -7,6 +7,7 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
+import net.ccbluex.liquidbounce.utils.PacketUtils.sendPacketNoEvent
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
@@ -42,6 +43,7 @@ class InfiniteAura : Module() {
     private val noRegen = BoolValue("NoRegen", true)
     private val doSwing = BoolValue("Swing", true).displayable { modeValue.equals("Aura") }
     private val path = BoolValue("PathRender", true)
+    private val fix = BoolValue("fix", true)
     private val voidCheck=BoolValue("VoidCheck",true)
 
     private val timer = MSTimer()
@@ -139,13 +141,13 @@ class InfiniteAura : Module() {
     private fun hit(entity: EntityLivingBase) {
         if(isVoid(entity) && voidCheck.get())
             return
-        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
+        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY + (if(fix.get()) 0.3 else 0), entity.posZ, moveDistanceValue.get().toDouble())
 
         path.forEach {
-            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, true))
+            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, !fix.get()))
             points.add(it)
         }
-
+        if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[path.size].xCoord, path[path.size].yCoord, path[path.size].zCoord, !fix.get()))
 //            val it=Vec3(entity.posX,entity.posY,entity.posZ)
 //            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord,it.yCoord,it.zCoord,true))
 //            points.add(it)
@@ -159,8 +161,9 @@ class InfiniteAura : Module() {
 
         for (i in path.size - 1 downTo 0) {
             val vec = path[i]
-            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(vec.xCoord, vec.yCoord, vec.zCoord, true))
+            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(vec.xCoord, vec.yCoord, vec.zCoord, !fix.get()))
         }
+        if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[0].xCoord, path[0].yCoord, path[0].zCoord, !fix.get()))
     }
 
     @EventTarget
