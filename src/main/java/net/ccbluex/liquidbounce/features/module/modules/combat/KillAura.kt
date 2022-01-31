@@ -127,7 +127,7 @@ class KillAura : Module() {
         }
     }.displayable { autoBlockValue.equals("Range") }
     private val autoBlockPacketValue = ListValue("AutoBlockPacket", arrayOf("AfterTick", "AfterAttack", "Vanilla"), "AfterTick").displayable { autoBlockValue.equals("Range") }
-    private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest", "HypixelTest", "Normal", "AAC", "AACTest"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest", "oldHypixel", "Normal", "AAC", "AACTest"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty", "normal", "onStoppedUsingItem"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN", "All-1", "Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingBlockPosValue = ListValue("stopBlockingBlockPos", arrayOf("ORIGIN", "All-1", "Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
@@ -137,7 +137,7 @@ class KillAura : Module() {
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
     private val firstBlockDelayValue = IntegerValue("FirstBlockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
-
+    private val afterTickPatchValue = BoolValue("AfterTickPatch", true).displayable { autoBlockPacketValue.equals("AfterTick") } 
     // Raycast
     private val raycastValue = BoolValue("RayCast", true)
     private val raycastIgnoredValue = BoolValue("RayCastIgnored", false).displayable { raycastValue.get() }
@@ -985,7 +985,7 @@ class KillAura : Module() {
             }
 
 
-            if (blockTimingValue.equals("All")) startBlocking(entity, interactAutoBlockValue.get())
+            if (blockTimingValue.equals("All") && (!afterTickPatchValue.get() || !autoBlockPacketValue.equals("AfterTick"))) startBlocking(entity, interactAutoBlockValue.get())
         }
     }
 
@@ -1135,7 +1135,12 @@ class KillAura : Module() {
         if (blockingStatus) {
             return
         }
-
+        if (mc.thePlayer.heldItem == null){
+            return
+        }
+        if(!mc.thePlayer.heldItem.item is ItemSword){
+            return
+        }
         if (!autoBlockTimer.hasTimePassed(reblockDelayValue.get()
                 .toLong()) || !firstBlockTimer.hasTimePassed(firstBlockDelayValue.get().toLong())) {
             return
@@ -1175,7 +1180,7 @@ class KillAura : Module() {
         when (blockingPacketValue.get().lowercase()) {
             "basic" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
             "ncptest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(blockingBlockPos, 255, null, 0.0f, 0.0f, 0.0f))
-            "hypixeltest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(blockingBlockPos, 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
+            "oldhypixel" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(blockingBlockPos, 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
             "normal" -> mc.thePlayer.setItemInUse(mc.thePlayer.inventory.getCurrentItem(), 51213)
             "aac" -> mc.thePlayer.setItemInUse(mc.thePlayer.inventory.getCurrentItem(), 71999)
             "aactest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(mc.thePlayer.posX, Math.floor(mc.thePlayer.entityBoundingBox.minY), mc.thePlayer.posZ), 1, mc.thePlayer.inventory.getCurrentItem(), 8F, 16F, 10F))

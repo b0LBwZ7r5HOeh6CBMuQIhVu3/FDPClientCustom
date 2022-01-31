@@ -268,7 +268,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         font.drawString(decimalFormat.format(easingHP), stopPos + 5, 43 - font.FONT_HEIGHT / 2, Color.WHITE.rgb)
 
-        if(target.hurtTime >= 9) {
+        if(target.hurtTime > 8) {
             for(i in 0 until riseCountValue.get()) {
                 riseParticleList.add(RiseParticle())
             }
