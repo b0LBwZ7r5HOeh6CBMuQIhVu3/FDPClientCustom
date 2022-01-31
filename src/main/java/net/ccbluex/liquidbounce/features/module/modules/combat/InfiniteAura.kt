@@ -141,7 +141,7 @@ class InfiniteAura : Module() {
     private fun hit(entity: EntityLivingBase) {
         if(isVoid(entity) && voidCheck.get())
             return
-        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY + (if(fix.get()) 0.3 else 0), entity.posZ, moveDistanceValue.get().toDouble())
+        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY + (if(fix.get()) 0.3 else 0.0), entity.posZ, moveDistanceValue.get().toDouble())
 
         path.forEach {
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, !fix.get()))
