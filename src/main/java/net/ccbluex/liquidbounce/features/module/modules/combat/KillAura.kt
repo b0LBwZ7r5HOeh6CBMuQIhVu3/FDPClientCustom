@@ -1138,7 +1138,7 @@ class KillAura : Module() {
         if (mc.thePlayer.heldItem == null){
             return
         }
-        if(!mc.thePlayer.heldItem.item is ItemSword){
+        if(mc.thePlayer.heldItem.item !is ItemSword){
             return
         }
         if (!autoBlockTimer.hasTimePassed(reblockDelayValue.get()
