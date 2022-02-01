@@ -141,13 +141,13 @@ class InfiniteAura : Module() {
     private fun hit(entity: EntityLivingBase) {
         if(isVoid(entity) && voidCheck.get())
             return
-        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY + (if(fix.get()) 0.3 else 0.0), entity.posZ, moveDistanceValue.get().toDouble())
+        val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY + (if(fix.get()) 0.1 else 0.0), entity.posZ, moveDistanceValue.get().toDouble())
 
         path.forEach {
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, !fix.get()))
             points.add(it)
         }
-        if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[path.size].xCoord, path[path.size].yCoord, path[path.size].zCoord, !fix.get()))
+        // if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[path.size].xCoord, path[path.size].yCoord, path[path.size].zCoord, !fix.get()))
 //            val it=Vec3(entity.posX,entity.posY,entity.posZ)
 //            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord,it.yCoord,it.zCoord,true))
 //            points.add(it)
@@ -163,7 +163,7 @@ class InfiniteAura : Module() {
             val vec = path[i]
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(vec.xCoord, vec.yCoord, vec.zCoord, !fix.get()))
         }
-        if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[0].xCoord, path[0].yCoord, path[0].zCoord, !fix.get()))
+        // if(fix.get()) sendPacketNoEvent(C04PacketPlayerPosition(path[0].xCoord, path[0].yCoord, path[0].zCoord, !fix.get()))
     }
 
     @EventTarget
