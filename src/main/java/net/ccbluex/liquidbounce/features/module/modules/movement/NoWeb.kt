@@ -18,7 +18,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 @ModuleInfo(name = "NoWeb", category = ModuleCategory.MOVEMENT)
 class NoWeb : Module() {
 
-    private val modeValue = ListValue("Mode", arrayOf("None", "OldAAC", "LAAC", "Rewinside", "Horizon", "Spartan", "AAC4", "Matrix", "Test"), "None")
+    private val modeValue = ListValue("Mode", arrayOf("None", "OldAAC", "LAAC", "Rewinside", "Horizon", "Spartan", "AAC4", "AAC5", "Matrix", "Test"), "None")
     private val horizonSpeed = FloatValue("HorizonSpeed", 0.1F, 0.01F, 0.8F)
 
      private var usedTimer = false
@@ -85,20 +85,28 @@ class NoWeb : Module() {
                 mc.thePlayer.jumpMovementFactor = 0.12425f
                 mc.thePlayer.motionY = -0.0125
                 if (mc.gameSettings.keyBindSneak.isKeyDown) mc.thePlayer.motionY = -0.1625
-                if (mc.thePlayer.onGround) {
-                    mc.thePlayer.jump()
-                    mc.thePlayer.motionY = 0.2425
-                }
+                
                 if (mc.thePlayer.ticksExisted % 40 == 0) {
                     mc.timer.timerSpeed = 3.0F
                     usedTimer = true
                 }
             }
+            "aac5" -> {
+                mc.thePlayer.jumpMovementFactor = 0.42f
+
+                if (mc.thePlayer.onGround) {
+                    mc.thePlayer.jump()
+                }
+            }
             "test" -> {
-                if (mc.thePlayer.ticksExisted % 2 == 0) {
-                    mc.thePlayer.motionY += 0.05
-                }else{
-                    mc.thePlayer.motionY -= 0.05
+                if (mc.thePlayer.ticksExisted % 7 == 0) {
+                    mc.thePlayer.jumpMovementFactor = 0.42f
+                }
+                if (mc.thePlayer.ticksExisted % 7 == 1) {
+                    mc.thePlayer.jumpMovementFactor = 0.33f
+                }
+                if (mc.thePlayer.ticksExisted % 7 == 2) {
+                    mc.thePlayer.jumpMovementFactor = 0.08f
                 }
             }
             "rewinside" -> {
