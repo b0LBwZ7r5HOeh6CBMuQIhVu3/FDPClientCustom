@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 import kotlin.concurrent.thread
 
 object DiscordRPC {
-    private val ipcClient = IPCClient(871606857981128724)
+    private val ipcClient = IPCClient(814078085066522655)
     private val timestamp = OffsetDateTime.now()
     private var running = false
 
@@ -24,7 +24,7 @@ object DiscordRPC {
                     while (running) {
                         update()
                         try {
-                            Thread.sleep(5000L)
+                            Thread.sleep(1300L)
                         } catch (ignored: InterruptedException) {
                         }
                     }
@@ -42,9 +42,11 @@ object DiscordRPC {
         val builder = RichPresence.Builder()
         builder.setStartTimestamp(timestamp)
         // builder.setLargeImage("cfb8fe2fe9169dc68f7f8c1236b885")
-        builder.setDetails("JbyteMod custom")
+        builder.setDetails("Working on : FAKECRACKMEAAAAAAAAA")
         // ServerUtils.getRemoteIp().also {
-            builder.setState("Idle ...")
+            builder.setState("Method : init()V")
+        presence.largeImageKey = "java"
+        presence.largeImageText = "JByteMod"
         // }
 
         // Check ipc client is connected and send rpc
