@@ -45,8 +45,8 @@ object DiscordRPC {
         builder.setDetails("Working on : FAKECRACKMEAAAAAAAAA")
         // ServerUtils.getRemoteIp().also {
             builder.setState("Method : init()V")
-        presence.largeImageKey = "java"
-        presence.largeImageText = "JByteMod"
+        // presence.largeImageKey = "java"
+        // presence.largeImageText = "JByteMod"
         // }
 
         // Check ipc client is connected and send rpc
