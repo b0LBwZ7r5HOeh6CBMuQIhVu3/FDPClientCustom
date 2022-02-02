@@ -243,7 +243,7 @@ object Fucker : Module() {
     }
     @EventTarget
     fun onStrafe(event: StrafeEvent) {
-        if(!rotationStrafeValue.get() && !breaking)
+        if(!rotationStrafeValue.get() || !breaking)
             return
         val (yaw) = RotationUtils.targetRotation ?: return
         var strafe = event.strafe
