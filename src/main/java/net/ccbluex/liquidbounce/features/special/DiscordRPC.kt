@@ -24,7 +24,7 @@ object DiscordRPC {
                     while (running) {
                         update()
                         try {
-                            Thread.sleep(1000L)
+                            Thread.sleep(5000L)
                         } catch (ignored: InterruptedException) {
                         }
                     }
@@ -41,11 +41,11 @@ object DiscordRPC {
     private fun update() {
         val builder = RichPresence.Builder()
         builder.setStartTimestamp(timestamp)
-        builder.setLargeImage("cfb8fe2fe9169dc68f7f8c1236b885")
-        builder.setDetails(LiquidBounce.CLIENT_VERSION)
-        ServerUtils.getRemoteIp().also {
-            builder.setState(if(it.equals("idling", true)) "Idling" else "Server: $it IGN: ${Minecraft.getMinecraft().session.username}")
-        }
+        // builder.setLargeImage("cfb8fe2fe9169dc68f7f8c1236b885")
+        builder.setDetails("JbyteMod custom")
+        // ServerUtils.getRemoteIp().also {
+            builder.setState("Idle ...")
+        // }
 
         // Check ipc client is connected and send rpc
         if (ipcClient.status == PipeStatus.CONNECTED)
