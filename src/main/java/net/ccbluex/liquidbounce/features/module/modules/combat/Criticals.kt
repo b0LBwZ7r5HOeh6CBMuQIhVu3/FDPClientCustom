@@ -33,6 +33,7 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.*
 import net.minecraft.network.play.server.S0BPacketAnimation
+import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
@@ -41,7 +42,6 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
-
     // private val packetHopMotionModeValue = ListValue("packetHopMotionMode", arrayOf("tp", "motion"), "tp")
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
@@ -55,6 +55,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hytMorePacketValue = BoolValue("HYTMorePacket", false).displayable { modeValue.equals("AAC5.0.14HYT") }
     private val motionSlowValue = BoolValue("motionSlow", false).displayable { modeValue.equals("Motion") }
+    private val s08FlagValue = BoolValue("FlagPause", true)
+    private val s08DelayValue = IntegerValue("FlagPauseTime", 100, 100, 5000).displayable { s08FlagValue.get() }
+
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
     private val lookValue = BoolValue("UseC06Packet", false)
@@ -64,6 +67,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     val msTimer = MSTimer()
     private val minemoraTimer = MSTimer()
     private var usedTimer = false
+    val flagTimer = MSTimer()
 
     private var target = 0
     private var needEdit = false
@@ -96,6 +100,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 return
                 }
             }
+            
+            if(s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
+                return
 
             needEdit = true
             fun sendCriticalPacket(xOffset: Double = 0.0, yOffset: Double = 0.0, zOffset: Double = 0.0, ground: Boolean) {
@@ -335,6 +342,16 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
+        
+        if (packet is S08PacketPlayerPosLook) {
+            flagTimer.reset()
+            if (s08FlagValue.get()) {
+                jState = 0
+            }
+        }
+        
+        if(s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
+            return
 
         if (packet is C03PacketPlayer) {
             when (modeValue.get().lowercase()) {
@@ -362,15 +379,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 }
                 "hover" -> {
                     if (hoverCombat.get() && !LiquidBounce.combatManager.inCombat) return
-                    if (packet is C05PacketPlayerLook) {
-                        mc.netHandler.addToSendQueue(C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, packet.yaw, packet.pitch, packet.onGround))
-                        event.cancelEvent()
-                        return
-                    } else if (!(packet is C04PacketPlayerPosition) && !(packet is C06PacketPlayerPosLook)) {
-                        mc.netHandler.addToSendQueue(C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, packet.onGround))
-                        event.cancelEvent()
-                        return
-                    }
+                    packet.isMoving = true
                     when (hoverValue.get().lowercase()) {
                         "2b2t" -> {
                             if (mc.thePlayer.onGround) {
