@@ -1,5 +1,5 @@
 # 别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看别看我求你了别看这里
-# 这就是我唯一在互联网有价值的东西了 但是这东西就是一堆屎 如果再有人提什么意见我就要直接一次性去吞一瓶--片的安眠药紫砂了
+# 这就是我唯一在互联网有价值的东西了 但是这东西就是一堆屎 如果再有人提什么意见我就要直接一次性去吞一瓶的安眠药紫砂了
 
 ### Skid codes
 I skidded LiquidBoune+, many scripts, Flux, Sigma, Rektsky, Zamorozka, Hanabi, FDPClient and LiquidBounce.
