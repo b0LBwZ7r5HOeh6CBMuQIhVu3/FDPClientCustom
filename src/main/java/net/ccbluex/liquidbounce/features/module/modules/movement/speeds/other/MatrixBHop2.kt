@@ -8,7 +8,7 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import kotlin.math.sqrt
 
-class MatrixHop2 : SpeedMode("MatrixHop2") {
+class MatrixBHop2 : SpeedMode("MatrixBHop2") {
     val veloBoostValue = BoolValue("MatrixVelocBoost", true)
     private var recX = 0.0
     private var recZ = 0.0
