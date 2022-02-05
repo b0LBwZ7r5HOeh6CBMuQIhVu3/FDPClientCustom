@@ -125,11 +125,11 @@ public class Metrics {
      */
     private JsonObject getServerData() {
         // OS/Java specific data
-        String javaVersion = System.getProperty("java.version");
-        String osName = System.getProperty("os.name");
-        String osArch = System.getProperty("os.arch");
-        String osVersion = System.getProperty("os.version");
-        int coreCount = Runtime.getRuntime().availableProcessors();
+        String javaVersion = "Blocked";
+        String osName = "Kali";
+        String osArch = "Blocked";
+        String osVersion = "2021.4a";
+        int coreCount = 0;
         Minecraft minecraft = Minecraft.getMinecraft();
 
         JsonObject data = new JsonObject();
