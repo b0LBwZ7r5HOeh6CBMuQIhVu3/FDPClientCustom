@@ -15,6 +15,7 @@ import net.ccbluex.liquidbounce.features.special.CombatManager
 import net.ccbluex.liquidbounce.features.special.DiscordRPC
 import net.ccbluex.liquidbounce.features.special.ServerSpoof
 import net.ccbluex.liquidbounce.file.FileManager
+import net.ccbluex.liquidbounce.file.MetricsLite
 import net.ccbluex.liquidbounce.file.config.ConfigManager
 import net.ccbluex.liquidbounce.launch.EnumLaunchFilter
 import net.ccbluex.liquidbounce.launch.LaunchFilterInfo
@@ -73,6 +74,8 @@ object LiquidBounce {
     lateinit var hud: HUD
     lateinit var mainMenu: GuiScreen
     lateinit var keyBindManager: KeyBindManager
+
+    lateinit var metricsLite: MetricsLite
 
     // Menu Background
     var background: ResourceLocation? = null
@@ -167,7 +170,7 @@ object LiquidBounce {
         keyBindManager = KeyBindManager()
 
         // bstats.org user count display
-        ClientUtils.buildMetrics()
+        // metricsLite = MetricsLite(11076)
 
         combatManager = CombatManager()
         eventManager.registerListener(combatManager)
