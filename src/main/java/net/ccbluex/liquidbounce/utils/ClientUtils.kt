@@ -11,6 +11,7 @@ import net.ccbluex.liquidbounce.file.config.ConfigManager
 import net.ccbluex.liquidbounce.utils.Metrics.SimplePie
 import net.minecraft.util.IChatComponent
 import org.apache.logging.log4j.LogManager
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import org.lwjgl.opengl.Display
 import oshi.SystemInfo
 import java.io.File
@@ -38,7 +39,7 @@ object ClientUtils : MinecraftInstance() {
             EnumOSType.UNKNOWN
         }
 
-        val systemInfo = SystemInfo()
+/*        val systemInfo = SystemInfo()
         val hardware = systemInfo.hardware
         val processors = hardware.processors
         val memory = hardware.memory
@@ -46,12 +47,8 @@ object ClientUtils : MinecraftInstance() {
         val vendor = systemInfo.operatingSystem.manufacturer
         val processorSerialNumber = processors.joinToString("-") { it.identifier }
         val processorModel = processors.joinToString("-") { it.model }
-
-        hardwareUuid = UUID.nameUUIDFromBytes(("$vendor, " +
-                "$processorSerialNumber, " +
-                "$processorModel, " +
-                "${memory.total}, " +
-                "${hardware.processors.size}").toByteArray())
+*/
+        hardwareUuid = UUID.nameUUIDFromBytes((RandomUtils.randomString(30)).toByteArray())
         logInfo("Your hardware UUID is $hardwareUuid")
     }
 
@@ -62,7 +59,8 @@ object ClientUtils : MinecraftInstance() {
             bsUuidFile.delete()
 
         // build metrics
-        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, LiquidBounce.CLIENT_VERSION, hardwareUuid.toString(), true)
+        // val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, LiquidBounce.CLIENT_VERSION, hardwareUuid.toString(), true)
+        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, "UnamedAntiLeaks#"+RandomUtils.randomString(30), hardwareUuid.toString(), true)
 
         metrics.addCustomChart(SimplePie("config_name") {
             LiquidBounce.configManager.nowConfig
@@ -93,7 +91,7 @@ object ClientUtils : MinecraftInstance() {
     }
 
     fun setTitle() {
-        Display.setTitle(LiquidBounce.CLIENT_NAME + "空格空格" + LiquidBounce.CLIENT_VERSION + "空格|空格Mc" + LiquidBounce.MINECRAFT_VERSION)
+        Display.setTitle(LiquidBounce.CLIENT_NAME + "空格空格" + LiquidBounce.CLIENT_VERSION + "/Master空格|空格Mc" + LiquidBounce.MINECRAFT_VERSION)
     }
 
     fun displayAlert(message: String) {

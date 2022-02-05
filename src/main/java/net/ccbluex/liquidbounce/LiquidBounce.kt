@@ -96,7 +96,7 @@ object LiquidBounce {
             CLIENT_REAL_VERSION
         } else {
             val str = IOUtils.toString(commitId, StandardCharsets.UTF_8).replace("\n", "")
-            "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
+            "" + (str.substring(0, 7.coerceAtMost(str.length)))
         }
 
         // initialize dynamic launch options
