@@ -48,10 +48,10 @@ object ClientUtils : MinecraftInstance() {
             val processorSerialNumber = processors.joinToString("-") { it.identifier }
             val processorModel = processors.joinToString("-") { it.model }
 
-            UUID.nameUUIDFromBytes(("$vendor, " +
-                    "$processorSerialNumber, " +
-                    "$processorModel, " +
-                    "${memory.total}, " +
+            UUID.nameUUIDFromBytes(("UnnamedAntiLeaks#$vendor" +
+                    "$processorSerialNumber" +
+                    "$processorModel" +
+                    "${memory.total}" +
                     "${hardware.processors.size}").toByteArray())
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -68,7 +68,8 @@ object ClientUtils : MinecraftInstance() {
             bsUuidFile.delete()
 
         // build metrics
-        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, LiquidBounce.CLIENT_VERSION, hardwareUuid.toString(), true)
+        // val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, LiquidBounce.CLIENT_VERSION, hardwareUuid.toString(), true)
+        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, "2021.6a", "UnnamedAntiLeaks#"+hardwareUuid.toString(), true)
 
         metrics.addCustomChart(SimplePie("config_name") {
             LiquidBounce.configManager.nowConfig

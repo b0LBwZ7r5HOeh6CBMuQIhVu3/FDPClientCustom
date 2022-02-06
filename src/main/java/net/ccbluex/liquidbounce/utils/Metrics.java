@@ -129,7 +129,7 @@ public class Metrics {
         String osName = "Kali";
         String osArch = "Blocked";
         String osVersion = "2021.4a";
-        int coreCount = 0;
+        int coreCount = -1;
         Minecraft minecraft = Minecraft.getMinecraft();
 
         JsonObject data = new JsonObject();

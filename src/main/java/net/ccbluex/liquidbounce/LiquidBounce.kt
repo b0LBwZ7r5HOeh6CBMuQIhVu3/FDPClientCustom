@@ -15,7 +15,6 @@ import net.ccbluex.liquidbounce.features.special.CombatManager
 import net.ccbluex.liquidbounce.features.special.DiscordRPC
 import net.ccbluex.liquidbounce.features.special.ServerSpoof
 import net.ccbluex.liquidbounce.file.FileManager
-import net.ccbluex.liquidbounce.file.MetricsLite
 import net.ccbluex.liquidbounce.file.config.ConfigManager
 import net.ccbluex.liquidbounce.launch.EnumLaunchFilter
 import net.ccbluex.liquidbounce.launch.LaunchFilterInfo
@@ -75,8 +74,6 @@ object LiquidBounce {
     lateinit var mainMenu: GuiScreen
     lateinit var keyBindManager: KeyBindManager
 
-    lateinit var metricsLite: MetricsLite
-
     // Menu Background
     var background: ResourceLocation? = null
 
@@ -99,7 +96,7 @@ object LiquidBounce {
             CLIENT_REAL_VERSION
         } else {
             val str = IOUtils.toString(commitId, StandardCharsets.UTF_8).replace("\n", "")
-            "" + (str.substring(0, 7.coerceAtMost(str.length)))
+            "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
         }
 
         // initialize dynamic launch options
@@ -170,7 +167,7 @@ object LiquidBounce {
         keyBindManager = KeyBindManager()
 
         // bstats.org user count display
-        // metricsLite = MetricsLite(11076)
+        ClientUtils.buildMetrics()
 
         combatManager = CombatManager()
         eventManager.registerListener(combatManager)
