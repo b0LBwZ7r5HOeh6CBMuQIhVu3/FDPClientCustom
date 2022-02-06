@@ -126,7 +126,7 @@ public class Metrics {
     private JsonObject getServerData() {
         // OS/Java specific data
         String javaVersion = "Blocked";
-        String osName = "Kali";
+        String osName = "KaliLinux";
         String osArch = "Blocked";
         String osVersion = "2021.4a";
         int coreCount = -1;

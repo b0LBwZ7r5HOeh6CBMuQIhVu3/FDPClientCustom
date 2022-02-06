@@ -27,7 +27,7 @@ object ClientUtils : MinecraftInstance() {
     val hardwareUuid: UUID
 
     init {
-        val os = System.getProperty("os.name").lowercase()
+        val os = /*System.getProperty("os.name").lowercase()
         osType = if (os.contains("win")) {
             EnumOSType.WINDOWS
         } else if (os.contains("mac")) {
@@ -35,8 +35,8 @@ object ClientUtils : MinecraftInstance() {
         } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
             EnumOSType.LINUX
         } else {
-            EnumOSType.UNKNOWN
-        }
+            */EnumOSType.UNKNOWN
+        // }
 
         hardwareUuid = try {
             val systemInfo = SystemInfo()
@@ -46,11 +46,11 @@ object ClientUtils : MinecraftInstance() {
 
             val vendor = systemInfo.operatingSystem.manufacturer
             val processorSerialNumber = processors.joinToString("-") { it.identifier }
-            val processorModel = processors.joinToString("-") { it.model }
+            // val processorModel = processors.joinToString("-") { it.model }
 
             UUID.nameUUIDFromBytes(("UnnamedAntiLeaks#$vendor" +
                     "$processorSerialNumber" +
-                    "$processorModel" +
+                    "CrackedVersion" +
                     "${memory.total}" +
                     "${hardware.processors.size}").toByteArray())
         } catch (e: Throwable) {
@@ -69,7 +69,7 @@ object ClientUtils : MinecraftInstance() {
 
         // build metrics
         // val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, LiquidBounce.CLIENT_VERSION, hardwareUuid.toString(), true)
-        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, "2021.6a", "UnnamedAntiLeaks#"+hardwareUuid.toString(), true)
+        val metrics = Metrics(LiquidBounce.CLIENT_NAME, 11076, "UnnamedAntiLeaks#2021.6a (EZ Crack)", "UnnamedAntiLeaks#"+hardwareUuid.toString(), true)
 
         metrics.addCustomChart(SimplePie("config_name") {
             LiquidBounce.configManager.nowConfig
