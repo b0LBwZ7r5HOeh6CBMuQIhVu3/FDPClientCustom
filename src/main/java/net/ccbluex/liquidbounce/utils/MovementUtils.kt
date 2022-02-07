@@ -175,7 +175,24 @@ object MovementUtils : MinecraftInstance() {
         }
         return 0.0
     }
+    fun isBlockUnder(): Boolean {
+        if (mc.thePlayer == null) return false
 
+        if (mc.thePlayer.posY < 0.0) {
+            return false;
+        }
+        val playerBoundingBox = mc.thePlayer.entityBoundingBox
+        // var blockHeight = 1.0
+        var off = 0
+        while (off < mc.thePlayer.posY+2) {
+            val bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, -off, 0.0)
+            if (mc.theWorld.checkBlockCollision(bb)) {
+                return true
+            }
+            off += 2
+        }
+        return false
+    }
     fun handleVanillaKickBypass() {
         val ground = calculateGround()
         run {

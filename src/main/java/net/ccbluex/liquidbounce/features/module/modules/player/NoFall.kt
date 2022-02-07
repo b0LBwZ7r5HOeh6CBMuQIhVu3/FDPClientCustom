@@ -23,6 +23,7 @@ import net.ccbluex.liquidbounce.utils.PacketUtils
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.VecRotation
 import net.ccbluex.liquidbounce.utils.block.BlockUtils
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.utils.timer.TickTimer
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
@@ -115,7 +116,7 @@ class NoFall : Module() {
     }
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || !MovementUtils.isBlockUnder()) ) return
         if (matrixFlagWait > 0) {
             matrixFlagWait--
             if(matrixFlagWait == 0) {
@@ -421,7 +422,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
-        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || !MovementUtils.isBlockUnder()) ) return
         if (modeValue.equals("AACv4") && event.eventState === EventState.PRE) {
             if (!inVoid()) {
                 if (aac4Fakelag) {
@@ -529,7 +530,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onPacket(event: PacketEvent) {
-        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || !MovementUtils.isBlockUnder()) ) return
         val mode = modeValue.get()
         if (event.packet is S12PacketEntityVelocity) {
             if (mode.equals("AAC4.4.X-Flag", ignoreCase = true) && mc.thePlayer.fallDistance > 1.8) {
@@ -619,7 +620,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onMove(event: MoveEvent) {
-        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || !MovementUtils.isBlockUnder()) ) return
         if (BlockUtils.collideBlock(mc.thePlayer.entityBoundingBox) { it is BlockLiquid } || BlockUtils.collideBlock(AxisAlignedBB(mc.thePlayer.entityBoundingBox.maxX, mc.thePlayer.entityBoundingBox.maxY, mc.thePlayer.entityBoundingBox.maxZ, mc.thePlayer.entityBoundingBox.minX, mc.thePlayer.entityBoundingBox.minY - 0.01, mc.thePlayer.entityBoundingBox.minZ)) { it is BlockLiquid }) {
             return
         }
