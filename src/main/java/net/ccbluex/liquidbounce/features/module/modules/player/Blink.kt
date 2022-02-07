@@ -60,12 +60,14 @@ class Blink : Module() {
 
     override fun onEnable() {
         if (mc.thePlayer == null) return
-
-        fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
+        if(serverSidePositionValue.get()){
+                    fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
         // fakePlayer!!.clonePlayer(mc.thePlayer, true)
         fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
         // fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
         mc.theWorld.addEntityToWorld(-1337, fakePlayer)
+        }
+
 
         synchronized(positions) {
             positions.add(
@@ -155,7 +157,7 @@ class Blink : Module() {
                 fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
                 fakePlayer!!.renderDistanceWeight = if(mc.gameSettings.thirdPersonView == 0) 0.0 else 1.0
             }else{
-                mc.theWorld.removeEntityFromWorld(fakePlayer!!.entityId)
+                if(mc.theWorld!!.getEntityByID(fakePlayer!!.entityId) != null){mc.theWorld.removeEntityFromWorld(fakePlayer!!.entityId)}
             }
             pulseTimer.reset()
         }
