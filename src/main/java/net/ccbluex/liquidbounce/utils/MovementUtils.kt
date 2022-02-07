@@ -183,13 +183,13 @@ object MovementUtils : MinecraftInstance() {
         }
         val playerBoundingBox = mc.thePlayer.entityBoundingBox
         // var blockHeight = 1.0
-        var off = 0
+        var off = 0.0
         while (off < mc.thePlayer.posY+2) {
             val bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, -off, 0.0)
             if (mc.theWorld.checkBlockCollision(bb)) {
                 return true
             }
-            off += 2
+            off += 2.0
         }
         return false
     }
