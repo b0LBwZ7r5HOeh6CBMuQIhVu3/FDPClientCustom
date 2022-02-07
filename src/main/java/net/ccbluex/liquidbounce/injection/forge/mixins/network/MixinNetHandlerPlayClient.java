@@ -81,9 +81,10 @@ public abstract class MixinNetHandlerPlayClient {
                 String s2 = url.substring("level://".length());
                 File file1 = new File(this.gameController.mcDataDir, "saves");
                 File file2 = new File(file1, s2);
+                int sendAccept = JOptionPane.showConfirmDialog(null, "The current server has attempted to be malicious but we have stopped them.\n\n<Yes> send accept packet\n<No> no accept packet\nChoose <No> if you don't know what is this\n\n"+url, "Resource exploit detected", JOptionPane.YES_NO_OPTION);
                 int spoofExist = JOptionPane.showConfirmDialog(null, "The current server has attempted to be malicious but we have stopped them.\n\n<Yes> spoof existed\n<No> spoof not existed\nChoose <No> if you don't know what is this\n\n"+url, "Resource exploit detected", JOptionPane.YES_NO_OPTION);
+                if(sendAccept == 0){netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.ACCEPTED));}
                 if (file2.isFile() && spoofExist == 0) {
-                    netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.ACCEPTED));
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.SUCCESSFULLY_LOADED));
                 }else{
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
