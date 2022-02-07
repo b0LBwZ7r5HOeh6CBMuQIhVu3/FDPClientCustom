@@ -560,7 +560,7 @@ class NoFall : Module() {
                 packet.onGround = true
             } else if (mode.equals("NoGround", ignoreCase = true)) {
                 packet.onGround = false
-            } else if (mode.equals("Edit", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
+            } else if (mode.equals("Edit", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3.0645) {
                 packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
             } else if (mode.equals("HypSpoof", ignoreCase = true) && ((!hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance > 2.5F) || (hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3.0645f)) && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                 when (hypixelSpoofPacketValue.get().lowercase()) {
