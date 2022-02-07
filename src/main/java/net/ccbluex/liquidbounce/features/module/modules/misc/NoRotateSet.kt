@@ -22,6 +22,7 @@ import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 
 @ModuleInfo(name = "NoRotateSet", category = ModuleCategory.MISC)
 class NoRotateSet : Module() {
@@ -29,6 +30,7 @@ class NoRotateSet : Module() {
     private val confirmValue = BoolValue("Confirm", true)
     private val confirmBackValue = BoolValue("ConfirmBack", true)
     private val usePrevRotationValue = BoolValue("usePrevRotation", true)
+    private val vulcanValue = BoolValue("vulcan", true)
     private val illegalRotationValue = BoolValue("ConfirmIllegalRotation", false)
     private val noZeroValue = BoolValue("NoZero", false)
 
@@ -44,13 +46,13 @@ class NoRotateSet : Module() {
             }
             val yaw = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationYaw else mc.thePlayer.rotationYaw
             val pitch = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationPitch else mc.thePlayer.rotationPitch
-
+            val valcanYaw = if(vulcanValue.get()) RandomUtils.nextFloat(-2,2) else 0
             if (illegalRotationValue.get() || packet.getPitch() <= 90 && packet.getPitch() >= -90 &&
                 RotationUtils.serverRotation != null && packet.getYaw() != RotationUtils.serverRotation.yaw &&
                 packet.getPitch() != RotationUtils.serverRotation.pitch) {
 
                 if (confirmValue.get()) {
-                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw(), packet.getPitch(), mc.thePlayer.onGround))
+                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw() + valcanYaw, packet.getPitch(), mc.thePlayer.onGround))
                 }
                 if (confirmBackValue.get()) {
                     mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround))

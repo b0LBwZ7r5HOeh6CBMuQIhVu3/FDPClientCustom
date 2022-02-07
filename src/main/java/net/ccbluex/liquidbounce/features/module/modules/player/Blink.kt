@@ -51,6 +51,7 @@ class Blink : Module() {
     private val dupeC00Value = BoolValue("dupeC00", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
     private val dupeC0FValue = BoolValue("dupeC0F", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
     private val debugValue = BoolValue("debug", true)
+    private val serverSidePositionValue = BoolValue("serverSidePosition", true)
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
     private var packetsDuped = 0
@@ -61,9 +62,9 @@ class Blink : Module() {
         if (mc.thePlayer == null) return
 
         fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
-        fakePlayer!!.clonePlayer(mc.thePlayer, true)
+        // fakePlayer!!.clonePlayer(mc.thePlayer, true)
         fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
-        fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
+        // fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
         mc.theWorld.addEntityToWorld(-1337, fakePlayer)
 
         synchronized(positions) {
@@ -145,10 +146,17 @@ class Blink : Module() {
                     .toString() + ")")
             }
             blink()
-            fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
-//            fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
-            fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
-            fakePlayer!!.renderDistanceWeight = if(mc.gameSettings.thirdPersonView == 0) 1.0 else 0.0
+            if(serverSidePositionValue.get()){
+                if(mc.theWorld!!.getEntityByID(fakePlayer!!.entityId) == null){
+                    mc.theWorld.addEntityToWorld(-1337, fakePlayer)
+                }
+                fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
+//              fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
+                fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
+                fakePlayer!!.renderDistanceWeight = if(mc.gameSettings.thirdPersonView == 0) 0.0 else 1.0
+            }else{
+                mc.theWorld.removeEntityFromWorld(fakePlayer!!.entityId)
+            }
             pulseTimer.reset()
         }
     }
@@ -156,6 +164,7 @@ class Blink : Module() {
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         val breadcrumbs = LiquidBounce.moduleManager[Breadcrumbs::class.java]!!
+        if(!serverSidePositionValue.get()) return
         synchronized(positions) {
             GL11.glPushMatrix()
             GL11.glDisable(GL11.GL_TEXTURE_2D)
