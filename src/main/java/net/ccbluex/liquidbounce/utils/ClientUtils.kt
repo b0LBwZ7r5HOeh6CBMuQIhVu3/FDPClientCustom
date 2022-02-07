@@ -18,7 +18,7 @@ import java.util.*
 
 object ClientUtils : MinecraftInstance() {
     private val logger = LogManager.getLogger("FDPClient")
-    val osType: EnumOSType
+    val osType: EnumOSType = EnumOSType.UNKNOWN
     var inDevMode = System.getProperty("dev-mode") != null
 
     /**
@@ -27,7 +27,7 @@ object ClientUtils : MinecraftInstance() {
     val hardwareUuid: UUID
 
     init {
-        val os = /*System.getProperty("os.name").lowercase()
+/*        val os = System.getProperty("os.name").lowercase()
         osType = if (os.contains("win")) {
             EnumOSType.WINDOWS
         } else if (os.contains("mac")) {
@@ -35,8 +35,8 @@ object ClientUtils : MinecraftInstance() {
         } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
             EnumOSType.LINUX
         } else {
-            */EnumOSType.UNKNOWN
-        // }
+            EnumOSType.UNKNOWN
+        }*/
 
         hardwareUuid = try {
             val systemInfo = SystemInfo()

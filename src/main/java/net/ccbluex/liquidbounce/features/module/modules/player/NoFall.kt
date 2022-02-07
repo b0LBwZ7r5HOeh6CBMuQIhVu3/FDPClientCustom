@@ -53,6 +53,7 @@ class NoFall : Module() {
     val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix1", "OldMatrix2", "OldAACFlag", "HYTFlag", "AAC4.4.X-Flag", "LoyisaAAC4.4.2"), "SpoofGround")
     private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
     private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
+    private val noVoidValue = BoolValue("NoVoid", true)
     private val editDelayValue = IntegerValue("editDelay", 2, 1, 10)
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
     private val minFallDistance = FloatValue("MinMLGHeight", 5f, 2f, 50f).displayable { modeValue.equals("MLG") }
@@ -102,9 +103,19 @@ class NoFall : Module() {
         matrixFlagWait = 0
         aac4FlagCooldown.reset()
     }
-
+    private fun checkVoid(): Boolean {
+        var i = (-(mc.thePlayer!!.posY-1.4857625)).toInt()
+        var dangerous = true
+        while (i <= 0) {
+        dangerous = mc.theWorld!!.getCollisionBoxes(mc.thePlayer.entityBoundingBox.offset(mc.thePlayer.motionX * 0.5, i.toDouble(), mc.thePlayer.motionZ * 0.5)).isEmpty()
+        i++
+        if (!dangerous) break
+        }
+        return dangerous
+    }
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
         if (matrixFlagWait > 0) {
             matrixFlagWait--
             if(matrixFlagWait == 0) {
@@ -410,6 +421,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
         if (modeValue.equals("AACv4") && event.eventState === EventState.PRE) {
             if (!inVoid()) {
                 if (aac4Fakelag) {
@@ -517,6 +529,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onPacket(event: PacketEvent) {
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
         val mode = modeValue.get()
         if (event.packet is S12PacketEntityVelocity) {
             if (mode.equals("AAC4.4.X-Flag", ignoreCase = true) && mc.thePlayer.fallDistance > 1.8) {
@@ -606,6 +619,7 @@ class NoFall : Module() {
 
     @EventTarget
     fun onMove(event: MoveEvent) {
+        if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || checkVoid() || !inVoid()) ) return
         if (BlockUtils.collideBlock(mc.thePlayer.entityBoundingBox) { it is BlockLiquid } || BlockUtils.collideBlock(AxisAlignedBB(mc.thePlayer.entityBoundingBox.maxX, mc.thePlayer.entityBoundingBox.maxY, mc.thePlayer.entityBoundingBox.maxZ, mc.thePlayer.entityBoundingBox.minX, mc.thePlayer.entityBoundingBox.minY - 0.01, mc.thePlayer.entityBoundingBox.minZ)) { it is BlockLiquid }) {
             return
         }

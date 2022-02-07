@@ -118,7 +118,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
 
             when (modeValue.get().lowercase()) {
                 "vanilla" -> {
-                    sendCriticalPacket(yOffset = 1, ground = false)
+                    sendCriticalPacket(yOffset = 1.0, ground = false)
                 }
                 "oldcubecraft" -> {
                     sendCriticalPacket(yOffset = 0.0626, ground = false)

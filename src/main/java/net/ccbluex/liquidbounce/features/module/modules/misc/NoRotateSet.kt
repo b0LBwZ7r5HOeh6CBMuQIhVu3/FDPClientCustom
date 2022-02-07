@@ -46,13 +46,13 @@ class NoRotateSet : Module() {
             }
             val yaw = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationYaw else mc.thePlayer.rotationYaw
             val pitch = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationPitch else mc.thePlayer.rotationPitch
-            val valcanYaw = if(vulcanValue.get()) RandomUtils.nextFloat(-2,2) else 0
+            val valcanYaw = if(vulcanValue.get()) RandomUtils.nextFloat(-2F,2F) else 0
             if (illegalRotationValue.get() || packet.getPitch() <= 90 && packet.getPitch() >= -90 &&
                 RotationUtils.serverRotation != null && packet.getYaw() != RotationUtils.serverRotation.yaw &&
                 packet.getPitch() != RotationUtils.serverRotation.pitch) {
 
                 if (confirmValue.get()) {
-                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw() + valcanYaw, packet.getPitch(), mc.thePlayer.onGround))
+                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw() + valcanYaw.toFloat(), packet.getPitch(), mc.thePlayer.onGround))
                 }
                 if (confirmBackValue.get()) {
                     mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch, mc.thePlayer.onGround))
