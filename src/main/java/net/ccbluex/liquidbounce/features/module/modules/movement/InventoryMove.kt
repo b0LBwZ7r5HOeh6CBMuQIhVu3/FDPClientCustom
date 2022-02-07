@@ -33,7 +33,7 @@ class InventoryMove : Module() {
     private val testPreValue = BoolValue("testPre", false).displayable { bypassValue.equals("test") }
     private val rotateValue = BoolValue("Rotate", true)
     private val noMoveClicksValue = BoolValue("NoMoveClicks", false)
-    val noSprint = ListValue("NoSprint", arrayOf("Real", "PacketSpoof", "None"), "None")
+    val noSprintValue = ListValue("NoSprint", arrayOf("Real", "PacketSpoof", "None"), "None")
 
     private val blinkPacketList = mutableListOf<C03PacketPlayer>()
     var lastInvOpen = false
@@ -101,7 +101,7 @@ class InventoryMove : Module() {
         lastInvOpen = invOpen
         if (packet is S2DPacketOpenWindow || (packet is C16PacketClientStatus && packet.status == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT)) {
             invOpen = true
-            if (noSprint.equals("PacketSpoof")) {
+            if (noSprintValue.equals("PacketSpoof")) {
                 if (mc.thePlayer.isSprinting) {
                     mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING))
                 }
@@ -112,7 +112,7 @@ class InventoryMove : Module() {
         }
         if (packet is S2EPacketCloseWindow || packet is C0DPacketCloseWindow) {
             invOpen = false
-            if (noSprint.equals("PacketSpoof")) {
+            if (noSprintValue.equals("PacketSpoof")) {
                 if (mc.thePlayer.isSprinting) {
                     mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
                 }
