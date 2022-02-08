@@ -736,7 +736,7 @@ class Scaffold : Module() {
         mc.timer.timerSpeed = 1f
         shouldGoDown = false
         RotationUtils.reset()
-        if (slot != mc.thePlayer.inventory.currentItem) mc.netHandler.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
+        if (slot != mc.thePlayer.inventory.currentItem && !autoBlockValue.equals("OFF")) mc.netHandler.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
     }
 
     /**

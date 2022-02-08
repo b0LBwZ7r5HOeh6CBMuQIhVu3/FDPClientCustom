@@ -31,6 +31,7 @@ object KillInsults : Module() {
         ), "RawWords"
     )
     private val waterMarkValue = BoolValue("WaterMark", true)
+    private val hytShoutValue = BoolValue("hytShout", true)
     private val insultFile = File(LiquidBounce.fileManager.dir, "insult.json")
 
     init {
@@ -98,6 +99,9 @@ object KillInsults : Module() {
         var message = msg.replace("%name%", name)
         if (waterMarkValue.get()) {
             message = "[FDPClient] $message"
+        }
+        if(hytShoutValue.get()){
+            message = "@$message"
         }
         mc.thePlayer.sendChatMessage(message)
     }
