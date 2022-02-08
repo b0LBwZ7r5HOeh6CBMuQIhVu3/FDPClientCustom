@@ -95,12 +95,16 @@ public class ClickGui extends GuiScreen {
             int wheel = Mouse.getDWheel();
 
             for (int i = panels.size() - 1; i >= 0; i--)
-                if (panels.get(i).handleScroll(mouseX, mouseY, wheel));
+                if (panels.get(i).handleScroll(mouseX, mouseY, wheel))
                     return;
-            if(wheel < 0){
-                scroll-=15;
-            }else if(wheel>0){
+
+            if (wheel < 0) {
+                scroll -= 15;
+            } else if (wheel > 0) {
                 scroll += 15;
+                if (scroll > 0) {
+                    scroll = 0;
+                }
             }
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
