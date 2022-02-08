@@ -105,7 +105,7 @@ class Scaffold : Module() {
     private val keepLengthValue = IntegerValue("KeepRotationTick", 0, 0, 20).displayable { !rotationsValue.equals("None") }
 
     // Zitter
-    private val zitterModeValue = ListValue("ZitterMode", arrayOf("Teleport", "Smooth","Teleport2", , "OFF"), "OFF")
+    private val zitterModeValue = ListValue("ZitterMode", arrayOf("Teleport", "Smooth","Teleport2", "OFF"), "OFF")
     private val zitterSpeed = FloatValue("ZitterSpeed", 0.13f, 0.1f, 0.3f).displayable { !zitterModeValue.equals("OFF") }
     private val zitterStrength = FloatValue("ZitterStrength", 0.072f, 0.05f, 0.2f).displayable { !zitterModeValue.equals("OFF") }
 
