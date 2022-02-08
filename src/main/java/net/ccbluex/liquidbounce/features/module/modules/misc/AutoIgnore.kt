@@ -21,6 +21,7 @@ class AutoIgnore : Module() {
     private val chatTimes = HashMap<String, Long>()
     private val chatVL = HashMap<String, Float>()
     private val blockedPlayer = ArrayList<String>()
+    private val timer = MSTimer()
 
     @EventTarget
     fun onPacket(event: PacketEvent) {

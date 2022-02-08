@@ -49,7 +49,7 @@ class ModuleCommand(val module: Module, val values: List<Value<*>> = module.valu
             val newValue = !value.get()
             value.set(newValue)
 
-            alert("§7${module.name} §8${args[1]}§7 was toggled ${if (newValue) "§8on§7" else "§8off§7" + "."}")
+            chat("§7${module.name} §8${args[1]}§7 was toggled ${if (newValue) "§8on§7" else "§8off§7" + "."}")
             playEdit()
         } else {
             if (args.size < 3) {
@@ -69,7 +69,7 @@ class ModuleCommand(val module: Module, val values: List<Value<*>> = module.valu
                             val tmpId = Block.getBlockFromName(args[2])?.let { Block.getIdFromBlock(it) }
 
                             if (tmpId == null || tmpId <= 0) {
-                                alert("§7Block §8${args[2]}§7 does not exist!")
+                                chat("§7Block §8${args[2]}§7 does not exist!")
                                 return
                             }
 
@@ -77,7 +77,7 @@ class ModuleCommand(val module: Module, val values: List<Value<*>> = module.valu
                         }
 
                         value.set(id)
-                        alert("§7${module.name} §8${args[1].lowercase()}§7 was set to §8${BlockUtils.getBlockName(id)}§7.")
+                        chat("§7${module.name} §8${args[1].lowercase()}§7 was set to §8${BlockUtils.getBlockName(id)}§7.")
                         playEdit()
                         return
                     }
@@ -94,10 +94,10 @@ class ModuleCommand(val module: Module, val values: List<Value<*>> = module.valu
                     is TextValue -> value.set(StringUtils.toCompleteString(args, 2))
                 }
 
-                alert("§7${module.name} §8${args[1]}§7 was set to §8${value.get()}§7.")
+                chat("§7${module.name} §8${args[1]}§7 was set to §8${value.get()}§7.")
                 playEdit()
             } catch (e: NumberFormatException) {
-                alert("§8${args[2]}§7 cannot be converted to number!")
+                chat("§8${args[2]}§7 cannot be converted to number!")
             }
         }
     }

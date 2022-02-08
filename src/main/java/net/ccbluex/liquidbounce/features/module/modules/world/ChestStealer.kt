@@ -43,6 +43,7 @@ class ChestStealer : Module() {
             nextDelay = TimeUtils.randomDelay(minDelayValue.get(), get())
         }
     }
+
     private val minDelayValue: IntegerValue = object : IntegerValue("MinDelay", 150, 0, 400) {
         override fun onChanged(oldValue: Int, newValue: Int) {
             val i = maxDelayValue.get()
@@ -56,6 +57,7 @@ class ChestStealer : Module() {
     }
 
     private val chestValue = IntegerValue("ChestOpenDelay", 300, 0, 1000)
+
     private val takeRandomizedValue = BoolValue("TakeRandomized", false)
     private val onlyItemsValue = BoolValue("OnlyItems", false)
     private val noCompassValue = BoolValue("NoCompass", false)

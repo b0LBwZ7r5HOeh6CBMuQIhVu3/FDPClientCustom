@@ -113,9 +113,9 @@ public abstract class MixinItemRenderer {
 
             if (this.itemToRender.getItem() instanceof ItemMap) {
                 this.renderItemMap(abstractclientplayer, f2, f, f1);
-            } else if ((abstractclientplayer.isUsingItem() || (mc.gameSettings.keyBindUseItem.isKeyDown() && animations.getAnythingBlockValue().get())) || ((itemToRender.getItem() instanceof ItemSword || animations.getAnythingBlockValue().get())
+            } else if ((abstractclientplayer.isUsingItem() || (mc.gameSettings.keyBindUseItem.isKeyDown() && animations.getAnythingBlock().get())) || ((itemToRender.getItem() instanceof ItemSword || animations.getAnythingBlock().get())
                     && ((killAura.getAutoBlockValue().equals("Fake") && killAura.getCanFakeBlock()) || killAura.getBlockingStatus()))) {
-                switch((killAura.getBlockingStatus() || animations.getAnythingBlockValue().get()) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction()) {
+                switch((killAura.getBlockingStatus() || animations.getAnythingBlock().get()) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction()) {
                     case NONE:
                         this.transformFirstPersonItem(f, 0.0F);
                         break;
@@ -125,7 +125,7 @@ public abstract class MixinItemRenderer {
                         this.transformFirstPersonItem(f, f1);
                         break;
                     case BLOCK:
-                        GL11.glTranslated(animations.getTranslateXValue().get(), animations.getTranslateYValue().get(), animations.getTranslateZValue().get());
+                        GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
                         switch (animations.getBlockingModeValue().get()) {
                             case "Akrien": {
                                 transformFirstPersonItem(f1, 0.0F);
@@ -259,7 +259,7 @@ public abstract class MixinItemRenderer {
                         this.doBowTransformations(partialTicks, abstractclientplayer);
                 }
             }else{
-                if (!animations.getSwingAnimValue().get())
+                if (!animations.getSwingAnim().get())
                     this.doItemUsedTransformations(f1);
                 this.transformFirstPersonItem(f, f1);
             }
@@ -275,11 +275,11 @@ public abstract class MixinItemRenderer {
     }
 
     private void doItemRenderGLTranslate(){
-        GlStateManager.translate(animations.getItemPosXValue().get(), animations.getItemPosYValue().get(), animations.getItemPosZValue().get());
+        GlStateManager.translate(animations.getItemPosX().get(), animations.getItemPosY().get(), animations.getItemPosZ().get());
     }
 
     private void doItemRenderGLScale(){
-        GlStateManager.scale(animations.getItemScaleValue().get(), animations.getItemScaleValue().get(), animations.getItemScaleValue().get());
+        GlStateManager.scale(animations.getItemScale().get(), animations.getItemScale().get(), animations.getItemScale().get());
     }
 
     private void sigmaOld(float f) {
@@ -412,7 +412,7 @@ public abstract class MixinItemRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         float f = 1.0F;
-        if(antiBlind.getState() && antiBlind.getFireEffectValue().get()){
+        if(antiBlind.getState() && antiBlind.getFireEffect().get()){
             GlStateManager.color(1.0F, 1.0F, 1.0F, 0.3F);
             f = 0.7F;
         }else{

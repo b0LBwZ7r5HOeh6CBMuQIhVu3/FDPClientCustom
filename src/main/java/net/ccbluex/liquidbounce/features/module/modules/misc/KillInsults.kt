@@ -21,6 +21,7 @@ import java.nio.file.Files
 
 @ModuleInfo(name = "KillInsults", category = ModuleCategory.MISC)
 object KillInsults : Module() {
+    var insultWords = mutableListOf<String>()
 
     val modeValue = ListValue(
         "Mode", arrayOf(
@@ -30,9 +31,7 @@ object KillInsults : Module() {
         ), "RawWords"
     )
     private val waterMarkValue = BoolValue("WaterMark", true)
-
     private val insultFile = File(LiquidBounce.fileManager.dir, "insult.json")
-    var insultWords = mutableListOf<String>()
 
     init {
         loadFile()

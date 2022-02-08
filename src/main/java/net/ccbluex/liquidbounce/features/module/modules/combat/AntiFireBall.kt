@@ -21,13 +21,12 @@ import net.minecraft.network.play.client.C0APacketAnimation
 
 @ModuleInfo(name = "AntiFireBall", category = ModuleCategory.COMBAT)
 class AntiFireBall : Module() {
+    private val timer = MSTimer()
 
     private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val rotationValue = BoolValue("Rotation", true)
     private val rangeValue = FloatValue("Range", 5.5f, 1f, 6f)
     private val rotationKeepLenValue = BoolValue("RotationKeepLen", true)
-
-    private val timer = MSTimer()
 
     @EventTarget
     private fun onUpdate(event: UpdateEvent) {
