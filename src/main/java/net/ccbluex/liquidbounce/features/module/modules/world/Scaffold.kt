@@ -105,7 +105,7 @@ class Scaffold : Module() {
     private val keepLengthValue = IntegerValue("KeepRotationTick", 0, 0, 20).displayable { !rotationsValue.equals("None") }
 
     // Zitter
-    private val zitterModeValue = ListValue("ZitterMode", arrayOf("Teleport", "Smooth", "OFF"), "OFF")
+    private val zitterModeValue = ListValue("ZitterMode", arrayOf("Teleport", "Smooth","Teleport2", , "OFF"), "OFF")
     private val zitterSpeed = FloatValue("ZitterSpeed", 0.13f, 0.1f, 0.3f).displayable { !zitterModeValue.equals("OFF") }
     private val zitterStrength = FloatValue("ZitterStrength", 0.072f, 0.05f, 0.2f).displayable { !zitterModeValue.equals("OFF") }
 
@@ -357,6 +357,13 @@ class Scaffold : Module() {
             // Zitter
             if (zitterModeValue.equals("teleport")) {
                 MovementUtils.strafe(zitterSpeed.get())
+                val yaw = Math.toRadians(mc.thePlayer.rotationYaw + if (zitterDirection) 90.0 else -90.0)
+                mc.thePlayer.motionX -= sin(yaw) * zitterStrength.get()
+                mc.thePlayer.motionZ += cos(yaw) * zitterStrength.get()
+                zitterDirection = !zitterDirection
+            }
+            if (zitterModeValue.equals("teleport2")) {
+                // MovementUtils.strafe(zitterSpeed.get())
                 val yaw = Math.toRadians(mc.thePlayer.rotationYaw + if (zitterDirection) 90.0 else -90.0)
                 mc.thePlayer.motionX -= sin(yaw) * zitterStrength.get()
                 mc.thePlayer.motionZ += cos(yaw) * zitterStrength.get()

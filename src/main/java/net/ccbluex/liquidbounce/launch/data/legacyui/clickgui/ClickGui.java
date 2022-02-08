@@ -32,6 +32,7 @@ public class ClickGui extends GuiScreen {
     private Panel clickedPanel;
     private int mouseX;
     private int mouseY;
+    private int scroll;
 
     public ClickGui() {
         final int width = 100;
@@ -57,6 +58,8 @@ public class ClickGui extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         final double scale = LiquidBounce.moduleManager.getModule(ClickGUIModule.class).scaleValue.get();
 
+        GlStateManager.translate(0,scroll,9)
+        mouseY -= scroll;
         mouseX /= scale;
         mouseY /= scale;
 
@@ -83,25 +86,33 @@ public class ClickGui extends GuiScreen {
             }
         }
 
+
+
+        GlStateManager.disableLighting();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.scale(1, 1, 1);
         if (Mouse.hasWheel()) {
             int wheel = Mouse.getDWheel();
 
             for (int i = panels.size() - 1; i >= 0; i--)
                 if (panels.get(i).handleScroll(mouseX, mouseY, wheel))
-                    break;
+                    reutnr;
+            if(wheel < 0){
+                scroll-=15;
+            }else if(wheel>0){
+                scroll += 15;
+                if(scroll>0){
+                    scroll+=0;
+                }
+            }
         }
-
-        GlStateManager.disableLighting();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.scale(1, 1, 1);
-
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         final double scale = LiquidBounce.moduleManager.getModule(ClickGUIModule.class).scaleValue.get();
-
+        mouseY-=scroll;
         mouseX /= scale;
         mouseY /= scale;
 
@@ -130,7 +141,7 @@ public class ClickGui extends GuiScreen {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         final double scale = LiquidBounce.moduleManager.getModule(ClickGUIModule.class).scaleValue.get();
-
+        mouseY-=scroll;
         mouseX /= scale;
         mouseY /= scale;
 
