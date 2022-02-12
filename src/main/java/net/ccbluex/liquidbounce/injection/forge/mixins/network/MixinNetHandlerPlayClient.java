@@ -81,7 +81,7 @@ public abstract class MixinNetHandlerPlayClient {
                 File file2 = new File(file1, s2);
                 if (file2.isFile()
                         && !url.toLowerCase().contains(LiquidBounce.CLIENT_NAME.toLowerCase())
-                        /* lmao imagine check the client legal with this exploit, zqat.top */) {
+                        /* nice exploit abuse, zqat dot top... */) {
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.ACCEPTED));
                     // a legit client will send SUCCESSFULLY_LOADED back even [java.util.zip.ZipException] is thrown
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.SUCCESSFULLY_LOADED));
