@@ -8,6 +8,8 @@ package net.ccbluex.liquidbounce.features.module.modules.render
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
+import net.minecraft.entity.player.EntityPlayer
+import net.ccbluex.liquidbounce.event.EntityKilledEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -44,7 +46,7 @@ class HitLightning : Module() {
             return
         }
 
-                mc.netHandler.handleSpawnGlobalEntity(S2CPacketSpawnGlobalEntity(EntityLightningBolt(mc.theWorld, target.posX, target.posY, ptarget.posZ)))
+                mc.netHandler.handleSpawnGlobalEntity(S2CPacketSpawnGlobalEntity(EntityLightningBolt(mc.theWorld, target.posX, target.posY, target.posZ)))
                 mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.explode"), 1.0f))
                 mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("ambient.weather.thunder"), 1.0f))
             target?.let { mc.effectRenderer.spawnEffectParticle(EnumParticleTypes.LAVA.particleID, target!!.posX, target!!.posY, target!!.posZ, 0.0, 0.0, 0.0) }
