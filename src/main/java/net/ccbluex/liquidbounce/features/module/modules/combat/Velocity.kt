@@ -527,9 +527,9 @@ class Velocity : Module() {
                     val horizontal = horizontalValue.get()
                     val vertical = verticalValue.get()
 
-                    if (horizontal == 0F && vertical == 0F) {
+                    /*if (horizontal == 0F && vertical == 0F) {
                         event.cancelEvent()
-                    }
+                    }*/
 
                     packet.motionX = (packet.getMotionX() * horizontal).toInt()
                     packet.motionY = (packet.getMotionY() * vertical).toInt()
