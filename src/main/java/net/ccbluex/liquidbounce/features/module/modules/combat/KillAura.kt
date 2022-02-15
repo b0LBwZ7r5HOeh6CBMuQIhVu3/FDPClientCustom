@@ -1066,7 +1066,7 @@ class KillAura : Module() {
             "Test" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "Jigsaw" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getJigsawRotations(entity), (calculateSpeed).toFloat())
             "Vodka" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getVodkaRotations(entity, false), (calculateSpeed).toFloat())
-            "WatchDog" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getWatcgDogRotations(entity), (calculateSpeed).toFloat())
+            "WatchDog" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getWatchDogRotations(entity), (calculateSpeed).toFloat())
             "Simple" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getRotations(entity), (calculateSpeed).toFloat())
             else -> return true
         }

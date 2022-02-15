@@ -26,7 +26,7 @@ class VulcanTimer : SpeedMode("VulcanTimer") {
         if(stage) {
             if(!event.isServerSide()){
                 event.cancelEvent()
-                packets.add(packet)
+                packets.add(event.getPacket())
             }
         } else {
             while (!packets.isEmpty()) {
