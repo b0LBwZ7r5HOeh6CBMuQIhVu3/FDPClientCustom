@@ -372,7 +372,7 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
     }
 
 
-        public static Rotation getVodkaRotations(Entity e, boolean oldPositionUse) {
+    public static Rotation getVodkaRotations(Entity e, boolean oldPositionUse) {
         // Variables
         double diffX = (oldPositionUse ? e.prevPosX : e.posX) - (oldPositionUse ? mc.thePlayer.prevPosX : mc.thePlayer.posX);
         double diffZ = (oldPositionUse ? e.prevPosZ : e.posZ) - (oldPositionUse ? mc.thePlayer.prevPosZ : mc.thePlayer.posZ);
@@ -400,8 +400,31 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         pitch = MathHelper.clamp_float(pitch, -90F, 90F);
         return new Rotation( yaw, pitch );
     }
+    public static Rotation getWatchDogRotations(Entity e) {
+        float rotations = getAngles(e)
+        float yaw = (float)((double)rotations[0] + nextDouble(1.0,2.0));
+        float pitch = (float)MathHelper.round(rotations[1] + nextFloat(0F, 1F), 25);
+        
+        return new Rotation( yaw, pitch );
+    }
+    public static float[] getAngles(Entity e) {
+        return new float[]{getYawChangeToEntity(e) + mc.thePlayer.rotationYaw, getPitchChangeToEntity(e) + mc.thePlayer.rotationPitch};
+    }
+    public static float getYawChangeToEntity(Entity entity) {
+        double deltaX = entity.posX - mc.thePlayer.posX;
+        double deltaZ = entity.posZ - mc.thePlayer.posZ;
+        double yawToEntity = deltaZ < 0.0 && deltaX < 0.0 ? 90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX)) : (deltaZ < 0.0 && deltaX > 0.0 ? -90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX)) : Math.toDegrees(-Math.atan(deltaX / deltaZ)));
+        return Double.isNaN((double)mc.thePlayer.rotationYaw - yawToEntity) ? 0.0f : MathHelper.wrapAngleTo180_float(-(mc.thePlayer.rotationYaw - (float)yawToEntity));
+    }
 
-
+    public static float getPitchChangeToEntity(Entity entity) {
+        double distanceXZ;
+        double deltaX = entity.posX - mc.thePlayer.posX;
+        double deltaZ = entity.posZ - mc.thePlayer.posZ;
+        double deltaY = entity.posY - 1.6 + (double)entity.getEyeHeight() - mc.thePlayer.posY;
+        double pitchToEntity = -Math.toDegrees(Math.atan(deltaY / (distanceXZ = (double)MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ))));
+        return Double.isNaN((double)mc.thePlayer.rotationPitch - pitchToEntity) ? 0.0f : -MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationPitch - (float)pitchToEntity);
+    }
     /**
      * Calculate difference between the client rotation and your entity
      *

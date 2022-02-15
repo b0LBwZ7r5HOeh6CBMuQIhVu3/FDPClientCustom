@@ -51,7 +51,7 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
-    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix1", "OldMatrix2", "OldAACFlag", "HYTFlag", "AAC4.4.X-Flag", "LoyisaAAC4.4.2"), "SpoofGround")
+    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix1", "OldMatrix2", "OldAACFlag", "HYTFlag", "AAC4.4.X-Flag", "LoyisaAAC4.4.2","WatchDog"), "SpoofGround")
     private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
     private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
     private val noVoidValue = BoolValue("NoVoid", true)
@@ -423,6 +423,9 @@ class NoFall : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         if(noVoidValue.get() && (mc.thePlayer!!.ticksExisted < 2 || !MovementUtils.isBlockUnder()) ) return
+        if (modeValue.equals("WatchDog") && event.eventState === EventState.PRE) {
+            mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+        }
         if (modeValue.equals("AACv4") && event.eventState === EventState.PRE) {
             if (!inVoid()) {
                 if (aac4Fakelag) {

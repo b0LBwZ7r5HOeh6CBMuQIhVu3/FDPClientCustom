@@ -148,7 +148,7 @@ class KillAura : Module() {
     // TODO: Divide AAC Opinion into three separated opinions
 
     // Rotations
-    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix", "Jigsaw", "Vodka", "HalfUp", "HalfDown", "Simple"), "LiquidBounce")
+    private val rotationModeValue = ListValue("RotationMode", arrayOf("None", "LiquidBounce", "ForceCenter", "SmoothCenter", "SmoothLiquid", "LockView", "OldMatrix", "Jigsaw", "Vodka", "HalfUp", "HalfDown", "Simple","WatchDog"), "LiquidBounce")
     // TODO: RotationMode Bypass Intave
 
     private val maxTurnSpeed: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 1f, 180f) {
@@ -1066,6 +1066,7 @@ class KillAura : Module() {
             "Test" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, directRotation, (calculateSpeed).toFloat())
             "Jigsaw" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getJigsawRotations(entity), (calculateSpeed).toFloat())
             "Vodka" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getVodkaRotations(entity, false), (calculateSpeed).toFloat())
+            "WatchDog" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getWatcgDogRotations(entity), (calculateSpeed).toFloat())
             "Simple" -> RotationUtils.limitAngleChange(RotationUtils.serverRotation, RotationUtils.getRotations(entity), (calculateSpeed).toFloat())
             else -> return true
         }
