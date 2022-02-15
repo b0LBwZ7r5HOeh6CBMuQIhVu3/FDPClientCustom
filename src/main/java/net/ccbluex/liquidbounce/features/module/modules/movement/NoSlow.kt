@@ -102,7 +102,10 @@ class NoSlow : Module() {
 
 //        val heldItem = mc.thePlayer.heldItem
         if (modeValue.get().lowercase() == "aac5") {
-            if (((event.eventState == EventState.POST && !aac5PreValue.get()) || (event.eventState == EventState.PRE && aac5PreValue.get())) && ((!aac5noEatPacketValue.get() && mc.thePlayer.isUsingItem) || mc.thePlayer.isBlocking() || killAura.blockingStatus) && (msTimer.hasTimePassed(customDelayValue.get().toLong()) || customDelayValue.get() <= 0)) {
+            if (((event.eventState == EventState.POST && !aac5PreValue.get())
+             || (event.eventState == EventState.PRE && aac5PreValue.get()))
+              && ((!aac5noEatPacketValue.get() && mc.thePlayer.isUsingItem) || mc.thePlayer.isBlocking() || killAura.blockingStatus)
+               && (msTimer.hasTimePassed(customDelayValue.get().toLong()) || customDelayValue.get() <= 0)) {
                 when (aac5PacketValue.get().lowercase()) {
                     "normal" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
                     "old" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), -1, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
