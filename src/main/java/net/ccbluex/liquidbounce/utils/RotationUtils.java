@@ -16,6 +16,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.*;
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.util.MathHelper;
 import java.util.Random;
@@ -371,7 +373,14 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         return (float)(startInclusive + (endInclusive - startInclusive) * Math.random());
     }
 
-
+    public static double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
     public static Rotation getVodkaRotations(Entity e, boolean oldPositionUse) {
         // Variables
         double diffX = (oldPositionUse ? e.prevPosX : e.posX) - (oldPositionUse ? mc.thePlayer.prevPosX : mc.thePlayer.posX);
@@ -403,7 +412,7 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
     public static Rotation getWatchDogRotations(Entity e) {
         float[] rotations = getAngles(e);
         float yaw = (float)((double)rotations[0] + random.nextDouble());
-        float pitch = (float)MathHelper.round(rotations[1] + nextFloat(0F, 1F), 25);
+        float pitch = (float)round(rotations[1] + nextFloat(0F, 1F), 25);
         
         return new Rotation( yaw, pitch );
     }
