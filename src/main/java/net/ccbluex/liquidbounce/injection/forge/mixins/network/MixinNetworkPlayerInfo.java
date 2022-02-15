@@ -36,6 +36,5 @@ public class MixinNetworkPlayerInfo {
                 cir.cancel();
             }
         }
-
     }
 }

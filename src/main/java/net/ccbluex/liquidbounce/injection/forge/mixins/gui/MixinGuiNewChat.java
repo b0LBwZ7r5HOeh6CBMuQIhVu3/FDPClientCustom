@@ -71,36 +71,19 @@ public abstract class MixinGuiNewChat {
     private boolean isScrolled;
 
     @Shadow
-    public abstract void deleteChatLine(int p_deleteChatLine_1_);
-
-    @Shadow
-    @Final
-    private List<ChatLine> chatLines;
-
-    @Shadow
-    public abstract void scroll(int p_scroll_1_);
-
-    @Shadow
     public abstract void printChatMessageWithOptionalDeletion(IChatComponent chatComponent, int chatLineId);
 
     private String lastMessage;
     private int sameMessageAmount;
     private int line;
 
-    private HUD hud;
-
-    private void checkHud(){
-        if(hud==null){
-            hud = LiquidBounce.moduleManager.getModule(HUD.class);
-        }
-    }
+    private final HUD hud = LiquidBounce.moduleManager.getModule(HUD.class);
 
     /**
      * @author Liuli
      */
     @Overwrite
     public void printChatMessage(IChatComponent chatComponent) {
-        checkHud();
         if(!hud.getChatCombineValue().get()) {
             printChatMessageWithOptionalDeletion(chatComponent, 0);
             return;
@@ -145,8 +128,7 @@ public abstract class MixinGuiNewChat {
 
     @Overwrite
     public void drawChat(int updateCounter) {
-        checkHud();
-        boolean canFont=hud.getState() && hud.getFontChatValue().get();
+        boolean canFont = hud.getState() && hud.getFontChatValue().get();
 
         if (hud.getChatPositionValue().get()) {
             GlStateManager.pushMatrix();
@@ -261,7 +243,6 @@ public abstract class MixinGuiNewChat {
 
     @Inject(method = "getChatComponent", at = @At("HEAD"), cancellable = true)
     private void getChatComponent(int p_getChatComponent_1_, int p_getChatComponent_2_, final CallbackInfoReturnable<IChatComponent> callbackInfo) {
-        checkHud();
         if(hud.getState() && hud.getFontChatValue().get()) {
             if(!this.getChatOpen()) {
                 callbackInfo.setReturnValue(null);
