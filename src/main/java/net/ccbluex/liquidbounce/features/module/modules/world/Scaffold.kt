@@ -306,6 +306,11 @@ class Scaffold : Module() {
                     }
                 }
             }
+            if(extraClickValue.get().lowercase() != "off"){if (swingValue.equals("packet")) {
+                mc.netHandler.addToSendQueue(C0APacketAnimation())
+            } else if (swingValue.equals("normal")) {
+                mc.thePlayer.swingItem()
+            }}
             clickDelay = TimeUtils.randomDelay(extraClickMinDelayValue.get(), extraClickMaxDelayValue.get())
             clickTimer.reset()
         }
