@@ -401,8 +401,8 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         return new Rotation( yaw, pitch );
     }
     public static Rotation getWatchDogRotations(Entity e) {
-        float rotations = getAngles(e);
-        float yaw = (float)((double)rotations[0] + nextDouble(1.0,2.0));
+        float[] rotations = getAngles(e);
+        float yaw = (float)((double)rotations[0] + random.nextDouble());
         float pitch = (float)MathHelper.round(rotations[1] + nextFloat(0F, 1F), 25);
         
         return new Rotation( yaw, pitch );
