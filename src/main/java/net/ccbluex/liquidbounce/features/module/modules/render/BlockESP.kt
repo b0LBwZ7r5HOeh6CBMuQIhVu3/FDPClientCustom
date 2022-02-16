@@ -32,6 +32,7 @@ class BlockESP : Module() {
     private val colorGreenValue = IntegerValue("G", 179, 0, 255)
     private val colorBlueValue = IntegerValue("B", 72, 0, 255)
     private val colorRainbow = BoolValue("Rainbow", false)
+    private val xrayValue = BoolValue("XRay", false)
     private val searchTimer = MSTimer()
     private val posList: MutableList<BlockPos> = ArrayList()
     private var color = Color.CYAN
@@ -58,7 +59,11 @@ class BlockESP : Module() {
                             val zPos = mc.thePlayer.posZ.toInt() + z
                             val blockPos = BlockPos(xPos, yPos, zPos)
                             val block = getBlock(blockPos)
-                            if (block === selectedBlock) blockList.add(blockPos)
+                            if (block === selectedBlock
+                                && ( !xrayValue.get() || 
+                                    (getBlock(blockPos.down()) == selectedBlock && getBlock(blockPos.north()) == selectedBlock)
+                                    
+                                    ) ) blockList.add(blockPos)
                         }
                     }
                 }
