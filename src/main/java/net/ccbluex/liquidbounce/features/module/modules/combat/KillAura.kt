@@ -140,11 +140,11 @@ class KillAura : Module() {
     private val firstBlockDelayValue = IntegerValue("FirstBlockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
     private val afterTickPatchValue = BoolValue("AfterTickPatch", true).displayable { autoBlockPacketValue.equals("AfterTick") } 
     // smart autoblock stuff
-    private val smartAutoBlockValue = BoolValue("SmartAutoBlock", false).displayable{ !autoBlockModeValue.get().equals("None", true) } // thanks czech
-    private val smartABItemValue = BoolValue("SmartAutoBlock-ItemCheck", true).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }//thanks LB+
-    private val smartABFacingValue = BoolValue("SmartAutoBlock-FacingCheck", true).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
-    private val smartABRangeValue = FloatValue("SmartAB-Range", 3.5F, 3F, 8F).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
-    private val smartABTolerationValue = FloatValue("SmartAB-Toleration", 0F, 0F, 2F).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
+    private val smartAutoBlockValue = BoolValue("SmartAutoBlock", false).displayable{ autoBlockValue.equals("Range", true) } // thanks czech
+    private val smartABItemValue = BoolValue("SmartAutoBlock-ItemCheck", true).displayable{ autoBlockValue.equals("Range", true) && smartAutoBlockValue.get() }//thanks LB+
+    private val smartABFacingValue = BoolValue("SmartAutoBlock-FacingCheck", true).displayable{ autoBlockValue.equals("Range", true) && smartAutoBlockValue.get() }
+    private val smartABRangeValue = FloatValue("SmartAB-Range", 3.5F, 3F, 8F).displayable{ autoBlockValue.equals("Range", true) && smartAutoBlockValue.get() }
+    private val smartABTolerationValue = FloatValue("SmartAB-Toleration", 0F, 0F, 2F).displayable{ autoBlockValue.equals("Range", true) && smartAutoBlockValue.get() }
 
     // Raycast
     private val raycastValue = BoolValue("RayCast", true)
