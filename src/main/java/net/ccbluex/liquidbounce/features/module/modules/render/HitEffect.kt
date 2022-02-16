@@ -32,7 +32,7 @@ class HitEffect : Module() {
     private val magicCriticalValue = BoolValue("MagicCritical", true)
     private val timesValue = IntegerValue("Times", 1, 1, 10)
     // private val hitSoundValue = ListValue("hitSound", arrayOf("Skeet","idk","none"), "none")
-    private val lightingSoundValue = BoolValue("LightingSound", true).displayable { modeValue.equals("Lighting") }
+    private val lightingSoundValue = BoolValue("LightingSound", true).displayable { lightingValue.get() }
 
     private val blockState = Block.getStateId(Blocks.redstone_block.defaultState)
 
