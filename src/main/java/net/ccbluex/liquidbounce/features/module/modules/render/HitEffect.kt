@@ -24,8 +24,14 @@ import net.minecraft.util.ResourceLocation
 class HitEffect : Module() {
 
     private val timingValue = ListValue("Timing", arrayOf("Attack", "Kill"), "Attack")
-    private val modeValue = ListValue("Mode", arrayOf("Lighting", "Blood", "Fire", "Critical", "MagicCritical"), "Lighting")
+    // private val modeValue = ListValue("Mode", arrayOf("Lighting", "Blood", "Fire", "Critical", "MagicCritical"), "Lighting")
+    private val lightingValue = BoolValue("Lighting", true)
+    private val bloodValue = BoolValue("Blood", true)
+    private val fireValue = BoolValue("Fire", true)
+    private val criticalValue = BoolValue("Critical", true)
+    private val magicCriticalValue = BoolValue("MagicCritical", true)
     private val timesValue = IntegerValue("Times", 1, 1, 10)
+    // private val hitSoundValue = ListValue("hitSound", arrayOf("Skeet","idk","none"), "none")
     private val lightingSoundValue = BoolValue("LightingSound", true).displayable { modeValue.equals("Lighting") }
 
     private val blockState = Block.getStateId(Blocks.redstone_block.defaultState)
@@ -46,25 +52,23 @@ class HitEffect : Module() {
 
     private fun displayEffectFor(entity: EntityLivingBase) {
         repeat(timesValue.get()) {
-            when(modeValue.get().lowercase()) {
-                "lighting" -> {
+            // when(modeValue.get().lowercase()) {
+                if(lightingValue.get()) {
                     mc.netHandler.handleSpawnGlobalEntity(S2CPacketSpawnGlobalEntity(EntityLightningBolt(mc.theWorld, entity.posX, entity.posY, entity.posZ)))
                     if(lightingSoundValue.get()) {
                         mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("random.explode"), 1.0f))
                         mc.soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("ambient.weather.thunder"), 1.0f))
                     }
                 }
-                "blood" -> {
+                if(bloodValue.get()) 
                     repeat(10) {
                         mc.effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.particleID, entity.posX, entity.posY + entity.height / 2, entity.posZ,
-                            entity.motionX + RandomUtils.nextFloat(-0.5f, 0.5f), entity.motionY + RandomUtils.nextFloat(-0.5f, 0.5f), entity.motionZ + RandomUtils.nextFloat(-0.5f, 0.5f), blockState)
+                        entity.motionX + RandomUtils.nextFloat(-0.5f, 0.5f), entity.motionY + RandomUtils.nextFloat(-0.5f, 0.5f), entity.motionZ + RandomUtils.nextFloat(-0.5f, 0.5f), blockState)
                     }
-                }
-                "fire" ->
-                    mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.LAVA)
-                "critical" -> mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.CRIT)
-                "magiccritical" -> mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.CRIT_MAGIC)
-            }
+                if(fireValue.get()) mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.LAVA)
+                if(criticalValue.get()) mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.CRIT)
+                if(magicCriticalValue.get())  mc.effectRenderer.emitParticleAtEntity(entity, EnumParticleTypes.CRIT_MAGIC)
+            // }
         }
     }
 }
