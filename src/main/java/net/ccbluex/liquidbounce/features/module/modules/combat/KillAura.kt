@@ -30,6 +30,7 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.gui.inventory.GuiContainer
+import net.minecraft.util.MovingObjectPosition
 import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.Entity
@@ -138,6 +139,13 @@ class KillAura : Module() {
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
     private val firstBlockDelayValue = IntegerValue("FirstBlockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
     private val afterTickPatchValue = BoolValue("AfterTickPatch", true).displayable { autoBlockPacketValue.equals("AfterTick") } 
+    // smart autoblock stuff
+    private val smartAutoBlockValue = BoolValue("SmartAutoBlock", false).displayable{ !autoBlockModeValue.get().equals("None", true) } // thanks czech
+    private val smartABItemValue = BoolValue("SmartAutoBlock-ItemCheck", true).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }//thanks LB+
+    private val smartABFacingValue = BoolValue("SmartAutoBlock-FacingCheck", true).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
+    private val smartABRangeValue = FloatValue("SmartAB-Range", 3.5F, 3F, 8F).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
+    private val smartABTolerationValue = FloatValue("SmartAB-Toleration", 0F, 0F, 2F).displayable{ !autoBlockModeValue.get().equals("None", true) && smartAutoBlockValue.get() }
+
     // Raycast
     private val raycastValue = BoolValue("RayCast", true)
     private val raycastIgnoredValue = BoolValue("RayCastIgnored", false).displayable { raycastValue.get() }
@@ -426,7 +434,25 @@ class KillAura : Module() {
         if (!rotationStrafeValue.equals("Off") && !mc.thePlayer.isRiding) {
             return
         }
-
+        smartBlocking = false
+        if (smartAutoBlockValue.get() && target != null) {
+            val smTarget = target!!
+            if (!smartABItemValue.get() || (smTarget.heldItem != null && smTarget.heldItem.getItem() != null && (smTarget.heldItem.getItem() is ItemSword || smTarget.heldItem.getItem() is ItemAxe))) {
+                if (mc.thePlayer.getDistanceToEntityBox(smTarget) < smartABRangeValue.get()) {
+                    if (smartABFacingValue.get()) {
+                        if (smTarget.rayTrace(smartABRangeValue.get().toDouble(), 1F).typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
+                            val eyesVec = smTarget.getPositionEyes(1F)
+                            val lookVec = smTarget.getLook(1F)
+                            val pointingVec = eyesVec.addVector(lookVec.xCoord * smartABRangeValue.get(), lookVec.yCoord * smartABRangeValue.get(), lookVec.zCoord * smartABRangeValue.get())
+                            val border = mc.thePlayer.getCollisionBorderSize() + smartABTolerationValue.get()
+                            val bb = mc.thePlayer.entityBoundingBox.expand(border.toDouble(), border.toDouble(), border.toDouble())
+                            smartBlocking = bb.calculateIntercept(eyesVec, pointingVec) != null || bb.intersectsWith(smTarget.entityBoundingBox)
+                        }
+                    } else
+                        smartBlocking = true
+                }
+            }
+        }
         if (mc.thePlayer.isRiding) {
             update()
         }
@@ -1256,8 +1282,9 @@ class KillAura : Module() {
     /**
      * Check if player is able to block
      */
+    var smartBlocking = false
     private val canBlock: Boolean
-        get() = mc.thePlayer.heldItem != null && mc.thePlayer.heldItem.item is ItemSword
+        get() = mc.thePlayer.heldItem != null && mc.thePlayer.heldItem.item is ItemSword && (!smartAutoBlockValue.get() || smartBlocking)
 
     /**
      * Range
