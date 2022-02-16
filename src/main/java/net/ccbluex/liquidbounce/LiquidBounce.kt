@@ -94,7 +94,11 @@ object LiquidBounce {
             CLIENT_REAL_VERSION
         } else {
             val str = commitId.reader(Charsets.UTF_8).readLines().first()
-            "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
+            if(str.isNotEmpty()) {
+                "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
+            } else {
+                CLIENT_REAL_VERSION
+            }
         }
     }
 

@@ -96,8 +96,6 @@ public abstract class MixinMinecraft {
     @Final
     public File mcDataDir;
 
-    @Shadow protected abstract ByteBuffer readImageToBuffer(InputStream p_readImageToBuffer_1_) throws IOException;
-
     /**
      * @author XiGuaGeGe
      */
