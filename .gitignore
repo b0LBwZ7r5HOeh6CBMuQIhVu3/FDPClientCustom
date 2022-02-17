@@ -28,5 +28,4 @@ run
 .DS_Store
 Thumbs.db
 
-#ok
-gradle.properties
+jbs.jar

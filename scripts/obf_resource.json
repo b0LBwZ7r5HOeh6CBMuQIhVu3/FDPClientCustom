@@ -1,0 +1,13 @@
+{
+  "inputFile": "build/libs/FDPClient-2.0.0.jar",
+  "outputFile": "build/libs/FDPClient-2.0.0.jar.tmp",
+  "allowedPackages": [
+    "net/ccbluex/liquidbounce/injection/forge/mixins/splash/MixinSplashProgressRunnable"
+  ],
+  "usedFeatures": [
+    "ResourceProtector"
+  ],
+  "protectedDictionaries": [
+    "assets/minecraft/fdpclient/misc/splash.png"
+  ]
+}

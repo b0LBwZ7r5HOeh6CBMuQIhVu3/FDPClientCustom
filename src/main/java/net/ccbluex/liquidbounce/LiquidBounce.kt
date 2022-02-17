@@ -72,9 +72,6 @@ object LiquidBounce {
     lateinit var mainMenu: GuiScreen
     lateinit var keyBindManager: KeyBindManager
 
-    val mainMenuInitialized: Boolean
-        get() = this::mainMenu.isInitialized
-
     // Menu Background
     var background: ResourceLocation? = null
 
@@ -96,16 +93,13 @@ object LiquidBounce {
         CLIENT_VERSION = if (commitId == null) {
             CLIENT_REAL_VERSION
         } else {
-            val str = IOUtils.toString(commitId, StandardCharsets.UTF_8).replace("\n", "")
-            "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
+            val str = commitId.reader(Charsets.UTF_8).readLines().first()
+            if(str.isNotEmpty()) {
+                "git-" + (str.substring(0, 7.coerceAtMost(str.length)))
+            } else {
+                CLIENT_REAL_VERSION
+            }
         }
-
-        // initialize dynamic launch options
-//        if(System.getProperty("fdp-legacy-ui")!=null){
-//            launchFilters.add(EnumLaunchFilter.LEGACY_UI)
-//        }else{
-//            launchFilters.add(EnumLaunchFilter.ULTRALIGHT)
-//        }
     }
 
     /**

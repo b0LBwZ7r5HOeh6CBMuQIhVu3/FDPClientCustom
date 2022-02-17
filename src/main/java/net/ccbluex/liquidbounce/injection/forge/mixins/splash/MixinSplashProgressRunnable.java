@@ -15,9 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 @Mixin(targets="net.minecraftforge.fml.client.SplashProgress$3", remap=false)
@@ -30,7 +28,7 @@ public abstract class MixinSplashProgressRunnable {
     protected abstract void clearGL();
 
     @Inject(method="run()V", at=@At(value="HEAD"), remap=false, cancellable=true)
-    private void run(CallbackInfo callbackInfo) {
+    private void run(CallbackInfo callbackInfo) throws IOException {
         callbackInfo.cancel();
 
         this.setGL();
@@ -38,12 +36,8 @@ public abstract class MixinSplashProgressRunnable {
 
         ClientUtils.INSTANCE.logInfo("[Splash] Loading Texture...");
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        int tex;
-        try {
-            tex = RenderUtils.loadGlTexture(ImageIO.read(this.getClass().getResourceAsStream("/assets/minecraft/fdpclient/misc/splash.png")));
-        } catch (IOException e) {
-            tex = 0;
-        }
+        // just throw it, I think is safe
+        int tex = RenderUtils.loadGlTexture(ImageIO.read(this.getClass().getResourceAsStream("/assets/minecraft/fdpclient/misc/splash.png")));
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         AnimatedValue animatedValue = new AnimatedValue();
