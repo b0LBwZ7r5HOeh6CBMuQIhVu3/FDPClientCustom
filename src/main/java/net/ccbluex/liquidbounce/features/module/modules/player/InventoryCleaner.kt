@@ -94,12 +94,17 @@ class InventoryCleaner : Module() {
     private val openInventory: Boolean
         get() = mc.currentScreen !is GuiInventory && simulateInventory.get()
 
+    /**
+     * means of simulating inventory
+     */
     private var invOpened = false
         set(value) {
             if (value != field) {
                 if (value) {
+                    chat("Inventory opened")
                     InventoryUtils.openPacket()
                 } else {
+                    chat("Inventory closed")
                     InventoryUtils.closePacket()
                 }
             }
@@ -130,7 +135,9 @@ class InventoryCleaner : Module() {
         if (noMoveValue.get() && MovementUtils.isMoving() ||
             mc.thePlayer.openContainer != null && mc.thePlayer.openContainer.windowId != 0 ||
             (LiquidBounce.combatManager.inCombat && noCombatValue.get())) {
-            invOpened = false
+            if(InventoryUtils.CLICK_TIMER.hasTimePassed(simulateDelayValue.get().toLong())) {
+                invOpened = false
+            }
             return
         }
 
@@ -201,7 +208,9 @@ class InventoryCleaner : Module() {
             }
         }
 
-        invOpened = false
+        if(InventoryUtils.CLICK_TIMER.hasTimePassed(simulateDelayValue.get().toLong())) {
+            invOpened = false
+        }
     }
 
     /**
