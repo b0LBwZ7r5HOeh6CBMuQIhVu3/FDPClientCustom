@@ -120,7 +120,7 @@ public abstract class MixinGuiInGame extends MixinGui {
     private void renderPumpkinOverlay(final CallbackInfo callbackInfo) {
         final AntiBlind antiBlind = LiquidBounce.moduleManager.getModule(AntiBlind.class);
 
-        if(antiBlind.getState() && antiBlind.getPumpkinEffect().get())
+        if(antiBlind.getState() && antiBlind.getPumpkinEffectValue().get())
             callbackInfo.cancel();
     }
 
