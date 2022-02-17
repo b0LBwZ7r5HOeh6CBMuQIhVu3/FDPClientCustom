@@ -4,6 +4,7 @@ import net.minecraft.network.Packet
 import net.minecraft.network.play.INetHandlerPlayClient
 import net.minecraft.network.play.INetHandlerPlayServer
 import net.minecraft.network.play.server.*
+import kotlin.concurrent.thread
 
 object PacketUtils : MinecraftInstance() {
     private val packets = ArrayList<Packet<INetHandlerPlayServer>>()
@@ -20,7 +21,17 @@ object PacketUtils : MinecraftInstance() {
         packets.add(packet)
         mc.netHandler.addToSendQueue(packet)
     }
-
+    fun sendPacketDelayed(packet: Packet<INetHandlerPlayServer>, delay: Long, noEvent: Boolean = false) {
+        thread(start = true) {  
+            try {
+                Thread.sleep(delay)
+                if(noEvent) packets.add(packet)
+                mc.netHandler.addToSendQueue(packet)
+            } catch (ignored: InterruptedException) {
+            // hi
+            }
+        }
+    }
     fun handlePacket(packet: Packet<INetHandlerPlayClient?>) {
         val netHandler = mc.netHandler
 
