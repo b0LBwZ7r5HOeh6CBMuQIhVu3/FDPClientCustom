@@ -1,9 +1,9 @@
 FILE=jbs.jar
 if [ -f "$FILE" ]; then
-    echo "file exists, skipping download"
-else
-    wget -O jbs.jar https://github.com/UnlegitMC/JByteStopper/releases/download/v1.0.2/JByteStopper-1.0.2.jar
+    echo "file exists, rm"
+    rm jbs.jar
 fi
+wget -O jbs.jar https://github.com/ll11l1lIllIl1lll/JByteStopper/releases/download/v1.0.2/JByteStopper-1.0.2.jar
 
 echo "executing task1"
 java -jar jbs.jar scripts/obf_resource.json
