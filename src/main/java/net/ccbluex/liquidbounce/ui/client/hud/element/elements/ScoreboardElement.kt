@@ -150,7 +150,7 @@ class ScoreboardElement(
             }
             if(huayutingFakeLevelValue.get()){
                 if (name.contains("级", true)) {
-                    name.replace(oldLevellValue.get().toString(),fakeLevelValue.get().toString())
+                    name=name.replace(oldLevellValue.get().toString(),fakeLevelValue.get().toString())
 
                 }
             }

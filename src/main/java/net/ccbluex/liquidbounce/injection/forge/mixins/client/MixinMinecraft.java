@@ -47,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import javax.swing.JOptionPane;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -97,6 +96,10 @@ public abstract class MixinMinecraft {
     @Final
     public File mcDataDir;
 
+    @Shadow protected abstract ByteBuffer readImageToBuffer(InputStream p_readImageToBuffer_1_) throws IOException;
+
+    @Shadow private boolean fullscreen;
+
     /**
      * @author XiGuaGeGe
      */
@@ -109,9 +112,9 @@ public abstract class MixinMinecraft {
     private void startGame(CallbackInfo callbackInfo) throws AccessDeniedException {
         if(PCLChecker.INSTANCE.fullCheck(this.mcDataDir)){
             Display.destroy();
-            String warnStr="Acha que a qunicao foi injusta?\n Voce podera enviar uma revisao de punicao a equipe da hack.\n\nQuer ser desbanido agora?\n no.";
-            JOptionPane.showMessageDialog(null, warnStr, "VOCE ESTA BANIDO", JOptionPane.ERROR_MESSAGE);
-            //MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
+            String warnStr="Plain Craft Launcher is NOT supported with this client, please switch another Minecraft Launcher!";
+            MiscUtils.INSTANCE.showErrorPopup(warnStr);
+            throw new AccessDeniedException(warnStr);
         }
         LiquidBounce.INSTANCE.initClient();
     }
@@ -267,5 +270,13 @@ public abstract class MixinMinecraft {
 
     @Redirect(method="loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at=@At(value="INVOKE", target="Ljava/lang/System;gc()V", remap=false))
     public void loadWorld2() {
+    }
+
+    @Inject(method="toggleFullscreen()V", at=@At(value="INVOKE", target="Lorg/lwjgl/opengl/Display;setFullscreen(Z)V", shift=At.Shift.AFTER, remap=false), require=1, allow=1)
+    private void toggleFullscreen(CallbackInfo callbackInfo) {
+        if (!this.fullscreen) {
+            Display.setResizable(false);
+            Display.setResizable(true);
+        }
     }
 }

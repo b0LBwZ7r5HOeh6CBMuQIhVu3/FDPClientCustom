@@ -51,11 +51,12 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
-    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix1", "OldMatrix2", "OldAACFlag", "HYTFlag", "AAC4.4.X-Flag", "LoyisaAAC4.4.2","WatchDog"), "SpoofGround")
+    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Medusa", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix1", "OldMatrix2", "OldAACFlag", "HYTFlag", "AAC4.4.X-Flag", "LoyisaAAC4.4.2","WatchDog"), "SpoofGround")
     private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
     private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
     private val noVoidValue = BoolValue("NoVoid", true)
     private val editDelayValue = IntegerValue("editDelay", 2, 1, 10)
+
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
     private val minFallDistance = FloatValue("MinMLGHeight", 5f, 2f, 50f).displayable { modeValue.equals("MLG") }
     private val flySpeed = FloatValue("MotionSpeed", -0.01f, -5f, 5f).displayable { modeValue.equals("MotionFlag") }
@@ -616,6 +617,12 @@ class NoFall : Module() {
                     mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y - 256, packet.z, false))
                     mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(packet.x, (-10).toDouble() , packet.z, true))
                     mc.timer.timerSpeed = 0.18f
+                }
+            } else if(mode.equals("Medusa", true)) {
+                if(mc.thePlayer.fallDistance > 2.3f) {
+                    event.cancelEvent()
+                    PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
+                    mc.thePlayer.fallDistance = 0.0f
                 }
             }
         }

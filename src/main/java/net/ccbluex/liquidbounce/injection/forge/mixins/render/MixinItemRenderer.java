@@ -3,7 +3,7 @@
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
  */
-package net.ccbluex.liquidbounce.injection.forge.mixins.item;
+package net.ccbluex.liquidbounce.injection.forge.mixins.render;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.features.module.modules.client.Animations;
@@ -28,6 +28,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
@@ -113,9 +115,9 @@ public abstract class MixinItemRenderer {
 
             if (this.itemToRender.getItem() instanceof ItemMap) {
                 this.renderItemMap(abstractclientplayer, f2, f, f1);
-            } else if ((abstractclientplayer.isUsingItem() || (mc.gameSettings.keyBindUseItem.isKeyDown() && animations.getAnythingBlock().get())) || ((itemToRender.getItem() instanceof ItemSword || animations.getAnythingBlock().get())
+            } else if ((abstractclientplayer.isUsingItem() || (mc.gameSettings.keyBindUseItem.isKeyDown() && animations.getAnythingBlockValue().get())) || ((itemToRender.getItem() instanceof ItemSword || animations.getAnythingBlockValue().get())
                     && ((killAura.getAutoBlockValue().equals("Fake") && killAura.getCanFakeBlock()) || killAura.getBlockingStatus()))) {
-                switch((killAura.getBlockingStatus() || animations.getAnythingBlock().get()) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction()) {
+                switch((killAura.getBlockingStatus() || animations.getAnythingBlockValue().get()) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction()) {
                     case NONE:
                         this.transformFirstPersonItem(f, 0.0F);
                         break;
@@ -125,7 +127,7 @@ public abstract class MixinItemRenderer {
                         this.transformFirstPersonItem(f, f1);
                         break;
                     case BLOCK:
-                        GL11.glTranslated(animations.getTranslateX().get(), animations.getTranslateY().get(), animations.getTranslateZ().get());
+                        GL11.glTranslated(animations.getTranslateXValue().get(), animations.getTranslateYValue().get(), animations.getTranslateZValue().get());
                         switch (animations.getBlockingModeValue().get()) {
                             case "Akrien": {
                                 transformFirstPersonItem(f1, 0.0F);
@@ -242,10 +244,6 @@ public abstract class MixinItemRenderer {
                                 rotateSword(f1);
                                 break;
                             }
-                            case "Rotate360":{
-                                rotateSword360(f1);
-                                break;
-                            }
                             case "Liquid": {
                                 this.transformFirstPersonItem(f + 0.1F, f1);
                                 this.doBlockTransformations();
@@ -259,7 +257,7 @@ public abstract class MixinItemRenderer {
                         this.doBowTransformations(partialTicks, abstractclientplayer);
                 }
             }else{
-                if (!animations.getSwingAnim().get())
+                if (!animations.getSwingAnimValue().get())
                     this.doItemUsedTransformations(f1);
                 this.transformFirstPersonItem(f, f1);
             }
@@ -275,11 +273,11 @@ public abstract class MixinItemRenderer {
     }
 
     private void doItemRenderGLTranslate(){
-        GlStateManager.translate(animations.getItemPosX().get(), animations.getItemPosY().get(), animations.getItemPosZ().get());
+        GlStateManager.translate(animations.getItemPosXValue().get(), animations.getItemPosYValue().get(), animations.getItemPosZValue().get());
     }
 
     private void doItemRenderGLScale(){
-        GlStateManager.scale(animations.getItemScale().get(), animations.getItemScale().get(), animations.getItemScale().get());
+        GlStateManager.scale(animations.getItemScaleValue().get(), animations.getItemScaleValue().get(), animations.getItemScaleValue().get());
     }
 
     private void sigmaOld(float f) {
@@ -323,15 +321,7 @@ public abstract class MixinItemRenderer {
         GlStateManager.translate(-0.5F, 0.2F, 0.0F);
         GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, -0.0F, 2.0F);
     }
-    private void rotateSword360(float f1){
-        genCustom(0.0F, 0.0F);
-        doBlockTransformations();
-        GlStateManager.translate(-0.5F, 0.2F, 0.0F);
-        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, -0.0F, 2.0F);
-        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, 1.0F, 0.0F);
-        // GlStateManager.rotate(MathHelper.sqrt_float(f1) * 10.0F * 40.0F, 1.0F, 1.0F, 0.0F);
-    }
+
     private void genCustom(float p_178096_1_, float p_178096_2_) {
         GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
         GlStateManager.translate(0.0F, p_178096_1_ * -0.6F, 0.0F);
@@ -405,51 +395,13 @@ public abstract class MixinItemRenderer {
     /**
      * @author Liuli
      */
-    @Overwrite
-    private void renderFireInFirstPerson(float partialTicks) {
+    @Redirect(method="renderFireInFirstPerson", at=@At(value="INVOKE", target="Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"))
+    private void renderFireInFirstPerson(float p_color_0_, float p_color_1_, float p_color_2_, float p_color_3_) {
         final AntiBlind antiBlind = LiquidBounce.moduleManager.getModule(AntiBlind.class);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        float f = 1.0F;
-        if(antiBlind.getState() && antiBlind.getFireEffect().get()){
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 0.3F);
-            f = 0.7F;
+        if(p_color_3_ != 1.0f && antiBlind.getState()){
+            GlStateManager.color(p_color_0_, p_color_1_, p_color_2_, antiBlind.getFireEffectValue().get());
         }else{
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
+            GlStateManager.color(p_color_0_, p_color_1_, p_color_2_, p_color_3_);
         }
-        GlStateManager.depthFunc(519);
-        GlStateManager.depthMask(false);
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
-        for(int i = 0; i < 2; ++i) {
-            GlStateManager.pushMatrix();
-            TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-            this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-            float f1 = textureatlassprite.getMinU();
-            float f2 = textureatlassprite.getMaxU();
-            float f3 = textureatlassprite.getMinV();
-            float f4 = textureatlassprite.getMaxV();
-            float f5 = (0.0F - f) / 2.0F;
-            float f6 = f5 + f;
-            float f7 = 0.0F - f / 2.0F;
-            float f8 = f7 + f;
-            float f9 = -0.5F;
-            GlStateManager.translate((float)(-(i * 2 - 1)) * 0.24F, -0.3F, 0.0F);
-            GlStateManager.rotate((float)(i * 2 - 1) * 10.0F, 0.0F, 1.0F, 0.0F);
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            worldrenderer.pos(f5, f7, f9).tex(f2, f4).endVertex();
-            worldrenderer.pos(f6, f7, f9).tex(f1, f4).endVertex();
-            worldrenderer.pos(f6, f8, f9).tex(f1, f3).endVertex();
-            worldrenderer.pos(f5, f8, f9).tex(f2, f3).endVertex();
-            tessellator.draw();
-            GlStateManager.popMatrix();
-        }
-
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
-        GlStateManager.depthFunc(515);
     }
 }
