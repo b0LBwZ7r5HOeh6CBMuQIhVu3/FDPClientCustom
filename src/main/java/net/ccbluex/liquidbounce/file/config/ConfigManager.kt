@@ -134,23 +134,23 @@ class ConfigManager {
                     }
 
                     "targetPlayer", "targetPlayers" -> {
-                        Target.playerValue.set(args[1].equals("true", ignoreCase = true))
+                        Target.player.set(args[1].equals("true", ignoreCase = true))
                     }
 
                     "targetMobs" -> {
-                        Target.mobValue.set(args[1].equals("true", ignoreCase = true))
+                        Target.mob.set(args[1].equals("true", ignoreCase = true))
                     }
 
                     "targetAnimals" -> {
-                        Target.animalValue.set(args[1].equals("true", ignoreCase = true))
+                        Target.animal.set(args[1].equals("true", ignoreCase = true))
                     }
 
                     "targetInvisible" -> {
-                        Target.invisibleValue.set(args[1].equals("true", ignoreCase = true))
+                        Target.invisible.set(args[1].equals("true", ignoreCase = true))
                     }
 
                     "targetDead" -> {
-                        Target.deadValue.set(args[1].equals("true", ignoreCase = true))
+                        Target.dead.set(args[1].equals("true", ignoreCase = true))
                     }
 
                     else -> {
