@@ -13,13 +13,16 @@ import net.ccbluex.liquidbounce.ui.client.hud.element.ElementInfo
 import net.ccbluex.liquidbounce.ui.client.hud.element.Side
 import net.ccbluex.liquidbounce.ui.font.Fonts
 import net.ccbluex.liquidbounce.utils.render.BlurUtils
+import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.value.FontValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.gui.FontRenderer
+import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import java.util.*
 import kotlin.math.max
 
 /**
@@ -49,7 +52,16 @@ class Notifications(
         LiquidBounce.hud.notifications.map { it }.forEachIndexed { index, notify ->
             GL11.glPushMatrix()
 
-            if (notify.drawNotification(index, fontValue.get(), backGroundAlphaValue.get(), blurValue.get(), this.renderX.toFloat(), this.renderY.toFloat(), scale)) {
+            if (notify.drawNotification(
+                    index,
+                    fontValue.get(),
+                    backGroundAlphaValue.get(),
+                    blurValue.get(),
+                    this.renderX.toFloat(),
+                    this.renderY.toFloat(),
+                    scale
+                )
+            ) {
                 LiquidBounce.hud.notifications.remove(notify)
             }
 
@@ -82,7 +94,7 @@ class Notification(
     val animeTime: Int = 500
 ) {
     var width = 100
-    val height = 30
+    val height = 20
 
     var fadeState = FadeState.IN
     var nowY = -height
@@ -93,17 +105,24 @@ class Notification(
     /**
      * Draw notification
      */
-    fun drawNotification(index: Int, font: FontRenderer, alpha: Int, blurRadius: Float, x: Float, y: Float, scale: Float): Boolean {
-        this.width = 100.coerceAtLeast(font.getStringWidth(this.title)
-            .coerceAtLeast(font.getStringWidth(this.content)) + 10)
-        val realY = -(index+1) * height
+    fun drawNotification(
+        index: Int,
+        font: FontRenderer,
+        alpha: Int,
+        blurRadius: Float,
+        x: Float,
+        y: Float,
+        scale: Float
+    ): Boolean {
+        this.width = font.getStringWidth(this.content) + 25
+        val realY = -(index + 1) * height
         val nowTime = System.currentTimeMillis()
         var transY = nowY.toDouble()
 
         // Y-Axis Animation
         if (nowY != realY) {
             var pct = (nowTime - animeYTime) / animeTime.toDouble()
-            if (pct> 1) {
+            if (pct > 1) {
                 nowY = realY
                 pct = 1.0
             } else {
@@ -118,7 +137,7 @@ class Notification(
         var pct = (nowTime - animeXTime) / animeTime.toDouble()
         when (fadeState) {
             FadeState.IN -> {
-                if (pct> 1) {
+                if (pct > 1) {
                     fadeState = FadeState.STAY
                     animeXTime = nowTime
                     pct = 1.0
@@ -128,14 +147,14 @@ class Notification(
 
             FadeState.STAY -> {
                 pct = 1.0
-                if ((nowTime - animeXTime)> time) {
+                if ((nowTime - animeXTime) > time) {
                     fadeState = FadeState.OUT
                     animeXTime = nowTime
                 }
             }
 
             FadeState.OUT -> {
-                if (pct> 1) {
+                if (pct > 1) {
                     fadeState = FadeState.END
                     animeXTime = nowTime
                     pct = 1.0
@@ -151,7 +170,13 @@ class Notification(
         GL11.glTranslated(transX, transY, 0.0)
 
         if (blurRadius != 0f) {
-            BlurUtils.draw((x + transX).toFloat() * scale, (y + transY).toFloat() * scale, width * scale, height * scale, blurRadius)
+            BlurUtils.draw(
+                (x + transX).toFloat() * scale,
+                (y + transY).toFloat() * scale,
+                width * scale,
+                height * scale,
+                blurRadius
+            )
         }
 
         // draw notify
@@ -159,9 +184,22 @@ class Notification(
 //        GL11.glEnable(GL11.GL_SCISSOR_TEST)
 //        GL11.glScissor(width-(width*pct).toFloat(),0F, width.toFloat(),height.toFloat())
         RenderUtils.drawRect(0F, 0F, width.toFloat(), height.toFloat(), Color(0, 0, 0, alpha))
-        RenderUtils.drawRect(0F, height - 2F, max(width - width * ((nowTime - displayTime) / (animeTime * 2F + time)), 0F), height.toFloat(), type.renderColor)
-        font.drawString(title, 4F, 4F, Color.WHITE.rgb, false)
-        font.drawString(content, 4F, 17F, Color.WHITE.rgb, false)
+        RenderUtils.drawRect(
+            0F,
+            0F,
+            max(width * ((nowTime - displayTime) / (animeTime * 2F + time)), 0F),
+            height.toFloat(),
+            ColorUtils.reAlpha(type.renderColor,80)
+        )
+        RenderUtils.drawImage(
+            ResourceLocation(LiquidBounce.CLIENT_NAME.lowercase(Locale.getDefault()) + "/notificationIcon/" + type.name + ".png"),
+            4,
+            4,
+            12,
+            12
+        )
+//        font.drawString(title, 4F, 4F, Color.WHITE.rgb, false)
+        font.drawString(content, 22F, 6F, Color.WHITE.rgb, false)
 
         return false
     }

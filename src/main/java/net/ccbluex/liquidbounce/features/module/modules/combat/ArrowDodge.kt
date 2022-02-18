@@ -50,7 +50,7 @@ class ArrowDodge : Module() {
 
     private val dodgingMode = ListValue(
         "DodgingMode", arrayOf(
-            "HorizontalWalk", "HorizontalSpeed", "HorizontalTp",
+            "HorizontalWalk", "HorizontalSpeed", "HorizontalTp","BackWalk",
             "Block", "VerticalTp"
         ), "HorizontalWalk"
     )
@@ -184,6 +184,9 @@ class ArrowDodge : Module() {
             } else if(posL != null && posL.y < mc.thePlayer.posY - 7){
                 left.toPlayer(mc.thePlayer)
             } else if(posB != null && posB.y < mc.thePlayer.posY - 7){
+                back.toPlayer(mc.thePlayer)
+            }
+            if(dodgingMode.get().toLowerCase().equals("BackWalk")){
                 back.toPlayer(mc.thePlayer)
             }
             //val rot = if (rightDis > leftDis) right else left
