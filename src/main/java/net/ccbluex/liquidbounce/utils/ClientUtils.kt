@@ -16,9 +16,10 @@ import java.io.File
 import java.util.*
 
 object ClientUtils : MinecraftInstance() {
-    private val logger = LogManager.getLogger("FDPClient")
+    private val logger = LogManager.getLogger("FDPClient${if(LiquidBounce.isEarlyAccess) "(EarlyAccess)" else ""}")
     val osType: EnumOSType = EnumOSType.UNKNOWN
     var inDevMode = System.getProperty("dev-mode") != null
+
 
     /**
      * the hardware id used to identify in bstats
@@ -26,17 +27,6 @@ object ClientUtils : MinecraftInstance() {
     val hardwareUuid: UUID
 
     init {
-/*        val os = System.getProperty("os.name").lowercase()
-        osType = if (os.contains("win")) {
-            EnumOSType.WINDOWS
-        } else if (os.contains("mac")) {
-            EnumOSType.MACOS
-        } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
-            EnumOSType.LINUX
-        } else {
-            EnumOSType.UNKNOWN
-        }*/
-
         hardwareUuid = try {
             val systemInfo = SystemInfo()
             val hardware = systemInfo.hardware
@@ -58,6 +48,9 @@ object ClientUtils : MinecraftInstance() {
         }
 
         logInfo("Your hardware UUID is $hardwareUuid")
+        if(LiquidBounce.isEarlyAccess) {
+            logWarn("You are using an early access version of FDPClient. Please report any bugs you find to the FDPClient GitHub page.")
+        }
     }
 
     fun buildMetrics() {

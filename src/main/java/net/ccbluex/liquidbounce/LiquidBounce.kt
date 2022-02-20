@@ -55,6 +55,7 @@ object LiquidBounce {
 
     var isStarting = true
     var isLoadingConfig = true
+    val isEarlyAccess: Boolean
 
     // Managers
     lateinit var moduleManager: ModuleManager
@@ -100,6 +101,7 @@ object LiquidBounce {
                 CLIENT_REAL_VERSION
             }
         }
+        isEarlyAccess = CLIENT_VERSION != CLIENT_REAL_VERSION
     }
 
     /**
