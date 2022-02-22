@@ -39,7 +39,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -51,11 +51,10 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     private val lessPacketValue = BoolValue("PacketLessPackets", true)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
 
-    // // private val packetHopMotionValue = FloatValue("packetHopMotion", 0.15f, 0.01f, 0.5f)
-    // private val packetHopPacketHeightValue = FloatValue("packetHopPacketHeight", 0.148f, 0.01f, 0.5f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hytMorePacketValue = BoolValue("HYTMorePacket", false).displayable { modeValue.equals("AAC5.0.14HYT") }
     private val motionSlowValue = BoolValue("motionSlow", false).displayable { modeValue.equals("Motion") }
+
     private val s08FlagValue = BoolValue("FlagPause", true)
     private val s08DelayValue = IntegerValue("FlagPauseTime", 100, 100, 5000).displayable { s08FlagValue.get() }
 
@@ -141,10 +140,11 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.0626, ground = onGroundPacketValue.get())
                     if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
                 }
-                "litepacket" -> {
-                    sendCriticalPacket(yOffset = 0.015626, ground = false)
-                    sendCriticalPacket(yOffset = 0.00000000343, ground = false)
+                "mipacket" -> {
+                    sendCriticalPacket(yOffset = 0.0625, ground = false)
+                    sendCriticalPacket(ground = false)
                 }
+                
 
                 "aac5.0.14hyt" -> { //AAC5.0.14HYT moment but with bad cfg(cuz it will flag for timer)
                     if (timerValue.get() != 1F) {
