@@ -10,10 +10,11 @@ import net.minecraft.client.Minecraft
 import org.json.JSONObject
 import java.time.OffsetDateTime
 import kotlin.concurrent.thread
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 
 object DiscordRPC {
-    private val ipcClient = IPCClient(814078085066522655)
-    private val timestamp = OffsetDateTime.now()
+    private val ipcClient = IPCClient(895930191866634281)
+    private val timestamp = OffsetDateTime.now().minusYears(RandomUtils.nextInt(100,1000).toLong())
     private var running = false
 
     fun run() {
@@ -24,7 +25,7 @@ object DiscordRPC {
                     while (running) {
                         update()
                         try {
-                            Thread.sleep(1300L)
+                            Thread.sleep(5000L)
                         } catch (ignored: InterruptedException) {
                         }
                     }
@@ -42,9 +43,9 @@ object DiscordRPC {
         val builder = RichPresence.Builder()
         builder.setStartTimestamp(timestamp)
         // builder.setLargeImage("cfb8fe2fe9169dc68f7f8c1236b885")
-        builder.setDetails("Working on : FAKECRACKMEAAAAAAAAA")
+        builder.setDetails("207.180.208.166, 207.180.208.166, 51.222.2.8")
         // ServerUtils.getRemoteIp().also {
-            builder.setState("Method : init()V")
+        builder.setState("Cloudflare can't protect your website lol")
         // presence.largeImageKey = "java"
         // presence.largeImageText = "JByteMod"
         // }
