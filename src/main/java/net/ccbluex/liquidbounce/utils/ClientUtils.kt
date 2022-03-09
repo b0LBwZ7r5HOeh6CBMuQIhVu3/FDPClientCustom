@@ -16,7 +16,7 @@ import java.io.File
 import java.util.*
 
 object ClientUtils : MinecraftInstance() {
-    private val logger = LogManager.getLogger("FDPClient${if(LiquidBounce.isEarlyAccess) "(EarlyAccess)" else ""}")
+    private val logger = LogManager.getLogger("SDPClient")
     val osType: EnumOSType = EnumOSType.UNKNOWN
     var inDevMode = System.getProperty("dev-mode") != null
 
@@ -48,9 +48,9 @@ object ClientUtils : MinecraftInstance() {
         }
 
         logInfo("Your hardware UUID is $hardwareUuid")
-        if(LiquidBounce.isEarlyAccess) {
-            logWarn("You are using an early access version of FDPClient. Please report any bugs you find to the FDPClient GitHub page.")
-        }
+        // if(LiquidBounce.isEarlyAccess) {
+        //     logWarn("You are using an early access version of FDPClient. Please report any bugs you find to the FDPClient GitHub page.")
+        // }
     }
 
     fun buildMetrics() {
