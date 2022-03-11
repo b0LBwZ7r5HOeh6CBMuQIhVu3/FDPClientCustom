@@ -24,8 +24,8 @@ jobs:
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - name: Build
         run: ./gradlew setupCiWorkspace && ./gradlew build
-      - name: Obf build arfifacts
-        run: ./scripts/obf.sh
+      #- name: Obf build arfifacts
+      #  run: ./scripts/obf.sh
       - name: Rename build artifacts
         run: mv build/libs/FDPClient-*.jar build/libs/FDPClient-${{ steps.vars.outputs.sha_short }}.jar
       - name: Upload build artifacts

@@ -19,12 +19,12 @@ object Animations : Module() {
         ),
         "SlideDown"
     )
-    val invModeValue = ListValue("InvMode", arrayOf("None", "Slide", "Zoom"), "Slide")
+    val invModeValue = ListValue("InvMode", arrayOf("None", "Slide", "Zoom"), "None")
     val invEaseMode = EaseUtils.getEnumEasingList("InvEase")
     val invEaseOrderMode = EaseUtils.getEnumEasingOrderList("InvEaseOrder")
     val invTimeValue = IntegerValue("InvTime", 500, 0, 1000).displayable { !invModeValue.equals("None") }
     private val tabShowPlayerSkin = BoolValue("TabShowPlayerSkin", false)
-    val tabModeValue = ListValue("TabMode", arrayOf("None", "UpSlide", "DownSlide", "Zoom"), "Zoom")
+    val tabModeValue = ListValue("TabMode", arrayOf("None", "UpSlide", "DownSlide", "Zoom"), "None")
     val tabEaseMode = EaseUtils.getEnumEasingList("TabEase")
     val tabEaseOrderMode = EaseUtils.getEnumEasingOrderList("TabEaseOrder")
     val tabTimeValue = IntegerValue("TabTime", 500, 0, 1000).displayable { !tabModeValue.equals("None") }
