@@ -510,7 +510,7 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if (onlyHitVelocityValue.get() && (abs(packet.getMotionX()) < 10 && abs(packet.getMotionZ()) < 10 && abs(packet.getMotionY()) < 10 )) return
+            if (onlyHitVelocityValue.get() && (abs(packet.getMotionX()) < 10 || abs(packet.getMotionZ()) < 10 || abs(packet.getMotionY()) < 10 )) return
             if (alertValue.get()) {
                 alert(
                     "Velocity §7» " + (packet.getMotionX() + packet.getMotionY() + packet.getMotionZ()).toString()
