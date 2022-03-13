@@ -47,19 +47,21 @@ class AutoPot : Module() {
     fun onUpdate(event: UpdateEvent) {
         if (notCombat.get() && LiquidBounce.combatManager.inCombat) return
         if (!mc.thePlayer.onGround && noAir.get()) return
-
+        if (mc.thePlayer.health > healthValue.get()) return
         if (throwing) {
+            mc.netHandler.addToSendQueue(C09PacketHeldItemChange(pot - 36))
             throwTime++
-            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.prevRotationYaw + 180, 88F))
+            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.prevRotationYaw + 180, 85F))
             if (throwTime == throwTickValue.get()) {
-                mc.netHandler.addToSendQueue(C09PacketHeldItemChange(pot - 36))
+                
                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.heldItem))
-                mc.netHandler.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
+                
                 pot = -1
             }
             if (throwTime >= (throwTickValue.get() * 2)) {
                 throwTime = 0
                 throwing = false
+                mc.netHandler.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
             }
             return
         }
