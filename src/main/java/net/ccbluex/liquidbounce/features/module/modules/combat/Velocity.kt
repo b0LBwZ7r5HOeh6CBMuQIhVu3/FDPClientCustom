@@ -32,6 +32,7 @@ import net.minecraft.util.MathHelper
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 @ModuleInfo(name = "Velocity", category = ModuleCategory.COMBAT)
 class Velocity : Module() {
@@ -80,9 +81,14 @@ class Velocity : Module() {
     private val onlyCombatValue = BoolValue("OnlyCombat", false)
     private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
     private val noFireValue = BoolValue("noFire", false)
-    private val alertValue = BoolValue("alert", false)
+     private val alertValue = BoolValue("alert", false)
     private val timerValue = FloatValue("timer", 0.8F, 0.1F, 1F)
     private val timerOnlyPullUpValue = BoolValue("timerOnlyPullUpValue", true)
+   
+    private val overrideDirectionValue = ListValue("OverrideDirection", arrayOf("None", "Hard", "Offset"), "None")
+    private val overrideDirectionYawValue = FloatValue("OverrideDirectionYaw", 0F, -180F, 180F)
+        .displayable { !overrideDirectionValue.equals("None") }
+
     /**
      * VALUES
      */
@@ -90,7 +96,6 @@ class Velocity : Module() {
     private var velocityCalcTimer = MSTimer()
     private var velocityInput = false
     private var velocityTick = 0
-    private var velocityAirTick = 0
 
     // SmoothReverse
     private var reverseHurt = false
@@ -518,6 +523,19 @@ class Velocity : Module() {
             }
             velocityTimer.reset()
             velocityTick = 0
+
+            if(!overrideDirectionValue.equals("None")) {
+                val yaw = Math.toRadians(if(overrideDirectionValue.get() == "Hard") {
+                    overrideDirectionYawValue.get()
+                } else {
+                    mc.thePlayer.rotationYaw + overrideDirectionYawValue.get() + 90
+                }.toDouble())
+                val dist = sqrt((packet.motionX * packet.motionX + packet.motionZ * packet.motionZ).toDouble())
+                val x = cos(yaw) * dist
+                val z = sin(yaw) * dist
+                packet.motionX = x.toInt()
+                packet.motionZ = z.toInt()
+            }
 
             when (modeValue.get().lowercase()) {
                 "tick" -> {
