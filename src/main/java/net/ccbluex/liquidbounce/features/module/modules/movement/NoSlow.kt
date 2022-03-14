@@ -1,6 +1,7 @@
 
 package net.ccbluex.liquidbounce.features.module.modules.movement
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
@@ -15,31 +16,29 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.item.*
+import net.minecraft.network.Packet
+import net.minecraft.network.play.INetHandlerPlayServer
+import net.minecraft.network.play.client.*
+import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
+import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
 import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook
-import net.minecraft.network.play.client.C07PacketPlayerDigging
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
+import java.util.*
 import kotlin.math.sqrt
 
 @ModuleInfo(name = "NoSlow", category = ModuleCategory.MOVEMENT)
 class NoSlow : Module() {
-    private val msTimer = MSTimer()
-    private val modeValue = ListValue("PacketMode", arrayOf("Vanilla", "LiquidBounce", "Custom", "WatchDog", "Watchdog2", "NCP", "AAC", /*"AAC4",*/ "AAC5"), "Vanilla")
+    private val modeValue = ListValue("PacketMode", arrayOf("Vanilla", "LiquidBounce", "Custom", "WatchDog", "Watchdog2", "NCP", "AAC", "AAC5", "Matrix", "Vulcan"), "Vanilla")
     private val blockForwardMultiplier = FloatValue("BlockForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val blockStrafeMultiplier = FloatValue("BlockStrafeMultiplier", 1.0F, 0.2F, 1.0F)
     private val consumeForwardMultiplier = FloatValue("ConsumeForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val consumeStrafeMultiplier = FloatValue("ConsumeStrafeMultiplier", 1.0F, 0.2F, 1.0F)
     private val bowForwardMultiplier = FloatValue("BowForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val bowStrafeMultiplier = FloatValue("BowStrafeMultiplier", 1.0F, 0.2F, 1.0F)
-    private val aac5PreValue = BoolValue("AAC5Pre", false).displayable { modeValue.equals("AAC5") }
-    private val aac5C07Value = BoolValue("AAC5C07", false).displayable { modeValue.equals("AAC5") }
-    private val aac5noEatPacketValue = BoolValue("AAC5NoEatPacket", false).displayable { modeValue.equals("AAC5") }
-    private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") || modeValue.equals("AAC5")}
-    private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") || modeValue.equals("AAC5") }
-    private val aac5PacketValue = ListValue("AACv5PacketMode", arrayOf("normal", "old", "basic"), "normal").displayable { modeValue.equals("AAC5") }
-
+    private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
+    private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") }
     // Soulsand
     val soulsandValue = BoolValue("Soulsand", false)
     // Slowdown on teleport
@@ -50,15 +49,25 @@ class NoSlow : Module() {
     private val teleportCustomYValue = BoolValue("Teleport-CustomY", false).displayable { teleportValue.get() && teleportModeValue.equals("Custom") }
     private val teleportDecreasePercentValue = FloatValue("Teleport-DecreasePercent", 0.13f, 0f, 1f).displayable { teleportValue.get() && teleportModeValue.equals("Decrease") }
 
-    var pendingFlagApplyPacket = false
-    var lastMotionX = 0.0
-    var lastMotionY = 0.0
-    var lastMotionZ = 0.0
+    private var pendingFlagApplyPacket = false
+    private var lastMotionX = 0.0
+    private var lastMotionY = 0.0
+    private var lastMotionZ = 0.0
+    private val msTimer = MSTimer()
+    private var sendBuf = false
+    private var packetBuf = LinkedList<Packet<INetHandlerPlayServer>>()
+    private var nextTemp = false
+    private var waitC03 = false
 
     override fun onDisable() {
         msTimer.reset()
         pendingFlagApplyPacket = false
+        sendBuf = false
+        packetBuf.clear()
+        nextTemp = false
+        waitC03 = false
     }
+
     private fun sendPacket(
         event: MotionEvent,
         sendC07: Boolean,
@@ -102,29 +111,18 @@ class NoSlow : Module() {
 
 //        val heldItem = mc.thePlayer.heldItem
         if (modeValue.get().lowercase() == "aac5") {
-            if (((event.eventState == EventState.POST && !aac5PreValue.get())
-             || (event.eventState == EventState.PRE && aac5PreValue.get()))
-              && ((!aac5noEatPacketValue.get() && mc.thePlayer.isUsingItem) || mc.thePlayer.isBlocking() || killAura.blockingStatus)
-               && (msTimer.hasTimePassed(customDelayValue.get().toLong()) || customDelayValue.get() <= 0)) {
-                when (aac5PacketValue.get().lowercase()) {
-                    "normal" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
-                    "old" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), -1, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
-                    "basic" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
-                }
-                //mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), if(aac5oldPacket.get()) -1 else 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+            if (event.eventState == EventState.POST && (mc.thePlayer.isUsingItem || mc.thePlayer.isBlocking || killAura.blockingStatus)) {
+                mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
             }
+            return
         }
-        // if (modeValue.get().lowercase() != "aac5") {
+        if (modeValue.get().lowercase() != "aac5") {
             if (!mc.thePlayer.isBlocking && !killAura.blockingStatus) {
                 return
             }
             when (modeValue.get().lowercase()) {
                 "liquidbounce" -> {
                     sendPacket(event, true, true, false, 0, false)
-                }
-                "aac4" -> {
-                    //Todo: skid from my old codes cuz I forgot the packet order /Co
-                    //sendPacket(event, true, true, true, 80, false, false)
                 }
 
                 "aac" -> {
@@ -142,10 +140,6 @@ class NoSlow : Module() {
                 "ncp" -> {
                     sendPacket(event, true, true, false, 0, false)
                 }
-                "aac5" -> {
-                    if(aac5C07Value.get()){
-                    sendPacket(event, true, true, true, customDelayValue.get().toLong(), false)
-                }}
 
                 "watchdog2" -> {
                     if (event.eventState == EventState.PRE) {
@@ -163,7 +157,7 @@ class NoSlow : Module() {
                     }
                 }
             }
-        
+        }
     }
 
     @EventTarget
@@ -188,10 +182,52 @@ class NoSlow : Module() {
     }
 
     @EventTarget
+    fun onUpdate(event: UpdateEvent) {
+        if((modeValue.equals("Matrix") || modeValue.equals("Vulcan")) && isBlocking) {
+            if(msTimer.hasTimePassed(230) && nextTemp) {
+                nextTemp = false
+                PacketUtils.sendPacketNoEvent(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1, -1, -1), EnumFacing.DOWN))
+                if(packetBuf.isNotEmpty()) {
+                    var canAttack = false
+                    for(packet in packetBuf) {
+                        if(packet is C03PacketPlayer) {
+                            canAttack = true
+                        }
+                        if(!((packet is C02PacketUseEntity || packet is C0APacketAnimation) && !canAttack)) {
+                            PacketUtils.sendPacketNoEvent(packet)
+                        }
+                    }
+                    packetBuf.clear()
+                }
+            }
+            if(!nextTemp) {
+                PacketUtils.sendPacketNoEvent(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                nextTemp = true
+                waitC03 = modeValue.equals("Vulcan")
+                msTimer.reset()
+            }
+        }
+    }
+
+    private val isBlocking: Boolean
+        get() = (mc.thePlayer.isUsingItem || LiquidBounce.moduleManager[KillAura::class.java]!!.blockingStatus) && mc.thePlayer.heldItem != null && mc.thePlayer.heldItem.item is ItemSword
+
+    @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
 
-        if (teleportValue.get() && packet is S08PacketPlayerPosLook) {
+        if((modeValue.equals("Matrix") || modeValue.equals("Vulcan")) && nextTemp && isBlocking) {
+            if(packet is C07PacketPlayerDigging || packet is C08PacketPlayerBlockPlacement) {
+                event.cancelEvent()
+            } else if (packet is C03PacketPlayer || packet is C0APacketAnimation || packet is C0BPacketEntityAction || packet is C02PacketUseEntity) {
+                if (modeValue.equals("Vulcan") && waitC03 && packet is C03PacketPlayer) {
+                    waitC03 = false
+                    return
+                }
+                packetBuf.add(packet as Packet<INetHandlerPlayServer>)
+                event.cancelEvent()
+            }
+        } else if (teleportValue.get() && packet is S08PacketPlayerPosLook) {
             pendingFlagApplyPacket = true
             lastMotionX = mc.thePlayer.motionX
             lastMotionY = mc.thePlayer.motionY
