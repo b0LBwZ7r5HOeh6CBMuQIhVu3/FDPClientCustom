@@ -105,7 +105,7 @@ class NoSlow : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         val killAura = LiquidBounce.moduleManager[KillAura::class.java]!!
-        if (!MovementUtils.isMoving()) {
+        if (!MovementUtils.isMoving() || mc.thePlayer.isSneaking()) {
             return
         }
 

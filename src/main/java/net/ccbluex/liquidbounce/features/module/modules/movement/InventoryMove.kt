@@ -49,7 +49,7 @@ class InventoryMove : Module() {
             mc.gameSettings.keyBindLeft.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindLeft)
             mc.gameSettings.keyBindJump.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindJump)
             mc.gameSettings.keyBindSprint.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSprint)
-
+            mc.gameSettings.keyBindSneak.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSneak)
             if (rotateValue.get()) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
                     if (mc.thePlayer.rotationPitch > -90) {

@@ -79,10 +79,12 @@ class Scaffold : Module() {
     private val expandLengthValue = IntegerValue("ExpandLength", 1, 1, 6)
 
     // Rotations
-    private val rotationsValue = ListValue("Rotations", arrayOf("None", "Vanilla", "AAC", "Test1", "Test2", "Custom"), "AAC")
+    private val rotationsValue = ListValue("Rotations", arrayOf("None", "Vanilla", "AAC", "Test1", "Test2", "Test3", "Custom"), "AAC")
+    private val test2CustomPitchValue = BoolValue("test3CustomPitchValue", true).displayable { rotationsValue.equals("Test2") }
     private val aacYawValue = IntegerValue("AACYawOffset", 0, 0, 90).displayable { rotationsValue.equals("AAC") }
+    private val test2YawOffsetValue= IntegerValue("Test2YawOffset", 180, 0, 360).displayable { rotationsValue.equals("Test2") }
     private val customYaw = IntegerValue("CustomYaw", -145, -180, 180).displayable { rotationsValue.equals("Custom") }
-    private val customPitch = IntegerValue("CustomPitch", 79, -90, 90).displayable { rotationsValue.equals("Custom") }
+    private val customPitch = IntegerValue("CustomPitch", 79, -90, 90).displayable { rotationsValue.equals("Custom") || rotationsValue.equals("Test2") }
     // private val tolleyBridgeValue = IntegerValue("TolleyBridgeTick", 0, 0, 10)
     // private val tolleyYawValue = IntegerValue("TolleyYaw", 0, 0, 90)
     private val silentRotationValue = BoolValue("SilentRotation", true).displayable { !rotationsValue.equals("None") }
@@ -903,7 +905,7 @@ class Scaffold : Module() {
                     Rotation(caluyaw, placeRotation.rotation.pitch)
                 }
                 "test2" -> {
-                    Rotation(((MovementUtils.direction * 180f / Math.PI).toFloat() + 135), placeRotation.rotation.pitch)
+                    Rotation(((MovementUtils.direction * 180f / Math.PI).toFloat() + test2YawOffsetValue.get()), if(test2CustomPitchValue.get()) customPitch.get().toFloat() else placeRotation.rotation.pitch)
                 }
                 "custom" -> {
                     Rotation(mc.thePlayer.rotationYaw + customYaw.get(), customPitch.get().toFloat())
