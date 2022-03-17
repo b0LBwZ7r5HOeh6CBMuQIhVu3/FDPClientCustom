@@ -39,7 +39,9 @@ class NoSlow : Module() {
     private val bowForwardMultiplier = FloatValue("BowForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val bowStrafeMultiplier = FloatValue("BowStrafeMultiplier", 1.0F, 0.2F, 1.0F)
     private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
-    private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") }
+    private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200)/*.displayable { modeValue.equals("Custom") }*/
+    private val customReblockDelayValue = IntegerValue("CustomReblockDelay", 60, 10, 200)/*.displayable { modeValue.equals("Custom") }*/
+
     // Soulsand
     val soulsandValue = BoolValue("Soulsand", false)
     // Slowdown on teleport
@@ -193,7 +195,7 @@ class NoSlow : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if((modeValue.equals("Matrix") || modeValue.equals("Vulcan")) && (lastBlockingStat || isBlocking)) {
-            if(msTimer.hasTimePassed(230) && nextTemp) {
+            if(msTimer.hasTimePassed(customDelayValue.get()) && nextTemp) {
                 nextTemp = false
                 PacketUtils.sendPacketNoEvent(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1, -1, -1), EnumFacing.DOWN))
                 if(packetBuf.isNotEmpty()) {
@@ -209,7 +211,7 @@ class NoSlow : Module() {
                     packetBuf.clear()
                 }
             }
-            if(!nextTemp) {
+            if(!nextTemp && msTimer.hasTimePassed(customReblockDelayValue.get())) {
                 lastBlockingStat = isBlocking
                 if (!isBlocking) {
                     return
