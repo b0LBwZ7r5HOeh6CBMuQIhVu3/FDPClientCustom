@@ -211,7 +211,7 @@ class NoSlow : Module() {
                     packetBuf.clear()
                 }
             }
-            if(!nextTemp && msTimer.hasTimePassed(customReblockDelayValue.get().toLong())) {
+            if(!nextTemp && msTimer.hasTimePassed((customDelayValue.get()+customReblockDelayValue.get()).toLong())) {
                 lastBlockingStat = isBlocking
                 if (!isBlocking) {
                     return
