@@ -41,7 +41,8 @@ class NoSlow : Module() {
     private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
     private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200)/*.displayable { modeValue.equals("Custom") }*/
     private val customReblockDelayValue = IntegerValue("CustomReblockDelay", 60, 10, 200)/*.displayable { modeValue.equals("Custom") }*/
-
+    private val testValue = BoolValue("test", false)
+    private val test2Value = BoolValue("test2", false)
     // Soulsand
     val soulsandValue = BoolValue("Soulsand", false)
     // Slowdown on teleport
@@ -198,14 +199,21 @@ class NoSlow : Module() {
             if(msTimer.hasTimePassed(customDelayValue.get().toLong()) && nextTemp) {
                 nextTemp = false
                 PacketUtils.sendPacketNoEvent(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1, -1, -1), EnumFacing.DOWN))
+                debug("unblocked")
                 if(packetBuf.isNotEmpty()) {
                     var canAttack = false
                     for(packet in packetBuf) {
                         if(packet is C03PacketPlayer) {
                             canAttack = true
+                            debug("C03Packet sent.")
                         }
                         if(!((packet is C02PacketUseEntity || packet is C0APacketAnimation) && !canAttack)) {
                             PacketUtils.sendPacketNoEvent(packet)
+                            debug("(NoEvent) sent attack/swing packet:C03Packet has sent")
+                            if(testValue.get()){
+                                canAttack = false
+                                debug("(test) wait for next C03Packet")
+                            }
                         }
                     }
                     packetBuf.clear()
@@ -217,6 +225,7 @@ class NoSlow : Module() {
                     return
                 }
                 PacketUtils.sendPacketNoEvent(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
+                debug("reblocked")
                 nextTemp = true
                 waitC03 = modeValue.equals("Vulcan")
                 msTimer.reset()
@@ -234,12 +243,17 @@ class NoSlow : Module() {
         if((modeValue.equals("Matrix") || modeValue.equals("Vulcan")) && nextTemp) {
             if((packet is C07PacketPlayerDigging || packet is C08PacketPlayerBlockPlacement) && isBlocking) {
                 event.cancelEvent()
+                debug("cancelled block/release packet")
             }else if (packet is C03PacketPlayer || packet is C0APacketAnimation || packet is C0BPacketEntityAction || packet is C02PacketUseEntity || packet is C07PacketPlayerDigging || packet is C08PacketPlayerBlockPlacement) {
                 if (modeValue.equals("Vulcan") && waitC03 && packet is C03PacketPlayer) {
+                    if(!isPacketReallyJustC03(packet) && test2Value.get()){
+                        return
+                    }
                     waitC03 = false
                     return
-                }
+                } //ok only 1 C03Pacet can send after blocked
                 packetBuf.add(packet as Packet<INetHandlerPlayServer>)
+                debug("added")
                 event.cancelEvent()
             }
         } else if (teleportValue.get() && packet is S08PacketPlayerPosLook) {
@@ -292,7 +306,14 @@ class NoSlow : Module() {
             }
         }
     }
-    
+    private fun debug(str: String) {
+        if (alert1Value.get()) {
+            alert("[NoSlow] $str")
+        }
+    }
+    private fun isPacketReallyJustC03(packet: C03PacketPlayer): Boolean {
+        return (packet is C03PacketPlayer && packet !is C04PacketPlayerPosition && packet !is C05PacketPlayerLook && packet !is C06PacketPlayerPosLook)
+    }
     override val tag: String
         get() = modeValue.get()
 }
