@@ -5,10 +5,12 @@ import net.ccbluex.liquidbounce.features.module.modules.movement.speeds.SpeedMod
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.minecraft.network.play.server.S12PacketEntityVelocity
+import kotlin.math.sqrt
 
-class MatrixBHop2 : SpeedMode("MatrixBHop2") {
-    val veloBoostValue = BoolValue("MatrixVelocBoost", true)
-	val timerBoostValue = BoolValue("MatrixTimerBoost", true)
+class MatrixHop2 : SpeedMode("MatrixHop2") {
+    private val veloBoostValue = BoolValue("MatrixVelocBoost", true)
+	private val timerBoostValue = BoolValue("MatrixTimerBoost", true)
+
     private var recX = 0.0
     private var recZ = 0.0
 
@@ -55,9 +57,7 @@ class MatrixBHop2 : SpeedMode("MatrixBHop2") {
     override fun onPacket(event: PacketEvent) {
         val packet = event.packet
 
-        if (!veloBoostValue.get()) return
-
-        if (packet is S12PacketEntityVelocity) {
+        if (packet is S12PacketEntityVelocity && veloBoostValue.get()) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
@@ -65,8 +65,8 @@ class MatrixBHop2 : SpeedMode("MatrixBHop2") {
 
             recX = packet.motionX / 8000.0
             recZ = packet.motionZ / 8000.0
-            if (Math.sqrt(recX * recX + recZ * recZ) > MovementUtils.getSpeed()) {
-                MovementUtils.strafe(Math.sqrt(recX * recX + recZ * recZ).toFloat())
+            if (sqrt(recX * recX + recZ * recZ) > MovementUtils.getSpeed()) {
+                MovementUtils.strafe(sqrt(recX * recX + recZ * recZ).toFloat())
                 mc.thePlayer.motionY = packet.motionY / 8000.0
             }
 
