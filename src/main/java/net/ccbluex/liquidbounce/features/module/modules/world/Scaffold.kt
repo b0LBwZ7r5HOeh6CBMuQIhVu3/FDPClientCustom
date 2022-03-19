@@ -695,7 +695,7 @@ class Scaffold : Module() {
             itemStack = mc.thePlayer.inventoryContainer.getSlot(blockSlot).stack
         }
         if (isDynamicSprint) {
-            mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING))
+            mc.thePlayer.isSprinting = false
         }
         if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld, itemStack, targetPlace!!.blockPos, targetPlace!!.enumFacing, targetPlace!!.vec3)) {
             // delayTimer.reset()
@@ -723,7 +723,7 @@ class Scaffold : Module() {
             }
         }
         if (isDynamicSprint) {
-            mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
+            mc.thePlayer.isSprinting = true
         }
 
         if (autoBlockValue.equals("LiteSpoof") && blockSlot >= 0) {
