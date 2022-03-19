@@ -42,6 +42,7 @@ object AntiBot : Module() {
     private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
+    private val notVanillaDamageValue = BoolValue("NotVanillaDamage", false)
     private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
     private val fastDamageValue = BoolValue("FastDamage", false)
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
@@ -58,6 +59,7 @@ object AntiBot : Module() {
     private val hitted = mutableListOf<Int>()
     private val spawnInCombat = mutableListOf<Int>()
     private val notAlwaysInRadius = mutableListOf<Int>()
+    private val notVanillaDamage = mutableListOf<Int>()
     private val lastDamage = mutableMapOf<Int, Int>()
     private val lastDamageVl = mutableMapOf<Int, Float>()
     private val duplicate = mutableListOf<UUID>()
@@ -96,6 +98,10 @@ object AntiBot : Module() {
         }
 
         if (swingValue.get() && !swing.contains(entity.entityId)) {
+            return true
+        }
+
+        if(notVanillaDamageValue.get() && !notVanillaDamage.contains(entity.entityId)) {
             return true
         }
 
@@ -252,7 +258,16 @@ object AntiBot : Module() {
             }
         }
 
-        if (packet is S19PacketEntityStatus && packet.opCode.toInt() == 2 || packet is S0BPacketAnimation && packet.animationType == 1) {
+        val statusDMG = packet is S19PacketEntityStatus && packet.opCode.toInt() == 2
+
+        if(statusDMG) {
+            val entity = (packet as S19PacketEntityStatus).getEntity(mc.theWorld)
+            if(entity is EntityPlayer && !notVanillaDamage.contains(entity.entityId)) {
+                notVanillaDamage.add(entity.entityId)
+            }
+        }
+
+        if (statusDMG || packet is S0BPacketAnimation && packet.animationType == 1) {
             val entity = if (packet is S19PacketEntityStatus) { packet.getEntity(mc.theWorld) } else if (packet is S0BPacketAnimation) { mc.theWorld.getEntityByID(packet.entityID) } else { null } ?: return
 
             if (entity is EntityPlayer) {
