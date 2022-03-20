@@ -176,6 +176,11 @@ class TickEvent : Event()
 class UpdateEvent : Event()
 
 /**
+ * Called when minecraft player will be updated
+ */
+class PostUpdateEvent : Event()
+
+/**
  * Called when the world changes
  */
 class WorldEvent(val worldClient: WorldClient?) : Event()

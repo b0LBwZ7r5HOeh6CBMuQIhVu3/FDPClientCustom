@@ -386,6 +386,8 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
             this.capabilities.isFlying = false;
             this.sendPlayerAbilities();
         }
+        // post-update
+        LiquidBounce.eventManager.callEvent(new PostUpdateEvent());
     }
 
     @Override
