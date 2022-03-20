@@ -5,6 +5,7 @@
  */
 package net.ccbluex.liquidbounce.features.module.modules.combat
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
@@ -232,6 +233,9 @@ class KillAura : Module() {
 
     // Fake block status
     var blockingStatus = false
+
+    val displayBlocking: Boolean
+        get() = blockingStatus || (autoBlockValue.equals("Fake") && canFakeBlock)
 
     /**
      * Enable kill aura module

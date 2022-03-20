@@ -47,7 +47,6 @@
     "render.MixinItemRenderer",
     "render.MixinLayerHeldItem",
     "render.MixinModelBiped",
-    "render.MixinRender",
     "render.MixinRenderEntityItem",
     "render.MixinRendererLivingEntity",
     "render.MixinRenderItem",
@@ -67,6 +66,8 @@
     "performance.MixinEntityFX",
     "performance.MixinRenderGlobal",
     "render.MixinLayerArmorBase",
-    "render.MixinModelPlayer"
+    "render.MixinModelPlayer",
+    ,
+    "render.MixinRender"
   ]
 }
