@@ -110,9 +110,6 @@ class ScriptModule(private val moduleObject: JSObject) : Module() {
     fun onScreen(screenEvent: ScreenEvent) = callEvent("screen", screenEvent)
 
     @EventTarget
-    fun onText(textEvent: TextEvent) = callEvent("text", textEvent)
-
-    @EventTarget
     fun onTick(tickEvent: TickEvent) = callEvent("tick")
 
     @EventTarget
