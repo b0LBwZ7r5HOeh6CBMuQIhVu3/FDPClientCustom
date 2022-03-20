@@ -65,7 +65,6 @@
     "performance.MixinEntityFX",
     "performance.MixinRenderGlobal",
     "render.MixinLayerArmorBase",
-    "render.MixinModelPlayer",
     "render.MixinRender"
   ]
 }
