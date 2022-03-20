@@ -358,7 +358,8 @@ object AntiBot : Module() {
                 }
             }
                     } else if (packet is S0CPacketSpawnPlayer) {
-            if(LiquidBounce.combatManager.inCombat) {
+            if(LiquidBounce.combatManager.inCombat && !hasRemovedEntities.contains(packet.entityID)) {
+
                 spawnInCombat.add(packet.entityID)
             }
         } else if (packet is S13PacketDestroyEntities) {
