@@ -227,7 +227,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         // RenderUtils.drawRoundedCornerRect(0f, 0f, 150f, 50f, 5f, Color(0, 0, 0, 130))
 BlurUtils.draw(0f, 0f, 150f, 50f, 1.5f)
-RenderUtils.fastShadowRoundedRect(0f, 0f, 150f, 50f, 5f, 3f, Color(0, 0, 0, 130).rgb)
+RenderUtils.fastShadowRoundedRect(0f, 0f, 150f, 50f, 5f, 3f, Color(0, 0, 0, 130))
 
         val hurtPercent = target.hurtPercent
         val scale = if (hurtPercent == 0f) { 1f } else if (hurtPercent < 0.5f) {
