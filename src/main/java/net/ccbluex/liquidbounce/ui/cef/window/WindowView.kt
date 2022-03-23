@@ -53,7 +53,7 @@ class WindowView : MinecraftInstance() {
 
     init {
         cefRenderer = CefRendererLwjgl(true)
-        cefBrowser = CefBrowserCustom(CefRenderManager.cefClient, "https://yandex.com", true, null, cefRenderer)
+        cefBrowser = CefBrowserCustom(CefRenderManager.cefClient, "https://client.getfdp.today/live2d/index.html", true, null, cefRenderer)
         cefBrowser.setCloseAllowed()
         cefBrowser.createImmediately()
         cefBrowser.setFocus(true)
@@ -103,8 +103,8 @@ class WindowView : MinecraftInstance() {
 
         if(showTitle || fromChat) {
             // render title
-            RenderUtils.drawRect(0f, 0f, width, titleHeight, if(focus) Color.LIGHT_GRAY else Color.GRAY)
-            mc.fontRendererObj.drawString(if(cefBrowser.isLoading) { "Loading..." } else { "Browser" },
+            // RenderUtils.drawRect(0f, 0f, width, titleHeight, if(focus) Color.LIGHT_GRAY else Color.GRAY)
+            mc.fontRendererObj.drawString(if(cefBrowser.isLoading) { "Loading..." } else { "" },
                 2f, 1f, Color.WHITE.rgb, false)
             mc.fontRendererObj.drawCenteredString("X", width - (titleHeight * 0.5f), 1f, Color.WHITE.rgb)
             if(transparent) {
