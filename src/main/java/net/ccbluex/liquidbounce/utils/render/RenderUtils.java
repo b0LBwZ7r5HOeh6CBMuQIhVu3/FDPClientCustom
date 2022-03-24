@@ -24,7 +24,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
-import net.ccbluex.liquidbounce.utils.render.Stencil;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -122,54 +121,7 @@ public final class RenderUtils extends MinecraftInstance {
     public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color) {
         drawRoundedRect(paramXStart, paramYStart, paramXEnd, paramYEnd, radius, color, true);
     }
-    public static void fastShadowRoundedRect(float x, float y, float x2, float y2, float rad, float width, float r, float g, float b, float al) {
-        Stencil.write(true);
-        // drawRoundedRect(x, y, x2, y2, rad, new Color(r, g, b, al).getRGB());
-        Stencil.erase(false);
-        
-        glPushMatrix();
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glShadeModel(GL_SMOOTH);
 
-        glColor4f(r, g, b, al);
-        glBegin(GL_QUAD_STRIP);
-        glVertex2f(x + width / 2F, y + width / 2F);
-        glColor4f(r, g, b, 0F);
-        glVertex2f(x - width, y - width);
-        glColor4f(r, g, b, al);
-        glVertex2f(x2 - width / 2F, y + width / 2F);
-        glColor4f(r, g, b, 0F);
-        glVertex2f(x2 + width, y - width);
-        glColor4f(r, g, b, al);
-        glVertex2f(x2 - width / 2F, y2 - width / 2F);
-        glColor4f(r, g, b, 0F);
-        glVertex2f(x2 + width, y2 + width);
-        glColor4f(r, g, b, al);
-        glVertex2f(x + width / 2F, y2 - width / 2F);
-        glColor4f(r, g, b, 0F);
-        glVertex2f(x - width, y2 + width);
-        glColor4f(r, g, b, al);
-        glVertex2f(x + width / 2F, y + width / 2F);
-        glColor4f(r, g, b, 0F);
-        glVertex2f(x - width, y - width);
-        glColor4f(1f, 1f, 1f, 1f);
-        glEnd();
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glShadeModel(7424);
-        glColor4f(1, 1, 1, 1);
-        glPopMatrix();
-
-        Stencil.dispose();
-    }
-    public static void fastShadowRoundedRect(float x, float y, float x2, float y2, float rad, float width, Color color) {
-        fastShadowRoundedRect(x, y, x2, y2, rad, width, color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
-    }
     public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color, boolean popPush) {
         float alpha = (color >> 24 & 0xFF) / 255.0F;
         float red = (color >> 16 & 0xFF) / 255.0F;

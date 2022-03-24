@@ -225,9 +225,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
     private fun drawRise(target: EntityLivingBase) {
         val font = fontValue.get()
 
-        // RenderUtils.drawRoundedCornerRect(0f, 0f, 150f, 50f, 5f, Color(0, 0, 0, 130))
-BlurUtils.draw(0f, 0f, 150f, 50f, 1.5f)
-RenderUtils.fastShadowRoundedRect(0f, 0f, 150f, 50f, 5f, 3f, Color(0, 0, 0, 130))
+        RenderUtils.drawRoundedCornerRect(0f, 0f, 150f, 50f, 5f, Color(0, 0, 0, 130).rgb)
 
         val hurtPercent = target.hurtPercent
         val scale = if (hurtPercent == 0f) { 1f } else if (hurtPercent < 0.5f) {
@@ -248,7 +246,7 @@ RenderUtils.fastShadowRoundedRect(0f, 0f, 150f, 50f, 5f, 3f, Color(0, 0, 0, 130)
         RenderUtils.quickDrawHead(target.skin, 0, 0, size, size)
         GL11.glPopMatrix()
 
-        font.drawString("${target.name}", 40, 11, Color.WHITE.rgb)
+        font.drawString("Name ${target.name}", 40, 11, Color.WHITE.rgb)
         font.drawString("Distance ${decimalFormat.format(mc.thePlayer.getDistanceToEntityBox(target))} Hurt ${target.hurtTime}", 40, 11 + font.FONT_HEIGHT, Color.WHITE.rgb)
 
         // 渐变血量条
@@ -271,7 +269,7 @@ RenderUtils.fastShadowRoundedRect(0f, 0f, 150f, 50f, 5f, 3f, Color(0, 0, 0, 130)
 
         font.drawString(decimalFormat.format(easingHP), stopPos + 5, 43 - font.FONT_HEIGHT / 2, Color.WHITE.rgb)
 
-        if(target.hurtTime == 10) {
+        if(target.hurtTime > 8) {
             for(i in 0 until riseCountValue.get()) {
                 riseParticleList.add(RiseParticle())
             }
