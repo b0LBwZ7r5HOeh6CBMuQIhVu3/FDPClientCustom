@@ -129,7 +129,7 @@ class KillAura : Module() {
             if (i < newValue) set(i)
         }
     }.displayable { autoBlockValue.equals("Range") }
-    private val autoBlockPacketValue = ListValue("AutoBlockPacket", arrayOf("AfterTick", "AfterAttack", "Vanilla"), "AfterTick").displayable { autoBlockValue.equals("Range") }
+    private val autoBlockPacketValue = ListValue("AutoBlockPacket", arrayOf("AfterTick", "AfterAttack", "Vanilla","OldIntave","OldIntave2"), "AfterTick").displayable { autoBlockValue.equals("Range") }
     private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest", "oldHypixel", "Normal", "AAC", "AACTest"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty", "normal", "onStoppedUsingItem"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN", "All-1", "Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
@@ -1163,7 +1163,12 @@ class KillAura : Module() {
         if (autoBlockValue.equals("Range") && mc.thePlayer.getDistanceToEntityBox(interactEntity) > autoBlockRangeValue.get()) {
             return
         }
-
+        if(autoBlockPacketValue.get().toLowerCase().contains("oldintave") && !mc.thePlayer.isSwingInProgress){
+            return
+        }
+        if(autoBlockPacketValue.equals("OldIntave2") && mc.thePlayer.hurtTime == 0){
+            return
+        }
         if (blockingStatus) {
             return
         }

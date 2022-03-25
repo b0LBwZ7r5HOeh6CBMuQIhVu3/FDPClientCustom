@@ -381,6 +381,33 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+/*    public static float[] getOldIntaveKillAuraRots(final EntityPlayerSP player, final EntityLivingBase target, float currentYaw, float currentPitch) {
+        Vec3 positionEyes = player.getPositionEyes(1.0F);
+        float f11 = target.getCollisionBorderSize();
+        double ex = MathHelper.clamp_double(positionEyes.xCoord, target.getEntityBoundingBox().minX - f11, target.getEntityBoundingBox().maxX + f11);
+        double ey = MathHelper.clamp_double(positionEyes.yCoord, target.getEntityBoundingBox().minY - f11, target.getEntityBoundingBox().maxY + f11);
+        double ez = MathHelper.clamp_double(positionEyes.zCoord, target.getEntityBoundingBox().minZ - f11, target.getEntityBoundingBox().maxZ + f11);
+        double x = ex - player.posX;
+        double y = ey - (player.posY + (double) player.getEyeHeight());
+        double z = ez - player.posZ;
+        float calcYaw = (float) ((MathHelper.func_181159_b(z, x) * 180.0D / Math.PI) - 90.0F);
+        float calcPitch = (float) (-((MathHelper.func_181159_b(y, MathHelper.sqrt_double(x * x + z * z)) * 180.0D / Math.PI)));
+        float yawSpeed =   40;
+        float pitchSpeed = 180; 
+        float yaw = updateRotation(currentYaw, calcYaw, yawSpeed);  
+        float pitch = updateRotation(currentPitch, calcPitch, pitchSpeed);
+        double diffYaw = MathHelper.wrapAngleTo180_float(calcYaw - currentYaw);
+        double diffPitch = MathHelper.wrapAngleTo180_float(calcPitch - currentPitch);
+        if((!(-yawSpeed <= diffYaw) || !(diffYaw <= yawSpeed)) || (!(-pitchSpeed <= diffPitch) || !(diffPitch <= pitchSpeed))) {
+            yaw += nextFloat(1F, 2F) * Math.sin(pitch * Math.PI);
+            pitch += nextFloat(1F, 2F) * Math.sin(yaw * Math.PI);
+        }
+        final float f2 = mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+        final float f3 = f2 * f2 * f2 * 1.2F;
+        yaw -= (yaw % f3);
+        pitch -=(pitch % (f3 * f2));
+        return new float[] {yaw, pitch };
+    }*/
     public static Rotation getVodkaRotations(Entity e, boolean oldPositionUse) {
         // Variables
         double diffX = (oldPositionUse ? e.prevPosX : e.posX) - (oldPositionUse ? mc.thePlayer.prevPosX : mc.thePlayer.posX);
