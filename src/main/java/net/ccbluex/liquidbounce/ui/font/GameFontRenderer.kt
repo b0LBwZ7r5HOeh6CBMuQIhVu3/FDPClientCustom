@@ -5,6 +5,8 @@
  */
 package net.ccbluex.liquidbounce.ui.font
 
+import net.ccbluex.liquidbounce.LiquidBounce
+import net.ccbluex.liquidbounce.event.TextEvent
 import net.ccbluex.liquidbounce.ui.font.renderer.AbstractAwtFontRender
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
@@ -45,7 +47,11 @@ class GameFontRenderer(font: Font) : FontRenderer(Minecraft.getMinecraft().gameS
     override fun drawStringWithShadow(text: String, x: Float, y: Float, color: Int) = drawString(text, x, y, color, true)
 
     override fun drawString(text: String, x: Float, y: Float, color: Int, shadow: Boolean): Int {
-        val currentText = LanguageManager.replace(text)
+        var currentText = text
+
+        val event = TextEvent(currentText)
+        LiquidBounce.eventManager.callEvent(event)
+        currentText = event.text ?: return 0
 
         val currY = y - 3F
         if (shadow) {
@@ -54,10 +60,15 @@ class GameFontRenderer(font: Font) : FontRenderer(Minecraft.getMinecraft().gameS
         return drawText(currentText, x, currY, color, false)
     }
 
-    private fun drawText(text: String?, x: Float, y: Float, colorHex: Int, ignoreColor: Boolean): Int {
-        if (text.isNullOrEmpty()) {
+    private fun drawText(rawText: String?, x: Float, y: Float, colorHex: Int, ignoreColor: Boolean): Int {
+        if (rawText == null) {
             return 0
         }
+        if (rawText.isNullOrEmpty()) {
+            return x.toInt()
+        }
+
+        val text = LanguageManager.replace(rawText)
 
         GlStateManager.translate(x - 1.5, y + 0.5, 0.0)
 
@@ -170,7 +181,11 @@ class GameFontRenderer(font: Font) : FontRenderer(Minecraft.getMinecraft().gameS
             ColorUtils.hexColors[getColorIndex(charCode)]
 
     override fun getStringWidth(text: String): Int {
-        val currentText = LanguageManager.replace(text)
+        var currentText = LanguageManager.replace(text)
+
+        val event = TextEvent(currentText)
+        LiquidBounce.eventManager.callEvent(event)
+        currentText = event.text ?: return 0
 
         return if (currentText.contains("§")) {
             val parts = currentText.split("§")
