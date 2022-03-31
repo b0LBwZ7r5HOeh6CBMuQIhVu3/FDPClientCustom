@@ -12,14 +12,14 @@ import net.minecraft.util.IChatComponent
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.opengl.Display
 import oshi.SystemInfo
+import oshi.software.os.windows.nt.CentralProcessor
 import java.io.File
 import java.util.*
-
 object ClientUtils : MinecraftInstance() {
     private val logger = LogManager.getLogger("SDPClient")
     val osType: EnumOSType = EnumOSType.UNKNOWN
     var inDevMode = System.getProperty("dev-mode") != null
-
+    private val logger = LogManager.getLogger("FDPClient")
 
     /**
      * the hardware id used to identify in bstats
