@@ -19,7 +19,7 @@ object ClientUtils : MinecraftInstance() {
     private val logger = LogManager.getLogger("SDPClient")
     val osType: EnumOSType = EnumOSType.UNKNOWN
     var inDevMode = System.getProperty("dev-mode") != null
-    private val logger = LogManager.getLogger("FDPClient")
+
 
     /**
      * the hardware id used to identify in bstats
