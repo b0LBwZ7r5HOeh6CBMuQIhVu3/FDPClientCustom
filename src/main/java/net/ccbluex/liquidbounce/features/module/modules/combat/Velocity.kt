@@ -22,17 +22,18 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
-import net.minecraft.network.play.client.C02PacketUseEntity
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C0APacketAnimation
+import net.minecraft.network.play.client.C0BPacketEntityAction
+import net.minecraft.network.play.client.C0FPacketConfirmTransaction
 import net.minecraft.network.play.server.S12PacketEntityVelocity
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.util.BlockPos
 import net.minecraft.util.MathHelper
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.abs
 import kotlin.math.sqrt
+
 
 @ModuleInfo(name = "Velocity", category = ModuleCategory.COMBAT)
 class Velocity : Module() {
@@ -43,7 +44,7 @@ class Velocity : Module() {
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
     private val modeValue = ListValue("Mode", arrayOf("Simple", "Simple2", "AEMine", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AACPull","AACUltraPull",
-                                                      "Redesky1", "Redesky2","huayuting","HYT1","HYT2","HYT3","HYT4",
+                                                      "Redesky1", "Redesky2","RedeSky3","HYT1","HYT2","HYT3","HYT4",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "strafe", "SmoothReverse",
@@ -114,6 +115,7 @@ class Velocity : Module() {
     private var templateZ = 0
 
     private var templateZA = 0.00
+    private var templateYA = 0.00
     private var templateXA = 0.00
 
     private var isMatrixOnGround = false
@@ -139,11 +141,6 @@ class Velocity : Module() {
         }
             // if(onlyHitVelocityValue.get() && mc.thePlayer.motionY<0.05) return；
         if (noFireValue.get() && mc.thePlayer.isBurning) return
-        if (modeValue.get().lowercase() == "huayuting") {
-            if (event.eventState == EventState.PRE && mc.thePlayer.hurtTime > 0) {
-                mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0f, 0f, 0f))
-            }
-        }
     }
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
@@ -200,11 +197,6 @@ class Velocity : Module() {
                     mc.thePlayer.motionZ *= horizontalValue.get()
                     mc.thePlayer.motionY *= verticalValue.get()
                     velocityTimer.reset()
-            }
-            "huayuting" -> if (mc.thePlayer.hurtTime > 0) {
-                    mc.thePlayer.motionX *= horizontalValue.get()
-                    mc.thePlayer.motionZ *= horizontalValue.get()
-                    mc.thePlayer.motionY *= verticalValue.get()
             }
             "jump" -> if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
                 mc.thePlayer.motionY = 0.42
@@ -304,6 +296,33 @@ class Velocity : Module() {
                 } else if (velocityTimer.hasTimePassed(80L)) {
                     velocityInput = false
                 }
+            }
+            "redesky3" -> {
+                if (mc.thePlayer.hurtTime == 9) {
+                    velocityTick = 0
+                }
+
+                if (velocityTick < velocityTickValue.get()) {
+                    mc.timer.timerSpeed = timerValue.get()
+                }
+
+                if (velocityTick == velocityTickValue.get() || mc.thePlayer == null || mc.thePlayer.ticksExisted < 3) {
+                    mc.timer.timerSpeed = 1f
+                }
+
+                if (mc.thePlayer!!.hurtTime == 9) {
+                    templateXA = mc.thePlayer.motionX
+                    templateYA= mc.thePlayer.motionY
+                    templateZA = mc.thePlayer.motionZ
+                }
+
+                if (mc.thePlayer!!.hurtTime > 3) {
+                    mc.thePlayer.motionX *= horizontalValue.get()
+                    mc.thePlayer.motionZ *= horizontalValue.get()
+                    mc.thePlayer.motionY *= verticalValue.get()
+                }
+
+                mc.gameSettings.keyBindSneak.pressed = false
             }
             "smoothreverse" -> {
                 if (!velocityInput) {
@@ -508,10 +527,10 @@ class Velocity : Module() {
         if(packet is C03PacketPlayer && mc.thePlayer.hurtTime > 0){
             when (modeValue.get().lowercase()) {
                 "freeze" -> event.cancelEvent()
-                "huayuting" -> if(!mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) packet.y-=0.015625
             }
-        }
-        if (packet is S12PacketEntityVelocity) {
+        } else if (packet is C0FPacketConfirmTransaction){
+            if(modeValue.equals("vulcan")) event.cancelEvent();
+        }else if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
@@ -563,6 +582,21 @@ class Velocity : Module() {
                     packet.motionX = (packet.getMotionX() * horizontal).toInt()
                     packet.motionY = (packet.getMotionY() * vertical).toInt()
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
+                }
+                "redesky3" -> {
+                    //velocityInput = true
+                    val horizontal = horizontalValue.get()
+                    val vertical = verticalValue.get()
+
+                    /*if (horizontal == 0F && vertical == 0F) {
+                        event.cancelEvent()
+                    }*/
+                    mc.gameSettings.keyBindSneak.pressed = true
+                    // can block get less knock-back? XD
+                    packet.motionX = (packet.getMotionX() * horizontal).toInt()
+                    packet.motionY = (packet.getMotionY() * vertical).toInt()
+                    packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
+                    velocityInput = true
                 }
                 "vanilla" -> {
                     event.cancelEvent()

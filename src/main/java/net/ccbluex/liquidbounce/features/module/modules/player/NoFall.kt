@@ -46,7 +46,7 @@ class NoFall : Module() {
         "Packet", "Packet1", "Packet2",
         "MLG",
         "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC4.4.X-Flag", "LoyisaAAC4.4.2", "AAC5.0.4", "AAC5.0.14",
-        "Spartan", "CubeCraft", "Hypixel", "HypSpoof", "Phase", "Verus", "Medusa",
+        "Spartan", "CubeCraft", "Hypixel", "HypSpoof", "Phase", "Verus", "Medusa","vulcan",
         "Damage", "MotionFlag",
         "OldMatrix", "Matrix6.2.X", "Matrix6.2.X-Packet", "Matrix6.6.3"
     ), "SpoofGround")
@@ -78,6 +78,8 @@ class NoFall : Module() {
     private val aac4FlagCooldown = MSTimer()
     private var aac4FlagCount = 0
     private var wasTimer = false
+    private var fallDist = 0.0f
+    private var lastTickFallDist = 0.0f
     private var matrixSend = false
 
     override fun onEnable() {
@@ -99,7 +101,7 @@ class NoFall : Module() {
         matrixFlagWait = 0
         aac4FlagCooldown.reset()
     }
-    
+
     override fun onDisable() {
         matrixSend = false
         aac4FlagCount = 0
@@ -541,6 +543,26 @@ class NoFall : Module() {
                 needSpoof = false
             } else if (mode.equals("Damage", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 3.5) {
                 packet.onGround = true
+            } else if (mode.equals("vulcan", ignoreCase = true)) {
+                var mathGround = Math.round(packet.y / 0.015625) * 0.015625
+                if (mc.thePlayer.fallDistance == 0f)
+                    fallDist = 0f;
+
+                fallDist += mc.thePlayer.fallDistance - lastTickFallDist;
+                lastTickFallDist = mc.thePlayer.fallDistance;
+
+                if (fallDist > 1.3 && mc.thePlayer.ticksExisted % 15 == 0) {
+                    mc.thePlayer.setPosition(mc.thePlayer.posX, mathGround, mc.thePlayer.posZ)
+                    packet.y=mathGround
+                    mathGround = Math.round(packet.y / 0.015625) * 0.015625
+                    if (Math.abs(mathGround - packet.y) < 0.01) {
+                        if (mc.thePlayer.motionY < -0.4) mc.thePlayer.motionY = -0.4
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                        mc.timer.timerSpeed = 0.9f
+                    }
+                } else if (mc.timer.timerSpeed == 0.9f) {
+                    mc.timer.timerSpeed = 1f
+                }
             } else if (mode.equals("Packet1", ignoreCase = true) && packetModify) {
                 packet.onGround = true
                 packetModify = false
