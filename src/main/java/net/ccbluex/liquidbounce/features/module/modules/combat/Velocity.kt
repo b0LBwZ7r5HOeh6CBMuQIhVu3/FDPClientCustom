@@ -45,6 +45,7 @@ class Velocity : Module() {
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
     private val modeValue = ListValue("Mode", arrayOf("Simple", "Simple2", "AEMine", "Vanilla", "Tick","OldAC" , "AACPush", "AACZero", "AAC4Reduce", "AAC5Reduce","AACPull","AACUltraPull",
                                                       "Redesky1", "Redesky2","RedeSky3","HYT1","HYT2","HYT3","HYT4",
+                                                       "Vulcan",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
                                                       "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
                                                       "strafe", "SmoothReverse",
@@ -322,7 +323,15 @@ class Velocity : Module() {
                     mc.thePlayer.motionY *= verticalValue.get()
                 }
 
-                mc.gameSettings.keyBindSneak.pressed = false
+                if (velocityInput) {
+                    mc.netHandler.addToSendQueue(
+                        C0BPacketEntityAction(
+                            mc.thePlayer,
+                            C0BPacketEntityAction.Action.STOP_SNEAKING
+                        )
+                    )
+                    velocityInput = false
+                }
             }
             "smoothreverse" -> {
                 if (!velocityInput) {
@@ -530,11 +539,13 @@ class Velocity : Module() {
             }
         } else if (packet is C0FPacketConfirmTransaction){
             if(modeValue.equals("vulcan")) event.cancelEvent();
+        } else if (mc.thePlayer.hurtTime > 0 && packet is C0FPacketConfirmTransaction) {
+            event.cancelEvent()
         }else if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if (onlyHitVelocityValue.get() && (abs(packet.getMotionX()) < 10 || abs(packet.getMotionZ()) < 10 || abs(packet.getMotionY()) < 10 )) return
+            if (onlyHitVelocityValue.get() && (abs(packet.getMotionX()) < 0.02 || abs(packet.getMotionZ()) < 0.02 || abs(packet.getMotionY()) < 10 )) return
             if (alertValue.get()) {
                 alert(
                     "Velocity §7» " + (packet.getMotionX() + packet.getMotionY() + packet.getMotionZ()).toString()
@@ -591,14 +602,19 @@ class Velocity : Module() {
                     /*if (horizontal == 0F && vertical == 0F) {
                         event.cancelEvent()
                     }*/
-                    mc.gameSettings.keyBindSneak.pressed = true
-                    // can block get less knock-back? XD
+                    mc.netHandler.addToSendQueue(
+                        C0BPacketEntityAction(
+                            mc.thePlayer,
+                            C0BPacketEntityAction.Action.START_SNEAKING
+                        )
+                    )
+                    // Does blocking also reduce knockback? XD
                     packet.motionX = (packet.getMotionX() * horizontal).toInt()
                     packet.motionY = (packet.getMotionY() * vertical).toInt()
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
                     velocityInput = true
                 }
-                "vanilla" -> {
+                "vanilla","vulcan" -> {
                     event.cancelEvent()
                 }
                 "matrixsimple" -> {

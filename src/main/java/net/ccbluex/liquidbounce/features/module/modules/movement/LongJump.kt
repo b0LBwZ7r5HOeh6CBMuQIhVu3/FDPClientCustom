@@ -26,7 +26,7 @@ import net.minecraft.util.EnumFacing
 
 @ModuleInfo(name = "LongJump", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.FLAG)
 class LongJump : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("NCP", "NCPDamage", "JartexWater", "AACv1", "AACv2", "AACv3", "Mineplex", "Mineplex2", "Mineplex3", "RedeSkyTest", "RedeSky", "RedeSky2", "RedeSky3", "OldBlocksMC", "OldBlocksMC2", "HYT4v4"), "NCP")
+    private val modeValue = ListValue("Mode", arrayOf("NCP", "NCPDamage", "JartexWater", "AACv1", "AACv2", "AACv3", "Mineplex", "Mineplex2", "Mineplex3", "RedeSkyTest", "RedeSky", "RedeSky2", "RedeSky3", "OldBlocksMC", "OldBlocksMC2", "HYT4v4","AAC4Test"), "NCP")
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
 
     // redesky
@@ -230,7 +230,14 @@ class LongJump : Module() {
 
                         MovementUtils.strafe()
                     }
+                    "aac4test" -> {
+                        mc.timer.timerSpeed = 0.32F;
+                        if (mc.thePlayer.ticksExisted % 12 == 0) {
+                            mc.thePlayer.fallDistance = 1.0F;
 
+                            mc.thePlayer.motionY = 0.32;
+                        }
+                    }
                     "redesky" -> {
                         if (!mc.thePlayer.onGround) {
                             if (rsMoveReducerValue.get()) {

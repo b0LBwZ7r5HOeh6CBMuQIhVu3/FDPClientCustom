@@ -55,6 +55,7 @@ class FastUse : Module() {
     private val newAACDelayValue = BoolValue("NewAAC-Delay", false).displayable { modeValue.equals("NewAAC") }
     private val noMoveValue = BoolValue("NoMove", false)
     private val testValue = BoolValue("test", false)
+    private val verusValue = BoolValue("verus", false)
     // private val bowValue = BoolValue("bow", false)
 
     private val msTimer = MSTimer()
@@ -64,11 +65,12 @@ class FastUse : Module() {
     private var yaw = 0.0f
     private var pitch = 0.0f
     private fun sendPacket(packet: String = "C03flying") {
+        if(verusValue.get() && mc.thePlayer.ticksExisted % 4 != 0) return
         when (packet.lowercase()) {
             "c03flying" -> mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
             "c04position" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.onGround))
             "c05look" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround))
-            "c06position_look" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround))
+            "c06position_look" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY + (if(verusValue.get()) 1.0E-9 else 0.0), mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround))
         }
     }
 

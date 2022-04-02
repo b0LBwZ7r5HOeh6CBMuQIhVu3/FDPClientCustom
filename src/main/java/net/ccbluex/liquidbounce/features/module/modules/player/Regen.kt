@@ -15,7 +15,10 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.client.C03PacketPlayer
+import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.potion.Potion
+
 
 @ModuleInfo(name = "Regen", category = ModuleCategory.PLAYER)
 class Regen : Module() {
@@ -25,9 +28,21 @@ class Regen : Module() {
     private val foodValue = IntegerValue("Food", 18, 0, 20)
     private val speedValue = IntegerValue("Speed", 100, 1, 100)
     private val noAirValue = BoolValue("NoAir", false)
+    private val oldMatrixValue = BoolValue("OldMatrix", false)
+    private val c04PacketValue = BoolValue("PositionPacket", false)
     private val potionEffectValue = BoolValue("PotionEffect", false)
 
     private var resetTimer = false
+    fun sendPacket(packet: C03PacketPlayer) {
+        if (oldMatrixValue.get()) {
+            mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.getPosition().down(256), 256, null, 0.0f, 0.0f, 0.0f))
+        }
+        if (c04PacketValue.get()) {
+            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, packet.onGround))
+        } else {
+            mc.netHandler.addToSendQueue(packet)
+        }
+    }
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
@@ -37,7 +52,8 @@ class Regen : Module() {
         resetTimer = false
 
         if ((!noAirValue.get() || mc.thePlayer.onGround) && !mc.thePlayer.capabilities.isCreativeMode &&
-            mc.thePlayer.foodStats.foodLevel > foodValue.get() && mc.thePlayer.isEntityAlive && mc.thePlayer.health < healthValue.get()) {
+            mc.thePlayer.foodStats.foodLevel > foodValue.get() && mc.thePlayer.isEntityAlive && mc.thePlayer.health < healthValue.get()
+        ) {
             if (potionEffectValue.get() && !mc.thePlayer.isPotionActive(Potion.regeneration)) {
                 return
             }
@@ -84,6 +100,7 @@ class Regen : Module() {
             }
         }
     }
+
     override val tag: String
         get() = modeValue.get()
 }
