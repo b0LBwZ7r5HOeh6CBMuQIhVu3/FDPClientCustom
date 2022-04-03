@@ -23,12 +23,13 @@ import kotlin.concurrent.schedule
 
 @ModuleInfo(name = "AutoPlay", category = ModuleCategory.MISC)
 class AutoPlay : Module() {
-    private var clickState = 0
-    private val modeValue = ListValue("Server", arrayOf("RedeSky", "BlocksMC", "Minemora", "Hypixel", "Jartex"), "RedeSky")
+
+    private val modeValue = ListValue("Server", arrayOf("RedeSky", "BlocksMC", "Minemora", "Hypixel", "Jartex", "HyCraft"), "RedeSky")
     private val delayValue = IntegerValue("JoinDelay", 3, 0, 7)
 
     private var clicking = false
     private var queued = false
+    private var clickState = 0
 
     override fun onEnable() {
         clickState = 0
@@ -101,6 +102,7 @@ class AutoPlay : Module() {
             }
         } else if (packet is S02PacketChat) {
             val text = packet.chatComponent.unformattedText
+            val component = packet.chatComponent
             when (modeValue.get().lowercase()) {
                 "minemora" -> {
                     if (text.contains("Has click en alguna de las siguientes opciones", true)) {
@@ -109,11 +111,21 @@ class AutoPlay : Module() {
                         }
                     }
                 }
+                "hycraft" -> {
+                    component.siblings.forEach { sib ->
+                        val clickEvent = sib.chatStyle.chatClickEvent
+                        if(clickEvent != null && clickEvent.action == ClickEvent.Action.RUN_COMMAND && clickEvent.value.contains("playagain")) {
+                            queueAutoPlay {
+                                mc.thePlayer.sendChatMessage(clickEvent.value)
+                            }
+                        }
+                    }
+                }
                 "blocksmc" -> {
                     if (clickState == 1 && text.contains("Only VIP players can join full servers!", true)) {
                         LiquidBounce.hud.addNotification(Notification(this.name, "Join failed! trying again...", NotifyType.WARNING, 3000))
                         // connect failed so try to join again
-                        Timer().schedule(1000L) {
+                        Timer().schedule(1500L) {
                             mc.netHandler.addToSendQueue(C09PacketHeldItemChange(7))
                             repeat(2) {
                                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
@@ -122,12 +134,10 @@ class AutoPlay : Module() {
                     }
                 }
                 "jartex" -> {
-                    val component = packet.chatComponent
                     if (text.contains("Click here to play again", true)) {
                         component.siblings.forEach { sib ->
                             val clickEvent = sib.chatStyle.chatClickEvent
                             if(clickEvent != null && clickEvent.action == ClickEvent.Action.RUN_COMMAND && clickEvent.value.startsWith("/")) {
-                                println("clickEvent: ${clickEvent.value}")
                                 queueAutoPlay {
                                     mc.thePlayer.sendChatMessage(clickEvent.value)
                                 }
