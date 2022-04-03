@@ -17,7 +17,6 @@ import net.minecraft.network.play.client.C03PacketPlayer.*
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.util.AxisAlignedBB
-import net.minecraft.util.Vec3
 
 
 class OldHYTVanilla : FlyMode("OldHYTVanilla") {
