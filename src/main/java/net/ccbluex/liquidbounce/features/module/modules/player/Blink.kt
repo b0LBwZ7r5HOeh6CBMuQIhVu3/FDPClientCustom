@@ -1,11 +1,8 @@
 /*
- *
- *  * MotherF▉▉▉▉▉▉▉▉▉Client Hacked Client
- *  * A shit open source mixin-based injection hacked client for Minecraft using Minecraft Forge based on LiquidBounce.
- *  * DeleteFDP.today
- *
+ * FDPClient Hacked Client
+ * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
+ * https://github.com/UnlegitMC/FDPClient/
  */
-
 package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -20,7 +17,6 @@ import net.ccbluex.liquidbounce.features.module.modules.render.Breadcrumbs
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
-import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
 import net.minecraft.network.Packet
@@ -29,46 +25,29 @@ import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook
 import org.lwjgl.opengl.GL11
 import java.util.*
-import kotlin.math.min
-import kotlin.math.roundToInt
 import java.util.concurrent.LinkedBlockingQueue
 
 @ModuleInfo(name = "Blink", category = ModuleCategory.PLAYER)
 class Blink : Module() {
+
+    private val pulseValue = BoolValue("Pulse", false)
+    private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
+
+    private val pulseTimer = MSTimer()
     private val packets = LinkedBlockingQueue<Packet<*>>()
     private var fakePlayer: EntityOtherPlayerMP? = null
     private var disableLogger = false
     private val positions = LinkedList<DoubleArray>()
-    private val pulseValue = BoolValue("Pulse", false)
-    private val pingValue = BoolValue("ping", false)
-    private val actionValue = BoolValue("action", true)
-    private val moveValue = BoolValue("move", true)
-    private val movingCheckValue = BoolValue("movingCheck", true).displayable { moveValue.get() }
-    private val pingCalcValue = BoolValue("PingCalc", true)
-    private val pingCalcDupePacketValue = BoolValue("PingCalcDupePacket", true).displayable { pingCalcValue.get() }
-    private val dupePacketsPerMSValue = IntegerValue("dupePacketsPerMS", 30, 5, 500).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
-    private val maxDupePacketsValue = IntegerValue("MaxDupePackets", 5, 0, 15).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
-    private val dupeC00Value = BoolValue("dupeC00", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
-    private val dupeC0FValue = BoolValue("dupeC0F", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
-    private val debugValue = BoolValue("debug", true)
-    private val serverSidePositionValue = BoolValue("serverSidePosition", true)
-    private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
-    private val pulseTimer = MSTimer()
-    private var packetsDuped = 0
-    private var c00PacketToDupe = C00PacketKeepAlive()
-    private var c0fPacketToDupe = C0FPacketConfirmTransaction()
 
     override fun onEnable() {
         if (mc.thePlayer == null) return
-        if(serverSidePositionValue.get()){
-                    fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
-        // fakePlayer!!.clonePlayer(mc.thePlayer, true)
-        fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
-        // fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
-        mc.theWorld.addEntityToWorld(-1337, fakePlayer)
+        if (!pulseValue.get()) {
+            fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
+            fakePlayer!!.clonePlayer(mc.thePlayer, true)
+            fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
+            fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
+            mc.theWorld.addEntityToWorld(-1337, fakePlayer)
         }
-
-
         synchronized(positions) {
             positions.add(
                 doubleArrayOf(
@@ -95,22 +74,13 @@ class Blink : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
         if (mc.thePlayer == null || disableLogger) return
-        if (packet is C03PacketPlayer && (!movingCheckValue.get() || packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
+        if (packet is C03PacketPlayer) { // Cancel all movement stuff
             event.cancelEvent()
         }
-        if (
-            ((packet is C08PacketPlayerBlockPlacement ||
-                    packet is C0APacketAnimation ||
-                    packet is C0BPacketEntityAction ||
-                    packet is C02PacketUseEntity) && actionValue.get()) ||
-            ((packet is C00PacketKeepAlive || packet is C0FPacketConfirmTransaction) && pingValue.get())
-        ) {
-            if (packet is C0FPacketConfirmTransaction)
-                c0fPacketToDupe = packet
-
-            if (packet is C00PacketKeepAlive)
-                c00PacketToDupe = packet
-
+        if (packet is C04PacketPlayerPosition || packet is C06PacketPlayerPosLook ||
+            packet is C08PacketPlayerBlockPlacement ||
+            packet is C0APacketAnimation ||
+            packet is C0BPacketEntityAction || packet is C02PacketUseEntity) {
             event.cancelEvent()
             packets.add(packet)
         }
@@ -127,38 +97,8 @@ class Blink : Module() {
                 )
             )
         }
-        if (pulseValue.get() && pulseTimer.hasTimePassed((pulseDelayValue.get() - (if (pingCalcValue.get()) EntityUtils.getPing(mc.thePlayer) else 0)).toLong())) {
-            if (pingCalcValue.get() && EntityUtils.getPing(mc.thePlayer) > pulseDelayValue.get() && pingCalcDupePacketValue.get()) {
-                val packetsAmounts = min(
-                    ((pulseDelayValue.get() - EntityUtils.getPing(mc.thePlayer)) / dupePacketsPerMSValue.get()).toDouble()
-                        .roundToInt(),
-                    if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 800
-                )
-
-                repeat(packetsAmounts) {
-                    if (dupeC00Value.get()) {
-                        packets.add(c00PacketToDupe)
-                    }
-                    if (dupeC0FValue.get()) {
-                        packets.add(c0fPacketToDupe)
-                    }
-                }
-                if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to make sure your ping is around " + (if (dupeC0FValue.get() || dupeC00Value.get()) "the Blink value you set" else "your ping(lol)") + " §7("/*please excuse my typing error(s)*/ + EntityUtils.getPing(mc.thePlayer)
-                    .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
-                    .toString() + ")")
-            }
+        if (pulseValue.get() && pulseTimer.hasTimePassed(pulseDelayValue.get().toLong())) {
             blink()
-            if(serverSidePositionValue.get()){
-                if(mc.theWorld!!.getEntityByID(fakePlayer!!.entityId) == null){
-                    mc.theWorld.addEntityToWorld(-1337, fakePlayer)
-                }
-                fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
-//              fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
-                fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
-                fakePlayer!!.renderDistanceWeight = if(mc.gameSettings.thirdPersonView == 0) 0.0 else 1.0
-            }else{
-                if(mc.theWorld!!.getEntityByID(fakePlayer!!.entityId) != null){mc.theWorld.removeEntityFromWorld(fakePlayer!!.entityId)}
-            }
             pulseTimer.reset()
         }
     }
@@ -166,7 +106,6 @@ class Blink : Module() {
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         val breadcrumbs = LiquidBounce.moduleManager[Breadcrumbs::class.java]!!
-        if(!serverSidePositionValue.get()) return
         synchronized(positions) {
             GL11.glPushMatrix()
             GL11.glDisable(GL11.GL_TEXTURE_2D)
