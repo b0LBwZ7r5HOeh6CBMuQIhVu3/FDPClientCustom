@@ -38,6 +38,10 @@ public final class RotationUtils extends MinecraftInstance implements Listenable
     private static double y = random.nextDouble();
     private static double z = random.nextDouble();
 
+    public static int getKeepLength() {
+        return keepLength;
+    }
+
     /**
      * Face block
      *

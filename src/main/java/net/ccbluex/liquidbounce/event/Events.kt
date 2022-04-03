@@ -121,6 +121,9 @@ class PacketEvent(val packet: Packet<*>, val type: Type) : CancellableEvent() {
     }
 
     fun isServerSide() = type == Type.RECEIVE
+    fun getPacket(): Any {
+        return packet
+    }
 }
 
 /**
@@ -176,9 +179,13 @@ class TickEvent : Event()
 class UpdateEvent : Event()
 
 /**
- * Called when minecraft player will be updated
+ * Called when minecraft player was updated
  */
 class PostUpdateEvent : Event()
+/**
+ * after tick tack
+ */
+class PostTickEvent : Event()
 
 /**
  * Called when the world changes

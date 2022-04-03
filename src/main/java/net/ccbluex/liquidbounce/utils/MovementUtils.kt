@@ -41,7 +41,9 @@ object MovementUtils : MinecraftInstance() {
         mc.thePlayer.motionX = -sin(yaw) * speed
         mc.thePlayer.motionZ = cos(yaw) * speed
     }
-
+    fun strafe(speed: Double) {
+        strafe(speed.toFloat())
+    }
     fun move(speed: Float) {
         if (!isMoving()) return
         val yaw = direction

@@ -145,7 +145,14 @@ class Fly : Module() {
     fun onStep(event: StepEvent) {
         mode.onStep(event)
     }
-
+    @EventTarget
+    fun onTick(event: TickEvent) {
+        mode.onTick(event)
+    }
+    @EventTarget
+    fun onPostTick(event: PostTickEvent) {
+        mode.onPostTick(event)
+    }
     override val tag: String
         get() = modeValue.get()
 
