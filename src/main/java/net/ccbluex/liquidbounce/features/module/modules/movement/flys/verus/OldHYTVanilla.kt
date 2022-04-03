@@ -3,6 +3,7 @@ package net.ccbluex.liquidbounce.features.module.modules.movement.flys.verus
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.PostTickEvent
 import net.ccbluex.liquidbounce.event.TickEvent
+import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.PacketUtils
@@ -98,7 +99,7 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
         enabledTicks++;
     }
 
-    override fun onPostTick(event: PostTickEvent) {
+    override fun onUpdate(event: UpdateEvent) {
 //        val timer: DoubleSetting = ModulesManager.getModuleByClass(Fly::class.java).timer
 //        val enabledTicks: Int = ModulesManager.getModuleByClass(Fly::class.java).enabledTicks
         if (disablerValue.get()) {
@@ -158,7 +159,7 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
             mc.thePlayer.motionY = speedValue.get() / 1.399999976158142
             MovementUtils.strafe(speedValue.get() / 1.399999976158142F)
             MovementUtils.handleVanillaKickBypass()
-            MovementUtils.handleVanillaKickBypass()
+//            MovementUtils.handleVanillaKickBypass()
             floatingTickCount = 1
         }
     }

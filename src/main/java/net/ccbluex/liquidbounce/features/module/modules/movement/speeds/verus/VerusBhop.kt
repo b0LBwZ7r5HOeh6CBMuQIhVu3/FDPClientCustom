@@ -12,7 +12,7 @@ class VerusBhop : SpeedMode("VerusBhop") {
     private var jumpY = 0.0
     private var bypassTicks = 0
 
-    override fun onMove(event: MoveEvent) {
+    override fun onUpdate() {
         var speedBoost = 0.0;
         --bypassTicks;
         ++tick;

@@ -40,6 +40,7 @@ class InfiniteAura : Module() {
     private val distValue = IntegerValue("Distance", 30, 20, 100)
     private val moveDistanceValue = FloatValue("MoveDistance", 5F, 2F, 15F)
     private val noRegenValue = BoolValue("NoRegen", true)
+    private val kickCheckValue = BoolValue("KickCheck", true)
     private val swingValue = BoolValue("Swing", true).displayable { modeValue.equals("Aura") }
     private val pathRenderValue = BoolValue("PathRender", true)
     private val colorRedValue = IntegerValue("ColorRed", 0, 0, 255).displayable { pathRenderValue.get() && !colorRainbowValue.get() }
@@ -51,6 +52,7 @@ class InfiniteAura : Module() {
     private val timer = MSTimer()
     private var points = mutableListOf<Vec3>()
     private var thread: Thread? = null
+    private var floatingTickCount=0
 
     private fun getDelay(): Int {
         return 1000 / cpsValue.get()
@@ -119,7 +121,7 @@ class InfiniteAura : Module() {
 
     private fun hit(entity: EntityLivingBase) {
         val path = PathUtils.findBlinkPath(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, entity.posX, entity.posY, entity.posZ, moveDistanceValue.get().toDouble())
-
+        if (floatingTickCount <= 79 - path.size * 2 && kickCheckValue.get()) return
         path.forEach {
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(it.xCoord, it.yCoord, it.zCoord, it.yCoord % 0.125 == 0.0))
             points.add(it)
@@ -152,6 +154,7 @@ class InfiniteAura : Module() {
         if (noRegenValue.get() && event.packet is C03PacketPlayer && !isMovePacket) {
             event.cancelEvent()
         }
+        if(mc.thePlayer.onGround){floatingTickCount++}else{floatingTickCount=0}
     }
 
     @EventTarget
