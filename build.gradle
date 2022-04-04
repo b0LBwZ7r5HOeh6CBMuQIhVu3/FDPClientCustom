@@ -78,6 +78,10 @@ dependencies {
         exclude module: "junit"
     } // for read dynamic capes
 
+    include("com.github.UnlegitMC:starlite:9971b899f7") {
+        exclude module: "junit"
+    } // for pathfinding
+
     include fileTree(include: ["*.jar"], dir: "libs")
 }
 
