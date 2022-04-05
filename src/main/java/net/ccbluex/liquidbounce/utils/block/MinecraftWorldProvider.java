@@ -19,7 +19,11 @@ public class MinecraftWorldProvider implements IWorldProvider {
 
     @Override
     public boolean isBlocked(Cell cell) {
-        return isSolid(cell.x, cell.y, cell.z) || isSolid(cell.x, cell.y + 1, cell.z) || unableToStand(cell.x, cell.y - 1, cell.z);
+        return isSolid(cell.x, cell.y, cell.z);
+    }
+
+    public boolean isBlocked(int x, int y, int z) {
+        return isSolid(x, y, z) || isSolid(x, y + 1, z) || unableToStand(x, y - 1, z);
     }
 
     private boolean isSolid(int x, int y, int z) {
