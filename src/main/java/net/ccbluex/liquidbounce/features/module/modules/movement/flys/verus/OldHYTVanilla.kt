@@ -1,10 +1,13 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.verus
 
+import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.PostTickEvent
 import net.ccbluex.liquidbounce.event.TickEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
+import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification
+import net.ccbluex.liquidbounce.ui.client.hud.element.elements.NotifyType
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.PacketUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
@@ -51,11 +54,11 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
     }
 
     override fun onDisable() {
-
-        mc.thePlayer.setPosition(oldX, oldY, oldZ)
-        mc.thePlayer.rotationYaw = oldYaw
-        mc.thePlayer.rotationPitch = oldPitch
-
+        if (disablerValue.get()) {
+            mc.thePlayer.setPosition(oldX, oldY, oldZ)
+            mc.thePlayer.rotationYaw = oldYaw
+            mc.thePlayer.rotationPitch = oldPitch
+        }
         mc.thePlayer.motionX = 0.0
         mc.thePlayer.motionY = 0.0
         mc.thePlayer.motionZ = 0.0
@@ -92,6 +95,7 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
         }
         if (p is C03PacketPlayer) {
             floatingTickCount = if (mc.thePlayer.onGround) 0 else floatingTickCount + 1
+            if (disablerValue.get()) event.cancelEvent()
         }
     }
 
@@ -100,11 +104,9 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
     }
 
     override fun onUpdate(event: UpdateEvent) {
-//        val timer: DoubleSetting = ModulesManager.getModuleByClass(Fly::class.java).timer
-//        val enabledTicks: Int = ModulesManager.getModuleByClass(Fly::class.java).enabledTicks
         if (disablerValue.get()) {
             if (enabledTicks == 3) {
-//            Client.notify(PopupMessage("Final Dad", "Enabled Final Dad! You can fly freely until you disable fly", ColorUtil.NotificationColors.GREEN, 40))
+                LiquidBounce.hud.addNotification(Notification("AACv4 PacketClip exploit", "exploited You can fly freely until you disable fly.", NotifyType.WARNING, 2000))
             }
             if (enabledTicks <= 2) {
                 mc.timer.timerSpeed = 0.7F
@@ -122,19 +124,18 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
             if (mc.thePlayer.posY - player!!.posY > 10.0) {
                 if (enabledTicks % 20 == 0) {
                     mc.thePlayer.setLocationAndAngles(player!!.posX, player!!.posY, player!!.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
-//                Client.notify(PopupMessage("Final Dad Exploit", "You got lag backed! Please land on the ground if it keeps happening.", ColorUtil.NotificationColors.RED, 40))
+                    LiquidBounce.hud.addNotification(Notification("AACv4 PacketClip exploit", "You got lag backed! Please land on the ground if it keeps happening.", NotifyType.WARNING, 2000))
                 }
                 return
             }
             if (enabledTicks % 10 == 0 && (enabledTicks - lastFlag >= 6 || mc.thePlayer.posY - player!!.posY > 4.0) && mc.thePlayer.getDistanceToEntity(player) >= 12.0f) {
                 mc.thePlayer.setLocationAndAngles(player!!.posX, player!!.posY, player!!.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
-//            Client.notify(PopupMessage("Final Dad Exploit", "You got lag backed! Please land on the ground if it keeps happening.", ColorUtil.NotificationColors.RED, 40))
+                LiquidBounce.hud.addNotification(Notification("AACv4 PacketClip exploit", "You got lag backed! Please land on the ground if it keeps happening.", NotifyType.WARNING, 2000))
             }
             PacketUtils.sendPacketNoEvent(C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, true))
             PacketUtils.sendPacketNoEvent(C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 50.0, mc.thePlayer.posZ, true))
         }
         mc.thePlayer.fallDistance = 0.0f
-//        val speed: Double = ModulesManager.getModuleByClass(Fly::class.java).stableFlySpeed.getValue()
         mc.thePlayer.motionX = 0.0
         mc.thePlayer.motionY = 0.0
         mc.thePlayer.motionZ = 0.0
