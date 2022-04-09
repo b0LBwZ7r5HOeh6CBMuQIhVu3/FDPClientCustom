@@ -20,8 +20,6 @@ import java.awt.geom.AffineTransform
  */
 class VectorFontRenderer(font: Font) : AbstractAwtFontRender(font) {
 
-    private var texId = 0
-
     override fun drawChar(char: String): Int {
         val cached =  if (!cachedChars.containsKey(char)) {
             val list = GL11.glGenLists(1)
@@ -50,16 +48,17 @@ class VectorFontRenderer(font: Font) : AbstractAwtFontRender(font) {
         GlStateManager.disableTexture2D()
         GlStateManager.enableBlend()
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
-        RenderUtils.clearCaps()
-        RenderUtils.enableGlCap(GL11.GL_POLYGON_SMOOTH)
-        RenderUtils.disableGlCap(GL11.GL_DEPTH_TEST)
-        GL11.glDepthMask(false)
-        RenderUtils.disableGlCap(GL11.GL_CULL_FACE)
+        RenderUtils.clearCaps("FONT")
+        RenderUtils.enableGlCap(GL11.GL_POLYGON_SMOOTH, "FONT")
+//        RenderUtils.disableGlCap(GL11.GL_DEPTH_TEST)
+//        GL11.glDepthMask(false)
+        RenderUtils.disableGlCap(GL11.GL_CULL_FACE, "FONT")
     }
 
     override fun postGlHints() {
-        RenderUtils.resetCaps()
-        GL11.glDepthMask(true)
+        RenderUtils.resetCaps("FONT")
+//        GL11.glEnable(GL11.GL_DEPTH_TEST)
+//        GL11.glDepthMask(true)
         GlStateManager.disableBlend()
         GlStateManager.enableTexture2D()
     }
