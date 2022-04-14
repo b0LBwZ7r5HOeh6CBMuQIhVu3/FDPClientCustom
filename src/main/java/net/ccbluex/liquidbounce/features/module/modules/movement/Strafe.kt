@@ -11,7 +11,7 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import kotlin.math.*
 
-@ModuleInfo(name = "Strafe", category = ModuleCategory.MOVEMENT)
+@ModuleInfo(name = "Strafe", description = "Allows you to freely move in mid air.", category = ModuleCategory.MOVEMENT)
 class Strafe : Module() {
 
     private var strengthValue= FloatValue("Strength", 0.5F, 0F, 1F)
