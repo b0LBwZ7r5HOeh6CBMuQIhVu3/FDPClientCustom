@@ -538,7 +538,7 @@ class Velocity : Module() {
                 "freeze" -> event.cancelEvent()
             }
         } else if (packet is C0FPacketConfirmTransaction  && mc.thePlayer.hurtTime > 0){
-            if(modeValue.equals("vulcan") && packet.uid > 0) {
+            if(modeValue.equals("Vulcan") && packet.uid > 0) {
                 event.cancelEvent()
                 if(alertValue.get()) alert(packet.uid.toString())
             }
@@ -595,6 +595,19 @@ class Velocity : Module() {
                     packet.motionY = (packet.getMotionY() * vertical).toInt()
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
                 }
+                "vulcan" -> {
+                    //velocityInput = true
+                    val horizontal = horizontalValue.get()
+                    val vertical = verticalValue.get()
+
+                    if (horizontal == 0F && vertical == 0F) {
+                        event.cancelEvent()
+                    }
+
+                    packet.motionX = (packet.getMotionX() * horizontal).toInt()
+                    packet.motionY = (packet.getMotionY() * vertical).toInt()
+                    packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
+                }
                 "redesky3" -> {
                     //velocityInput = true
                     val horizontal = horizontalValue.get()
@@ -615,7 +628,7 @@ class Velocity : Module() {
                     packet.motionZ = (packet.getMotionZ() * horizontal).toInt()
                     velocityInput = true
                 }
-                "vanilla","vulcan" -> {
+                "vanilla" -> {
                     event.cancelEvent()
                 }
                 "matrixsimple" -> {
