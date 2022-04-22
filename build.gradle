@@ -137,6 +137,7 @@ jar {
 }
 
 mixin {
+    disableOverwriteChecker = true
     disableRefMapWarning = true
     defaultObfuscationEnv searge
     add sourceSets.main, "mixins.fdpclient.refmap.json"

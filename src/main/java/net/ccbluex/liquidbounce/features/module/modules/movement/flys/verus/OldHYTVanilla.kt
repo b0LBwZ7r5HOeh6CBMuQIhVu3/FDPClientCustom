@@ -156,7 +156,7 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
                 mc.thePlayer.motionY = speedValue.get() / 1.399999976158142
                 MovementUtils.strafe(speedValue.get() / 1.399999976158142F)
             }
-        } else if (mc.thePlayer.isSneaking()) {
+        } else if (mc.thePlayer.isSneaking() || mc.gameSettings.keyBindJump.isKeyDown()) {
             mc.thePlayer.motionY = speedValue.get() / 1.399999976158142
             MovementUtils.strafe(speedValue.get() / 1.399999976158142F)
             MovementUtils.handleVanillaKickBypass()
