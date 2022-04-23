@@ -50,7 +50,12 @@ object MovementUtils : MinecraftInstance() {
         mc.thePlayer.motionX += -sin(yaw) * speed
         mc.thePlayer.motionZ += cos(yaw) * speed
     }
-
+    fun isOnGround(height: Double): Boolean {
+        return !mc.theWorld.getCollidingBoundingBoxes(
+            mc.thePlayer,
+            mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)
+        ).isEmpty()
+    }
     fun limitSpeed(speed: Float) {
         val yaw = direction
         val maxXSpeed = -sin(yaw) * speed

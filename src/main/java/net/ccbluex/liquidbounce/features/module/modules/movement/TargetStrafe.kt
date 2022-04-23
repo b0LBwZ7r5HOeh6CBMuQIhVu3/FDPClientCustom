@@ -36,9 +36,9 @@ class TargetStrafe : Module() {
      */
     @EventTarget
     fun onMove(event: MoveEvent) {
-       val fly = LiquidBounce.moduleManager.getModule(Fly::class.java) as Fly
-       val speed = LiquidBounce.moduleManager.getModule(Speed::class.java) as Speed
-       if(fly.state || speed.state || ongroundValue.get()) {
+//       val fly = LiquidBounce.moduleManager.getModule(Fly::class.java) as Fly
+//       val speed = LiquidBounce.moduleManager.getModule(Speed::class.java) as Speed
+       if(mc.thePlayer.onGround || !ongroundValue.get()) {
             if (!canStrafe) return
             var aroundVoid = false
             for (x in -1..0) for (z in -1..0) if (isVoid(x, z)) aroundVoid = true

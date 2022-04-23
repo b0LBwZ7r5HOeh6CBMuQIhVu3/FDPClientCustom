@@ -22,6 +22,8 @@ import net.ccbluex.liquidbounce.utils.block.BlockUtils;
 import net.ccbluex.liquidbounce.utils.render.glu.DirectTessCallback;
 import net.ccbluex.liquidbounce.utils.render.glu.VertexData;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
@@ -122,7 +124,69 @@ public final class RenderUtils extends MinecraftInstance {
     public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color) {
         drawRoundedRect(paramXStart, paramYStart, paramXEnd, paramYEnd, radius, color, true);
     }
-
+    public static void drawFace(int x, int y,float scale, AbstractClientPlayer target) {
+        try {
+            ResourceLocation skin = target.getLocationSkin();
+            Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glColor4f(1, 1, 1, 1);
+            Gui.drawScaledCustomSizeModalRect(x, y, 8.0f, 8.0f, 8, 8, (int)scale, (int)scale, 64.0f, 64.0f);
+            GL11.glDisable(GL11.GL_BLEND);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void rectangleBordered(double x, double y, double x1, double y1, double width, int internalColor,
+                                         int borderColor) {
+        RenderUtils.rectangle(x + width, y + width, x1 - width, y1 - width, internalColor);
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+        RenderUtils.rectangle(x + width, y, x1 - width, y + width, borderColor);
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+        RenderUtils.rectangle(x, y, x + width, y1, borderColor);
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+        RenderUtils.rectangle(x1 - width, y, x1, y1, borderColor);
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+        RenderUtils.rectangle(x + width, y1 - width, x1 - width, y1, borderColor);
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+    }
+    public static void rectangle(double left, double top, double right, double bottom, int color) {
+        double var5;
+        if (left < right) {
+            var5 = left;
+            left = right;
+            right = var5;
+        }
+        if (top < bottom) {
+            var5 = top;
+            top = bottom;
+            bottom = var5;
+        }
+        float var11 = (float) (color >> 24 & 255) / 255.0f;
+        float var6 = (float) (color >> 16 & 255) / 255.0f;
+        float var7 = (float) (color >> 8 & 255) / 255.0f;
+        float var8 = (float) (color & 255) / 255.0f;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate((int) 770, (int) 771, (int) 1, (int) 0);
+        GlStateManager.color((float) var6, (float) var7, (float) var8, (float) var11);
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION);
+        worldRenderer.pos(left, bottom, 0.0).endVertex();
+        worldRenderer.pos(right, bottom, 0.0).endVertex();
+        worldRenderer.pos(right, top, 0.0).endVertex();
+        worldRenderer.pos(left, top, 0.0).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
+    }
+    public static int width() {
+        return new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth();
+    }
+    public static int height() {
+        return new ScaledResolution(Minecraft.getMinecraft()).getScaledHeight();
+    }
     public static void drawRoundedRect(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float radius, int color, boolean popPush) {
         float alpha = (color >> 24 & 0xFF) / 255.0F;
         float red = (color >> 16 & 0xFF) / 255.0F;
