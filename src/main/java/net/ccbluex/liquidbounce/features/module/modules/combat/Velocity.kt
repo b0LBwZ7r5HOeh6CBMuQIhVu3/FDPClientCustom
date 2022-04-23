@@ -537,10 +537,10 @@ class Velocity : Module() {
             when (modeValue.get().lowercase()) {
                 "freeze" -> event.cancelEvent()
             }
-        } else if (packet is C0FPacketConfirmTransaction  && mc.thePlayer.hurtTime > 0){
+        } else if (packet is C0FPacketConfirmTransaction && mc.thePlayer.hurtTime > 0){
             if(modeValue.equals("Vulcan") && packet.uid > 0) {
                 event.cancelEvent()
-                if(alertValue.get()) alert(packet.uid.toString())
+                if(alertValue.get()) alert("vc-"+packet.uid.toString())
             }
         }else if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
