@@ -11,10 +11,7 @@ import net.ccbluex.liquidbounce.features.special.GradientBackground;
 import net.ccbluex.liquidbounce.ui.client.GuiBackground;
 import net.ccbluex.liquidbounce.utils.render.ParticleUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -65,10 +62,18 @@ public abstract class MixinGuiScreen {
 
     @Inject(method = "drawWorldBackground", at = @At("HEAD"))
     private void drawWorldBackground(final CallbackInfo callbackInfo) {
-        final HUD hud = LiquidBounce.moduleManager.getModule(HUD.class);
+        if(mc.theWorld==null) {
+            final HUD hud = LiquidBounce.moduleManager.getModule(HUD.class);
+            final ScaledResolution scaledResolution = new ScaledResolution(mc);
+            final int width = scaledResolution.getScaledWidth();
+            final int height = scaledResolution.getScaledHeight();
 
-        if(hud.getInventoryParticle().get() && mc.thePlayer != null) {
-            ParticleUtils.drawParticles(Mouse.getX() * width / mc.displayWidth, height - Mouse.getY() * height / mc.displayHeight - 1);
+            mc.getTextureManager().bindTexture(LiquidBounce.INSTANCE.getBackground());
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            Gui.drawScaledCustomSizeModalRect(0, 0, 0.0F, 0.0F, width, height, width, height, width, height);
+            if (hud.getInventoryParticle().get() && mc.thePlayer != null) {
+                ParticleUtils.drawParticles(Mouse.getX() * width / mc.displayWidth, height - Mouse.getY() * height / mc.displayHeight - 1);
+            }
         }
     }
 

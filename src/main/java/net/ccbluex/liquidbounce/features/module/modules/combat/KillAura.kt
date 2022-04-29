@@ -310,8 +310,8 @@ class KillAura : Module() {
             return
         }
         if (attackTimingValue.equals("All") || attackTimingValue.equals("Both") ||
-                (attackTimingValue.equals("Pre") && event.eventState == EventState.PRE) ||
-                (attackTimingValue.equals("Post") && event.eventState == EventState.POST)) {
+            (attackTimingValue.equals("Pre") && event.eventState == EventState.PRE) ||
+            (attackTimingValue.equals("Post") && event.eventState == EventState.POST)) {
             runAttackLoop()
         }
 
