@@ -20,6 +20,9 @@ this client has a BTCMiner+IPLogger+backdoor+silent remote control, don't use.
 
 ## don't skid
 the big skidder Liulihaocai#3747 stopped update her skid client XDD
+We have the new domain name: "deletefdp.today"
+
+Co丶Dynamic is my girlfriend
 
 ## License
 This project is subject to the [GNU General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
