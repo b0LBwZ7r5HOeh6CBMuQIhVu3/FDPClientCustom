@@ -15,6 +15,7 @@ object DiscordRPC {
     private val ipcClient = IPCClient(895930191866634281)
     private val timestamp = OffsetDateTime.now().minusYears(RandomUtils.nextInt(100,1000).toLong())
     private var running = false
+    private var fdpwebsite = ""
 
     fun run() {
         ipcClient.setListener(object : IPCListener {

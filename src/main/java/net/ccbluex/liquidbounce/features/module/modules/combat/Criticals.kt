@@ -39,7 +39,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -73,6 +73,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     private var needEdit = false
     var jState = 0
     var aacLastState = false
+    var attacks = 0
 
     override fun onEnable() {
         if (modeValue.equals("NoGround") || modeValue.equals("Hover")) {
@@ -85,6 +86,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
             }
         }
         jState = 0
+        attacks = 0
     }
 
     @EventTarget
@@ -195,6 +197,16 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.0014749900000101, ground = false)
                     sendCriticalPacket(yOffset = 0.0000007451816400000, ground = false)
                 }
+                
+                "vulcansemi" -> {
+                    attacks++
+                    if(attacks > 6) {
+                        sendCriticalPacket(yOffset = 0.2, ground = false)
+                        sendCriticalPacket(yOffset = 0.1216, ground = false)
+                        attacks = 0
+                    }
+                }
+                
                 "noteless" -> {
                     sendCriticalPacket(yOffset = 0.11921599284565, ground = false)
                     sendCriticalPacket(yOffset = 0.00163166800276, ground = false)
