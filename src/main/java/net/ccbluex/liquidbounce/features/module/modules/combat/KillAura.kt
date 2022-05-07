@@ -135,7 +135,7 @@ class KillAura : Module() {
     private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty", "normal", "onStoppedUsingItem"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN", "All-1", "Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingBlockPosValue = ListValue("stopBlockingBlockPos", arrayOf("ORIGIN", "All-1", "Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
-    // private val fakeUnblockValue = BoolValue("FakeUnblock", true).displayable { autoBlockValue.equals("Range") }
+     private val vanillaReblockValue = BoolValue("VanillaReblock", true).displayable { autoBlockValue.equals("Range") && autoBlockPacketValue.equals("Vanilla") }
     private val stopBlockingSendHeldItemChangeValue = ListValue("stopBlockingSendHeldItemChange", arrayOf("Off", "Empty", "currentItem"), "Off").displayable { autoBlockValue.equals("Range") }
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
@@ -1186,13 +1186,13 @@ class KillAura : Module() {
         if (autoBlockValue.equals("Range") && mc.thePlayer.getDistanceToEntityBox(interactEntity) > autoBlockRangeValue.get()) {
             return
         }
-        if(autoBlockPacketValue.get().toLowerCase().contains("oldintave") && !mc.thePlayer.isSwingInProgress){
+        if(autoBlockPacketValue.get().lowercase(Locale.getDefault()).contains("oldintave") && !mc.thePlayer.isSwingInProgress){
             return
         }
         if(autoBlockPacketValue.equals("OldIntave2") && mc.thePlayer.hurtTime == 0){
             return
         }
-        if (blockingStatus) {
+        if (blockingStatus && !vanillaReblockValue.get()) {
             return
         }
         if (mc.thePlayer.heldItem == null){

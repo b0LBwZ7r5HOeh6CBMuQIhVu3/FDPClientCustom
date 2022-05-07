@@ -186,7 +186,7 @@ class ArrowDodge : Module() {
             } else if(posB != null && posB.y < mc.thePlayer.posY - 7){
                 back.toPlayer(mc.thePlayer)
             }
-            if(dodgingMode.get().toLowerCase().equals("BackWalk")){
+            if(dodgingMode.get().toLowerCase().equals("backwalk")){
                 back.toPlayer(mc.thePlayer)
             }
             //val rot = if (rightDis > leftDis) right else left
