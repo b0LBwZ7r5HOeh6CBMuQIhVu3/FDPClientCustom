@@ -9,7 +9,6 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.TextEvent
 import net.ccbluex.liquidbounce.ui.font.renderer.AbstractAwtFontRender
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
-import net.ccbluex.liquidbounce.utils.extensions.drawCenteredString
 import net.ccbluex.liquidbounce.utils.render.ColorUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.minecraft.client.Minecraft
@@ -61,16 +60,8 @@ class GameFontRenderer(font: Font) : FontRenderer(Minecraft.getMinecraft().gameS
         return drawText(currentText, x, currY, color, false)
     }
 
-    fun drawCenteredString(text: String, x: Float, y: Float, color: Int, shadow: Boolean): Int {
-        return Minecraft.getMinecraft().fontRendererObj.drawCenteredString(text,x,y,color,shadow);
-    }
-
-    fun drawCenteredString(text: String, x: Float, y: Float, color: Int): Int {
-        return Minecraft.getMinecraft().fontRendererObj.drawCenteredString(text,x,y,color,true);
-    }
-
-    private fun drawText(text: String?, x: Float, y: Float, colorHex: Int, ignoreColor: Boolean): Int {
-        if (text.isNullOrEmpty()) {
+    private fun drawText(rawText: String?, x: Float, y: Float, colorHex: Int, ignoreColor: Boolean): Int {
+        if (rawText == null) {
             return 0
         }
         if (rawText.isNullOrEmpty()) {

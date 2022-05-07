@@ -206,19 +206,12 @@ public abstract class MixinGuiNewChat {
 
                                 String s = fixString(chatline.getChatComponent().getFormattedText());
                                 GlStateManager.enableBlend();
-                                if(hud.getChatRectValue().get()) {
-                                    if (canFont)
-                                        FontLoaders.C16.DisplayFont(chatline.getChatComponent().getFormattedText(), (float) i2, (float) (j2 - 8), new Color(255, 255, 255).getRGB(), FontLoaders.C16);
-                                    else {
-                                        this.mc.fontRendererObj.drawString(chatline.getChatComponent().getFormattedText(), (float) i2, (float) (j2 - 8), 16777215 + (l1 << 24), false);
-                                    }
-                                }else{
-                                    if (canFont)
-                                        FontLoaders.C16.DisplayFont2(FontLoaders.C16,chatline.getChatComponent().getFormattedText(), (float) i2, (float) (j2 - 8), new Color(255, 255, 255).getRGB(),true);
-                                    else {
-                                        this.mc.fontRendererObj.drawStringWithShadow(chatline.getChatComponent().getFormattedText(), (float) i2, (float) (j2 - 8), 16777215 + (l1 << 24));
-                                    }
-                                }
+
+                                if (hud.getState() && hud.getChatAnimationValue().get() && lineBeingDrawn <= newLines) 
+                                    (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), new Color(1F, 1F, 1F, animationPercent * (float)d0).getRGB(), true);
+                                else
+                                    (canFont?hud.getFontType().get():this.mc.fontRendererObj).drawString(s, (float)i2, (float)(j2 - 8), 16777215 + (l1 << 24), true);
+
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
                             }
