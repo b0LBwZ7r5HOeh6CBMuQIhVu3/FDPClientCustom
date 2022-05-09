@@ -6,23 +6,20 @@
 package net.ccbluex.liquidbounce.launch.data.legacyui
 
 import net.ccbluex.liquidbounce.LiquidBounce
-import net.ccbluex.liquidbounce.LiquidBounce.fdpProtectManager
-import net.ccbluex.liquidbounce.features.special.FDPProtectManager
+//import net.ccbluex.liquidbounce.LiquidBounce.fdpProtectManager
+//import net.ccbluex.liquidbounce.features.special.FDPProtectManager
 import net.ccbluex.liquidbounce.font.FontLoaders
 import net.ccbluex.liquidbounce.ui.btn.TestBtn
 import net.ccbluex.liquidbounce.ui.client.GuiBackground
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
-import net.ccbluex.liquidbounce.utils.FDP4nt1Sk1dUtils
 import net.ccbluex.liquidbounce.utils.misc.HttpUtils
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
 import net.minecraft.client.gui.*
 import net.minecraft.client.resources.I18n
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.GuiModList
-import org.lwjgl.Sys
 import java.awt.Color
-import java.io.File
 
 class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     var drawed=false;
@@ -71,7 +68,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     override fun initGui() {
         val defaultHeight = (this.height / 3.5).toInt()
         try {
-            LiquidBounce.VERIFY = FDP4nt1Sk1dUtils.decrypt(File("./", "FDPProtect").readText())
+//            LiquidBounce.VERIFY = FDP4nt1Sk1dUtils.decrypt(File("./", "FDPProtect").readText())
         }catch (e:Exception){
             System.out.println("Cant load FDPProtect")
         }

@@ -61,23 +61,21 @@ class GameFontRenderer(font: Font) : FontRenderer(Minecraft.getMinecraft().gameS
         return drawText(currentText, x, currY, color, false)
     }
 
-    fun drawCenteredString(text: String, x: Float, y: Float, color: Int, shadow: Boolean): Int {
+/*    fun drawCenteredString(text: String, x: Float, y: Float, color: Int, shadow: Boolean): Int {
         return Minecraft.getMinecraft().fontRendererObj.drawCenteredString(text,x,y,color,shadow);
     }
 
     fun drawCenteredString(text: String, x: Float, y: Float, color: Int): Int {
         return Minecraft.getMinecraft().fontRendererObj.drawCenteredString(text,x,y,color,true);
-    }
+    }*/
 
     private fun drawText(text: String?, x: Float, y: Float, colorHex: Int, ignoreColor: Boolean): Int {
         if (text.isNullOrEmpty()) {
             return 0
         }
-        if (rawText.isNullOrEmpty()) {
-            return x.toInt()
-        }
 
-        val text = LanguageManager.replace(rawText)
+
+        val text = LanguageManager.replace(text)
 
         GlStateManager.translate(x - 1.5, y + 0.5, 0.0)
 

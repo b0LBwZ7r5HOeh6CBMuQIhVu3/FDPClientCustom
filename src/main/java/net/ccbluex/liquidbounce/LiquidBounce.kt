@@ -43,7 +43,7 @@ object LiquidBounce {
     // Client information
     const val CLIENT_NAME = "FDPClient"
     @JvmStatic
-    var VERIFY = "Can't load FDPProtect, You can try restart client (Insecure Version)"
+    var VERIFY = "FDPClient Cracked by rUApxXkcC8HT&rR4ZQonTLwgdudOiKLDUmnQ"
     var CLIENTTEXT = "Waiting..."
     var Darkmode = true
     const val COLORED_NAME = "§c§lFDP§6§lClient"
@@ -77,7 +77,7 @@ object LiquidBounce {
     // Managers
     lateinit var moduleManager: ModuleManager
     @JvmStatic
-    var fdpProtectManager = FDPProtectManager()
+//    var fdpProtectManager = FDPProtectManager()
     lateinit var commandManager: CommandManager
     lateinit var eventManager: EventManager
     lateinit var fileManager: FileManager

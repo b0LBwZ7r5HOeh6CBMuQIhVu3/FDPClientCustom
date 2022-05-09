@@ -21,6 +21,7 @@ public class Colors {
     public static int getColor(int red, int green, int blue) {
         return getColor(red, green, blue, 255);
     }
+
     public static Color getHealthColor(EntityLivingBase entityLivingBase) {
         float health = entityLivingBase.getHealth();
         float[] fractions = new float[]{0.0F, 0.15f, .55F, 0.7f, .9f};
@@ -28,6 +29,7 @@ public class Colors {
         float progress = health / entityLivingBase.getMaxHealth();
         return health >= 0.0f ? blendColors(fractions, colors, progress).brighter() : colors[0];
     }
+
     public static Color blendColors(float[] fractions, Color[] colors, float progress) {
         if (fractions == null) throw new IllegalArgumentException("Fractions can't be null");
         if (colors == null) throw new IllegalArgumentException("Colours can't be null");
@@ -41,6 +43,7 @@ public class Colors {
         float weight = value / max;
         return blend(colorRange[0], colorRange[1], 1.0f - weight);
     }
+
     public static Color blend(Color color1, Color color2, double ratio) {
         float r = (float) ratio;
         float ir = 1.0f - r;
@@ -76,6 +79,7 @@ public class Colors {
         }
         return color;
     }
+
     public static int[] getFractionIndicies(float[] fractions, float progress) {
         int startPoint;
         int[] range = new int[2];
@@ -88,6 +92,7 @@ public class Colors {
         range[1] = startPoint;
         return range;
     }
+
     public static int getColor(int red, int green, int blue, int alpha) {
         int color = 0;
         color |= alpha << 24;
@@ -98,20 +103,23 @@ public class Colors {
     }
 
     public static int getRainbow(int speed, int offset) {
-        float hue = (System.currentTimeMillis() + (long)offset) % (long)speed;
-        return Color.getHSBColor((float)(hue /= (float)speed), (float)0.4f, (float)1.0f).getRGB();
+        float hue = (System.currentTimeMillis() + (long) offset) % (long) speed;
+        return Color.getHSBColor((float) (hue /= (float) speed), (float) 0.4f, (float) 1.0f).getRGB();
     }
 
     public static int getRainbow2(int speed, int offset) {
-        float hue = (System.currentTimeMillis() + (long)offset) % (long)speed;
-        return Color.getHSBColor((float)(hue /= (float)speed), (float)0.5f, (float)0.555f).getRGB();
+        float hue = (System.currentTimeMillis() + (long) offset) % (long) speed;
+        return Color.getHSBColor((float) (hue /= (float) speed), (float) 0.5f, (float) 0.555f).getRGB();
     }
 
     public static int getRainbow3(int speed, int offset) {
-        float hue = (System.currentTimeMillis() + (long)offset) % (long)speed;
-        return Color.getHSBColor((float)(hue /= (float)speed), (float)0.8f, (float)1.001f).getRGB();
-    public static int getColor(int color,int a){
-        Color color1=new Color(color);
-        return new Color(color1.getRed(),color1.getGreen(),color1.getBlue(),a).getRGB();
+        float hue = (System.currentTimeMillis() + (long) offset) % (long) speed;
+        return Color.getHSBColor((float) (hue /= (float) speed), (float) 0.8f, (float) 1.001f).getRGB();
+
     }
+
+/*    public static int getColor(int color, int a) {
+        Color color1 = new Color(color);
+        return new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), a).getRGB();
+    }*/
 }

@@ -12,7 +12,6 @@ import net.ccbluex.liquidbounce.features.module.modules.client.Modules;
 import net.ccbluex.liquidbounce.features.module.modules.client.Rotations;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
 import net.ccbluex.liquidbounce.features.module.modules.world.FastPlace;
-import net.ccbluex.liquidbounce.features.special.FDPProtectManager;
 import net.ccbluex.liquidbounce.injection.access.StaticStorage;
 import net.ccbluex.liquidbounce.utils.*;
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils;
@@ -29,7 +28,6 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
@@ -48,12 +46,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.file.AccessDeniedException;
 
@@ -114,15 +109,15 @@ public abstract class MixinMinecraft {
             throw new AccessDeniedException(warnStr);
         }
         LiquidBounce.INSTANCE.initClient();
-        LiquidBounce.setFdpProtectManager(new FDPProtectManager());
-        QQUtils.getQQ();
+//        LiquidBounce.setFdpProtectManager(new FDPProtectManager());
+//        QQUtils.getQQ();
     }
     @Inject(method = "createDisplay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void createDisplay(CallbackInfo callbackInfo) {
         File file =new File("./", "FDPProtect");
         file.delete();
         ClientUtils.INSTANCE.setTitle();
-        FDPProtectUtils.load(0);
+//        FDPProtectUtils.load(0);
     }
 
     @Inject(method = "displayGuiScreen", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;currentScreen:Lnet/minecraft/client/gui/GuiScreen;", shift = At.Shift.AFTER))
@@ -193,6 +188,7 @@ public abstract class MixinMinecraft {
         CPSCounter.registerClick(CPSCounter.MouseButton.MIDDLE);
     }
 
+/*
 
     @Inject(method = "displayCrashReport", at = @At("HEAD"))
     private void displayCrashReport(CrashReport crashReport, CallbackInfo ci) {
@@ -200,7 +196,11 @@ public abstract class MixinMinecraft {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FDP4nt1Sk1dUtils.showTisp("FDPProtect","Your game has encountered a fatal error, if it persists, please save your error log and send it to the developers!", TrayIcon.MessageType.ERROR,5000L);
+                try {
+                    SystemUtil.ShowSystemNotification("FDPProtect","Your game has encountered a fatal error, if it persists, please save your error log and send it to the developers!", TrayIcon.MessageType.ERROR,5000L);
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
         new Thread(new Runnable() {
@@ -279,6 +279,7 @@ public abstract class MixinMinecraft {
             Sys.openURL("file://" + s);
         }
     }
+*/
 
     @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;rightClickDelayTimer:I", shift = At.Shift.AFTER))
     private void rightClickMouse(final CallbackInfo callbackInfo) {
