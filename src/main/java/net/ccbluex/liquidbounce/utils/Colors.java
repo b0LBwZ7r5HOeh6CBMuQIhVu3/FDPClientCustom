@@ -110,5 +110,8 @@ public class Colors {
     public static int getRainbow3(int speed, int offset) {
         float hue = (System.currentTimeMillis() + (long)offset) % (long)speed;
         return Color.getHSBColor((float)(hue /= (float)speed), (float)0.8f, (float)1.001f).getRGB();
+    public static int getColor(int color,int a){
+        Color color1=new Color(color);
+        return new Color(color1.getRed(),color1.getGreen(),color1.getBlue(),a).getRGB();
     }
 }

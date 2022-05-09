@@ -6,17 +6,23 @@
 package net.ccbluex.liquidbounce.launch.data.legacyui
 
 import net.ccbluex.liquidbounce.LiquidBounce
+import net.ccbluex.liquidbounce.LiquidBounce.fdpProtectManager
+import net.ccbluex.liquidbounce.features.special.FDPProtectManager
 import net.ccbluex.liquidbounce.font.FontLoaders
 import net.ccbluex.liquidbounce.ui.btn.TestBtn
+import net.ccbluex.liquidbounce.ui.client.GuiBackground
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
+import net.ccbluex.liquidbounce.utils.FDP4nt1Sk1dUtils
 import net.ccbluex.liquidbounce.utils.misc.HttpUtils
 import net.ccbluex.liquidbounce.utils.misc.MiscUtils
 import net.minecraft.client.gui.*
 import net.minecraft.client.resources.I18n
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.GuiModList
+import org.lwjgl.Sys
 import java.awt.Color
+import java.io.File
 
 class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     var drawed=false;
@@ -35,16 +41,28 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         this.buttonList.add(TestBtn(103, (this.width / 2) - (130 / 2), this.height / 2 + 70, 130, 23,  LanguageManager.get("ui.mods"), null, 2,
             Color(20, 20, 20, 130)))
 
-        this.buttonList.add(TestBtn(0, this.width - 35, 10, 25, 25, I18n.format("menu.options"), ResourceLocation("fdpclient/imgs/icon/setting.png"), 2,
+
+        this.buttonList.add(TestBtn(4, this.width - 35, 10, 25, 25, I18n.format("menu.quit"), ResourceLocation("fdpclient/imgs/icon/quit.png"), 2,
             Color(20, 20, 20, 130)))
 
-        this.buttonList.add(TestBtn(4, this.width - 65, 10, 25, 25, I18n.format("menu.quit"), ResourceLocation("fdpclient/imgs/icon/quit.png"), 2,
+        this.buttonList.add(TestBtn(0, this.width - 65, 10, 25, 25, I18n.format("menu.options"), ResourceLocation("fdpclient/imgs/icon/setting.png"), 2,
             Color(20, 20, 20, 130)))
 
-        this.buttonList.add(TestBtn(102, this.width - 95, 10, 25, 25, "Announcement", ResourceLocation("fdpclient/imgs/icon/announcement.png"), 2,
+
+        this.buttonList.add(TestBtn(104, this.width - 95, 10, 25, 25, I18n.format("ui.background"), ResourceLocation("fdpclient/imgs/icon/wallpaper.png"), 2,
             Color(20, 20, 20, 130)))
 
-        this.buttonList.add(TestBtn(514, this.width - 125, 10, 25, 25, "Discord", ResourceLocation("fdpclient/imgs/icon/discord.png"), 2,
+        this.buttonList.add(TestBtn(102, this.width - 125, 10, 25, 25, "Announcement", ResourceLocation("fdpclient/imgs/icon/announcement.png"), 2,
+            Color(20, 20, 20, 130)))
+
+        this.buttonList.add(TestBtn(514, this.width - 155, 10, 25, 25, "Discord", ResourceLocation("fdpclient/imgs/icon/discord.png"), 2,
+            Color(20, 20, 20, 130)))
+
+        this.buttonList.add(TestBtn(114, this.width - 185, 10, 25, 25, "Website", ResourceLocation("fdpclient/imgs/icon/website.png"), 2,
+            Color(20, 20, 20, 130)))
+
+
+        this.buttonList.add(TestBtn(191, 20, 10, 25, 25, "Change exterior", ResourceLocation("fdpclient/imgs/icon/moon-night.png"), 2,
             Color(20, 20, 20, 130)))
 
         drawed=true;
@@ -52,16 +70,21 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     /* For modification, please keep "Designed by XiGua" */
     override fun initGui() {
         val defaultHeight = (this.height / 3.5).toInt()
-
+        try {
+            LiquidBounce.VERIFY = FDP4nt1Sk1dUtils.decrypt(File("./", "FDPProtect").readText())
+        }catch (e:Exception){
+            System.out.println("Cant load FDPProtect")
+        }
+        //我急了，写破防了，写了7个小时没写好
         Thread {
-            if(LiquidBounce.CLIENTTEXT.contains("Waiting")) {
+            if(LiquidBounce.CLIENTTEXT.contains("Waiting") || LiquidBounce.CLIENTTEXT.contains("Oops")) {
                 try {
                     LiquidBounce.CLIENTTEXT = HttpUtils.get("http://fdpclient.club/changelogs")
                 } catch (e: Exception) {
                     try {
                         LiquidBounce.CLIENTTEXT = HttpUtils.get("http://fdpclient.club/changelogs")
                     } catch (e: Exception) {
-                        LiquidBounce.CLIENTTEXT = "Oops.. :(\$Can't get information!\$100\$80"
+                        LiquidBounce.CLIENTTEXT = "Oops.. :(\$Can't get information!#Try reopen the main menu\$140\$80"
                     }
                 }
             }
@@ -95,9 +118,14 @@ override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
     FontLoaders.F40.drawCenteredString(LiquidBounce.CLIENT_NAME,this.width.toDouble()/2,this.height.toDouble()/2 - 60,Color(255,255,255,200).rgb)
     
     /* For modification, please keep "Designed by XiGua" */
+    //FDPProtect.setVerify("1")
+
     FontLoaders.F16.drawString("Made by UnlegitMC Team & Designed by XiGua",10f,this.height-15f,Color(255,255,255,170).rgb)
+    FontLoaders.F16.drawString(LiquidBounce.VERIFY,10f,this.height-25f,if(LiquidBounce.VERIFY.contains("Insecure")) Color(255,58,58,170).rgb else Color(255,255,255,170).rgb)
     var versionMsg="Version: "+LiquidBounce.CLIENT_VERSION+if (LiquidBounce.VERSIONTYPE.contains("Release")) " | Release" else " | "+LiquidBounce.VERSIONTYPE+" (May be isn't work)"
     FontLoaders.F16.drawString(versionMsg,this.width - FontLoaders.F16.getStringWidth(versionMsg) - 10F,this.height-15f,Color(255,255,255,170).rgb)
+
+    //
     /*val bHeight = (this.height / 3.5).toInt()
 
     Gui.drawRect(width / 2 - 60, bHeight - 30, width / 2 + 60, bHeight + 174, Integer.MIN_VALUE)
@@ -148,7 +176,7 @@ override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
             }
         }
     }catch (e:Exception){
-        e.printStackTrace()
+        //e.printStackTrace()
     }
     super.drawScreen(mouseX, mouseY, partialTicks)
 }
@@ -165,7 +193,10 @@ when (button.id) {
     100 -> mc.displayGuiScreen(GuiAltManager(this))
     102 -> displayed=false
     103 -> mc.displayGuiScreen(GuiModList(this))
+    104 -> mc.displayGuiScreen(GuiBackground(this))
     514 -> MiscUtils.showURL("https://${LiquidBounce.CLIENT_WEBSITE}/discord.html")
+    114 -> MiscUtils.showURL("https://${LiquidBounce.CLIENT_WEBSITE}=")
+    191 -> LiquidBounce.Darkmode=!LiquidBounce.Darkmode
 }
 }
 
