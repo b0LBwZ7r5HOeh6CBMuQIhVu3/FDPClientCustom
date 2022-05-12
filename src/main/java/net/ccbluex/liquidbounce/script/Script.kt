@@ -7,7 +7,6 @@ package net.ccbluex.liquidbounce.script
 
 import jdk.internal.dynalink.beans.StaticClass
 import jdk.nashorn.api.scripting.JSObject
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptUtils
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.features.command.Command
@@ -21,9 +20,9 @@ import java.io.File
 import java.util.function.Function
 import javax.script.ScriptEngineManager
 
-class Script(private val scriptFile: File) : MinecraftInstance() {
+class Script(val scriptFile: File) : MinecraftInstance() {
 
-    private val scriptEngine = NashornScriptEngineFactory().getScriptEngine(emptyArray(), this.javaClass.classLoader, ScriptSafetyManager.classFilter)
+    private var scriptEngine = ScriptEngineManager().getEngineByName("nashorn")
     private val scriptText = scriptFile.readText(Charsets.UTF_8)
 
     // Script information
