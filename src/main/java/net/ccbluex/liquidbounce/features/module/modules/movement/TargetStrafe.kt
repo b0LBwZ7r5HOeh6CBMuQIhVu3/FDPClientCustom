@@ -28,6 +28,7 @@ class TargetStrafe : Module() {
     private val ongroundValue = BoolValue("OnGround",true)
     private val radiusValue = FloatValue("Radius", 0.1f, 0.5f, 5.0f)
     private val killAura = LiquidBounce.moduleManager[KillAura::class.java]
+    private val killAuraMod = LiquidBounce.moduleManager.getModule("KillAura")
     private var direction = -1
 
     /**
@@ -89,7 +90,7 @@ class TargetStrafe : Module() {
     }
 
     private val canStrafe: Boolean
-        get() = killAura!!.state && killAura.target != null && !mc.thePlayer.isSneaking
+        get() = killAuraMod!!.state && killAura!!.target != null && !mc.thePlayer.isSneaking
 
     private fun checkVoid(): Boolean {
         for (x in -2..2) for (z in -2..2) if (isVoid(x, z)) return true

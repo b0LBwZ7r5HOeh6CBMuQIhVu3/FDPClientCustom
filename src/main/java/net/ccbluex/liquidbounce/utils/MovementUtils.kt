@@ -22,7 +22,16 @@ object MovementUtils : MinecraftInstance() {
     fun strafe() {
         strafe(getSpeed())
     }
-
+    fun getBaseMoveSpeed(): Double {
+        var baseSpeed = mc.thePlayer.capabilities.walkSpeed * 2.873
+        if (mc.thePlayer.isPotionActive(Potion.moveSlowdown)) {
+            baseSpeed /= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSlowdown).amplifier + 1)
+        }
+        if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
+            baseSpeed *= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).amplifier + 1)
+        }
+        return baseSpeed
+    }
     fun move() {
         move(getSpeed())
     }
