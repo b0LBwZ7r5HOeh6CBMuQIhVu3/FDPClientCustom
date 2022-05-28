@@ -70,7 +70,7 @@ public class ClickGui extends GuiScreen {
         drawDefaultBackground();
         int defaultHeight1 = (this.height);
         int defaultWidth1 = (this.width);
-        if(HUD.INSTANCE.getGenshinImpactAnim().get()) RenderUtils.drawImage(LiquidBounce.INSTANCE.getVenti(), defaultWidth1-(int) (0.6*defaultWidth1) ,defaultHeight1-(int) (0.3*defaultWidth1),(int) (0.6*defaultWidth1),(int) (0.3*defaultWidth1));
+//        if(HUD.INSTANCE.getGenshinImpactAnim().get()) RenderUtils.drawImage(LiquidBounce.INSTANCE.getVenti(), defaultWidth1-(int) (0.6*defaultWidth1) ,defaultHeight1-(int) (0.3*defaultWidth1),(int) (0.6*defaultWidth1),(int) (0.3*defaultWidth1));
 
         GlStateManager.scale(scale, scale, scale);
 
