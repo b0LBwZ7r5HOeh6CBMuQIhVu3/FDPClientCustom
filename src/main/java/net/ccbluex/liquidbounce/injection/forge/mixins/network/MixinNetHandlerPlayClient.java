@@ -9,6 +9,7 @@ import io.netty.buffer.Unpooled;
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.PacketEvent;
 import net.ccbluex.liquidbounce.features.module.modules.misc.SilentDisconnect;
+//import net.ccbluex.liquidbounce.features.module.modules.exploit.AntiExploit;
 import net.ccbluex.liquidbounce.features.special.AntiForge;
 import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.minecraft.client.ClientBrandRetriever;
@@ -66,6 +67,8 @@ public abstract class MixinNetHandlerPlayClient {
     private void handleResourcePack(final S48PacketResourcePackSend p_handleResourcePack_1_, final CallbackInfo callbackInfo) {
         final String url = p_handleResourcePack_1_.getURL();
         final String hash = p_handleResourcePack_1_.getHash();
+        
+        // fix this later final AntiExploit antiExploit = (AntiExploit) LiquidBounce.moduleManager.getModule(AntiExploit.class);
 
         try {
             final String scheme = new URI(url).getScheme();

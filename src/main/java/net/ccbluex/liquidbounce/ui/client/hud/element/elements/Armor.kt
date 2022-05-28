@@ -27,7 +27,7 @@ class Armor(
 ) : Element(x, y, scale, side) {
 
     private val modeValue = ListValue("Alignment", arrayOf("Horizontal", "Vertical"), "Horizontal")
-
+    
     /**
      * Draw element
      */
