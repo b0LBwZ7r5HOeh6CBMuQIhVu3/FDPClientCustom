@@ -31,10 +31,16 @@ class Script(val scriptFile: File) : MinecraftInstance() {
     lateinit var scriptAuthors: Array<String>
 
     private var state = false
+    private var isEnable = false
     private val events = HashMap<String, JSObject>()
     private val registeredModules = mutableListOf<Module>()
     private val registeredCommands = mutableListOf<Command>()
-
+    fun getState(): Boolean {
+        return isEnable;
+    }
+    fun getRegisteredModules(): MutableList<Module> {
+        return registeredModules;
+    }
     init {
         // Global classes
         scriptEngine.put("Chat", StaticClass.forClass(Chat::class.java))
@@ -99,7 +105,10 @@ class Script(val scriptFile: File) : MinecraftInstance() {
         registeredCommands += command
         callback.call(commandObject, command)
     }
-
+    fun regAnyThing(){
+        registeredModules.forEach { LiquidBounce.moduleManager.registerModule(it) }
+        registeredCommands.forEach { LiquidBounce.commandManager.registerCommand(it) }
+    }
     fun supportLegacyScripts() {
         if (!scriptText.lines().first().contains("api_version=2")) {
             ClientUtils.logWarn("[ScriptAPI] Running script '${scriptFile.name}' with legacy support.")
@@ -153,7 +162,14 @@ class Script(val scriptFile: File) : MinecraftInstance() {
      * Calls the handler of a registered event.
      * @param eventName Name of the event to be called.
      */
-    private fun callEvent(eventName: String) {
+    public fun callEvent(eventName: String) {
+        if(eventName=="enable"){
+            isEnable=true;
+        }else{
+            if(eventName=="disable"){
+                isEnable=false;
+            }
+        }
         try {
             events[eventName]?.call(null)
         } catch (throwable: Throwable) {
