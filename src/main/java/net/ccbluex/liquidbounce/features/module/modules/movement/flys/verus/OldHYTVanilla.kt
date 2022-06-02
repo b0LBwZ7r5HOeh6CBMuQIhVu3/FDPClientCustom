@@ -71,17 +71,17 @@ class OldHYTVanilla : FlyMode("OldHYTVanilla") {
     }
 
     override fun onPacket(event: PacketEvent) {
-        val p: Packet<*> = event.getPacket() as Packet<*>
-        if (event.getPacket() is S12PacketEntityVelocity) {
+        val p: Packet<*> = event.packet as Packet<*>
+        if (p is S12PacketEntityVelocity) {
             event.setCanceled(true)
             lastFlag = enabledTicks
         }
-        if (event.getPacket() is S08PacketPlayerPosLook) {
-            oldX = (event.getPacket() as S08PacketPlayerPosLook).x
-            oldY = (event.getPacket() as S08PacketPlayerPosLook).y
-            oldZ = (event.getPacket() as S08PacketPlayerPosLook).z
-            oldYaw = (event.getPacket() as S08PacketPlayerPosLook).yaw
-            oldPitch = (event.getPacket() as S08PacketPlayerPosLook).pitch
+        if (p is S08PacketPlayerPosLook) {
+            oldX = (p as S08PacketPlayerPosLook).x
+            oldY = (p as S08PacketPlayerPosLook).y
+            oldZ = (p as S08PacketPlayerPosLook).z
+            oldYaw = (p as S08PacketPlayerPosLook).yaw
+            oldPitch = (p as S08PacketPlayerPosLook).pitch
             player!!.posX = oldX
             player!!.posY = oldY
             player!!.posZ = oldZ

@@ -121,9 +121,9 @@ class PacketEvent(val packet: Packet<*>, val type: Type) : CancellableEvent() {
     }
 
     fun isServerSide() = type == Type.RECEIVE
-    fun getPacket(): Any {
-        return packet
-    }
+//    fun getPacket(): Any {
+//        return packet
+//    }
 }
 
 /**

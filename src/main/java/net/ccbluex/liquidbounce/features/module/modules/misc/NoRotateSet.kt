@@ -22,6 +22,7 @@ class NoRotateSet : Module() {
 
     private val noLoadingValue = BoolValue("NoLoading", true)
     private val confirmValue = BoolValue("Confirm", false)
+    private val randomValue = BoolValue("random", false)
     private val overwriteTeleportValue = BoolValue("OverwriteTeleport", false)
     private val illegalRotationValue = BoolValue("ConfirmIllegalRotation", false)
     private val noZeroValue = BoolValue("NoZero", false)
@@ -50,10 +51,10 @@ class NoRotateSet : Module() {
             if(!overwriteTeleportValue.get()) {
                 lastRotation = Rotation(packet.getYaw(), packet.getPitch())
             }
-            packet.yaw = mc.thePlayer.rotationYaw
+            packet.yaw = mc.thePlayer.rotationYaw + if(randomValue.get())Math.random().toFloat() else 0F
             packet.pitch = mc.thePlayer.rotationPitch
         } else if (lastRotation != null && packet is C03PacketPlayer && packet.rotating) {
-            packet.yaw = lastRotation!!.yaw
+            packet.yaw = lastRotation!!.yaw + if(randomValue.get())Math.random().toFloat() else 0F
             packet.pitch = lastRotation!!.pitch
             lastRotation = null
         }
