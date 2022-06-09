@@ -92,8 +92,11 @@ object ClientUtils : MinecraftInstance() {
     }
 
     fun setTitle() {
-     //  Display.setTitle(LiquidBounce.CLIENT_NAME + "空格空格" + LiquidBounce.CLIENT_VERSION + "/master空格|空格Mc" + LiquidBounce.MINECRAFT_VERSION)
-           }
+        Display.setTitle("${LiquidBounce.CLIENT_NAME} ${LiquidBounce.CLIENT_VERSION} (${LiquidBounce.CLIENT_BRANCH}) | ${LiquidBounce.CLIENT_WEBSITE}")
+    }
+    fun setTitle(stats:String) {
+        Display.setTitle("${LiquidBounce.CLIENT_NAME} ${LiquidBounce.CLIENT_VERSION} (${LiquidBounce.CLIENT_BRANCH}) | ${LiquidBounce.CLIENT_WEBSITE} - "+stats)
+    }
 
     fun displayAlert(message: String) {
         displayChatMessage("§8[" + LiquidBounce.COLORED_NAME + "§8] §f" + message)

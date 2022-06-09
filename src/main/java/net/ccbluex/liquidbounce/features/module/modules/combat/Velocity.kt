@@ -47,8 +47,8 @@ class Velocity : Module() {
                                                       "Redesky1", "Redesky2","RedeSky3","HYT1","HYT2","HYT3","HYT4",
                                                        "Vulcan",
                                                       "AAC5.2.0", "AAC5.2.0Combat",
-                                                      "MatrixReduce", "MatrixSimple", "MatrixGround","MatrixNew","MatrixOld","MatrixNewTest",
-                                                      "strafe", "SmoothReverse",
+                                                      "MatrixReduce", "MatrixSimple", "MatrixReverse",
+                                                      "Reverse", "SmoothReverse",
                                                       "Jump",
                                                       "Phase", "PacketPhase", "Glitch", "Spoof","SlowDown","NoMove","Freeze",
                                                       "Legit"), "Simple")
@@ -648,6 +648,11 @@ class Velocity : Module() {
                         packet.motionX = (packet.getMotionX() * 0.6).toInt()
                         packet.motionZ = (packet.getMotionZ() * 0.6).toInt()
                     }
+                }
+                
+                "matrixreverse" -> {
+                    packet.motionX = (packet.getMotionX() * -0.3).toInt()
+                    packet.motionZ = (packet.getMotionZ() * -0.3).toInt()
                 }
 
                 "aac4reduce" -> {

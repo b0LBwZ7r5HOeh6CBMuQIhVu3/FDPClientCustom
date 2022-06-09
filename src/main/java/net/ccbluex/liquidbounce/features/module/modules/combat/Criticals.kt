@@ -39,7 +39,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -213,6 +213,28 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.15919999545217, ground = false)
                     sendCriticalPacket(yOffset=0.11999999731779,ground = false)
                 }
+                "matrixsemi" -> {
+                    attacks++
+                    if(attacks > 3) {
+                    sendCriticalPacket(yOffset = 0.110314, ground = false)
+                    sendCriticalPacket(yOffset = 0.0200081, ground = false)
+                    sendCriticalPacket(yOffset = 0.00000001300009, ground = false)
+                    sendCriticalPacket(yOffset = 0.000000000022, ground = false)
+                    sendCriticalPacket(ground = true)
+                    attacks = 0
+                    }
+                }
+                
+                "verus" -> {
+                    attacks ++
+                    if (attacks > 4) {
+                        attacks = 0
+                        
+                        sendCriticalPacket(yOffset = 0.001, ground = true)
+                        sendCriticalPacket(ground = false)
+                    }
+                }
+                
                 "hypixel2" -> {
                     sendCriticalPacket(yOffset = 0.05250000001304, ground = false)
                     sendCriticalPacket(yOffset = 0.00150000001304, ground = false)
@@ -283,6 +305,35 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.012008726, ground = false)
                     if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
                 }
+                
+                "miniphase" -> {
+                    sendCriticalPacket(yOffset = -0.0125, ground = false)
+                    sendCriticalPacket(yOffset =  0.01275, ground = false)
+                    sendCriticalPacket(yOffset = -0.00025, ground = false)
+                }
+
+                "nanopacket" -> {
+                    sendCriticalPacket(yOffset =  0.00973333333333, ground = false)
+                    sendCriticalPacket(yOffset =  0.001, ground = false)
+                    sendCriticalPacket(yOffset = -0.01200000000007, ground = false)
+                    sendCriticalPacket(yOffset = -0.0005, ground = false)
+
+                }
+
+                "non-calculable" -> {
+                    sendCriticalPacket(yOffset =  1E-5, ground = false)
+                    sendCriticalPacket(yOffset =  1E-7, ground = false)
+                    sendCriticalPacket(yOffset = -1E-6, ground = false)
+                    sendCriticalPacket(yOffset = -1E-4, ground = false)
+
+                }
+
+                "invalid" -> {
+                    sendCriticalPacket(yOffset =  1E+27, ground = false)
+                    sendCriticalPacket(yOffset = -1E+68, ground = false)
+                    sendCriticalPacket(yOffset =  1E+41, ground = false)
+                }
+
                 "tphop" -> {
                     sendCriticalPacket(yOffset = 0.02, ground = false)
                     sendCriticalPacket(yOffset = 0.01, ground = false)

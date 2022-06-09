@@ -109,15 +109,10 @@ public abstract class MixinMinecraft {
             throw new AccessDeniedException(warnStr);
         }
         LiquidBounce.INSTANCE.initClient();
-//        LiquidBounce.setFdpProtectManager(new FDPProtectManager());
-//        QQUtils.getQQ();
     }
     @Inject(method = "createDisplay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void createDisplay(CallbackInfo callbackInfo) {
-        File file =new File("./", "FDPProtect");
-        file.delete();
         ClientUtils.INSTANCE.setTitle();
-//        FDPProtectUtils.load(0);
     }
 
     @Inject(method = "displayGuiScreen", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;currentScreen:Lnet/minecraft/client/gui/GuiScreen;", shift = At.Shift.AFTER))
@@ -160,8 +155,12 @@ public abstract class MixinMinecraft {
 
     @Inject(method = "dispatchKeypresses", at = @At(value = "HEAD"))
     private void onKey(CallbackInfo callbackInfo) {
-        if(Keyboard.getEventKeyState() && (currentScreen == null || (Modules.INSTANCE.getToggleIgnoreScreenValue().get() && this.currentScreen instanceof GuiContainer)))
-            LiquidBounce.eventManager.callEvent(new KeyEvent(Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()));
+        try {
+            if (Keyboard.getEventKeyState() && (currentScreen == null || (Modules.INSTANCE.getToggleIgnoreScreenValue().get() && this.currentScreen instanceof GuiContainer)))
+                LiquidBounce.eventManager.callEvent(new KeyEvent(Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()));
+        } catch (Exception e){
+            //e.printStackTrace();
+        }
     }
 
     @Inject(method = "sendClickBlockToController", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/MovingObjectPosition;getBlockPos()Lnet/minecraft/util/BlockPos;"))
@@ -187,99 +186,6 @@ public abstract class MixinMinecraft {
     private void middleClickMouse(CallbackInfo ci) {
         CPSCounter.registerClick(CPSCounter.MouseButton.MIDDLE);
     }
-
-/*
-
-    @Inject(method = "displayCrashReport", at = @At("HEAD"))
-    private void displayCrashReport(CrashReport crashReport, CallbackInfo ci) {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    SystemUtil.ShowSystemNotification("FDPProtect","Your game has encountered a fatal error, if it persists, please save your error log and send it to the developers!", TrayIcon.MessageType.ERROR,5000L);
-                } catch (AWTException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JOptionPane.showMessageDialog(
-                        null,"Troubleshooting any problem without the error log is like driving with your eyes closed.","From Apache",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-        }).start();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        FDPProtectUtils.LoadFileNoEncrypt("FDPCrashLogs.txt",
-                "##########################FDPPROTECT CRASH REPORT##########################\r\n\r\n" +
-                "If this problem persists, please send this file to the FDPClient developers! Website (where you can join the discord server): http://FDPClient.Club/\r\nThis file will be saved in \".minecraft/FDPCrashLogs.txt\"" +
-                "\r\n\r\n" +
-                " | 在没有错误日志的情况下诊断任何问题无异于闭眼开车!  --Apache官方文档\r\n" +
-                " | Troubleshooting any problem without the error log is like driving with your eyes closed.\r\n" +
-                " | From Apache official documentation Getting Started chapter\r\n" +
-                "   - INFO:\r\n" +
-                "   |   HWID: "+HWIDUtils.getHWID()+"\r\n" +
-                "   |   Version: "+LiquidBounce.CLIENT_VERSION+"\r\n" +
-                "   |   Time: "+System.currentTimeMillis()+"\r\n" +
-                "   |   OS: "+Util.getOSType()+"\r\n" +
-                "\r\n##########################FDPPROTECT CRASH REPORT##########################\r\n"+crashReport.getCompleteReport());
-        File file1 = new File("./", "FDPCrashLogs.txt");;
-        String s = file1.getAbsolutePath();
-
-        if (Util.getOSType() == Util.EnumOS.OSX)
-        {
-            try
-            {
-                Runtime.getRuntime().exec(new String[] {"/usr/bin/open", s});
-                return;
-            }
-            catch (IOException ioexception1)
-            {
-                ioexception1.printStackTrace();
-            }
-        }
-        else if (Util.getOSType() == Util.EnumOS.WINDOWS)
-        {
-            String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", new Object[] {s});
-
-            try
-            {
-                Runtime.getRuntime().exec(s1);
-                return;
-            }
-            catch (IOException ioexception)
-            {
-                ioexception.printStackTrace();
-            }
-        }
-
-        boolean flag = false;
-
-        try
-        {
-            Class<?> oclass = Class.forName("java.awt.Desktop");
-            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
-            oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {file1.toURI()});
-        }
-        catch (Throwable throwable)
-        {
-            throwable.printStackTrace();
-            flag = true;
-        }
-
-        if (flag)
-        {
-            Sys.openURL("file://" + s);
-        }
-    }
-*/
 
     @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;rightClickDelayTimer:I", shift = At.Shift.AFTER))
     private void rightClickMouse(final CallbackInfo callbackInfo) {

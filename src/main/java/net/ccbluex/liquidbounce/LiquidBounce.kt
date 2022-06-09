@@ -18,6 +18,8 @@ import net.ccbluex.liquidbounce.launch.EnumLaunchFilter
 import net.ccbluex.liquidbounce.launch.LaunchFilterInfo
 import net.ccbluex.liquidbounce.launch.LaunchOption
 import net.ccbluex.liquidbounce.launch.data.GuiLaunchOptionSelectMenu
+import net.ccbluex.liquidbounce.launch.data.legacyui.scriptOnline.ScriptSubscribe
+import net.ccbluex.liquidbounce.launch.data.legacyui.scriptOnline.Subscriptions
 import net.ccbluex.liquidbounce.script.ScriptManager
 import net.ccbluex.liquidbounce.ui.cape.GuiCapeManager
 import net.ccbluex.liquidbounce.ui.client.hud.HUD
@@ -46,17 +48,18 @@ object LiquidBounce {
     var VERIFY = "FDPClient Cracked by rUApxXkcC8HT&rR4ZQonTLwgdudOiKLDUmnQ"
     var CLIENTTEXT = "Waiting..."
     var Darkmode = true
-    const val COLORED_NAME = "§c§lFDP§6§lClient"
+    const val COLORED_NAME = "§b[§b!§7] §b§lFDPCLIENT §b» "
     const val CLIENT_CREATOR = "CCBlueX & UnlegitMC"
     const val CLIENT_WEBSITE = "FDPClient.Club"
     val venti = ResourceLocation("fdpclient/imgs/GenshinImpact/venti.png")
     val lumine = ResourceLocation("fdpclient/imgs/GenshinImpact/lumine.png")
     const val MINECRAFT_VERSION = "1.8.9"
     const val VERSIONTYPE = "Preview"
+
     @JvmField
     val gitInfo = Properties().also {
         val inputStream = LiquidBounce::class.java.classLoader.getResourceAsStream("git.properties")
-        if(inputStream != null) {
+        if (inputStream != null) {
             it.load(inputStream)
         } else {
             it["git.branch"] = "unofficial" // fill with default values or we'll get null pointer exceptions
@@ -66,6 +69,7 @@ object LiquidBounce {
     // 自动读取客户端版本
     @JvmField
     val CLIENT_VERSION = gitInfo["git.commit.id.abbrev"]?.let { "git-$it" } ?: "unknown"
+
     @JvmField
     val CLIENT_BRANCH = (gitInfo["git.branch"] ?: "unknown").let {
         if(it == "main") "Master" else it
@@ -78,10 +82,12 @@ object LiquidBounce {
 
     // Managers
     lateinit var moduleManager: ModuleManager
+
     @JvmStatic
 //    var fdpProtectManager = FDPProtectManager()
     lateinit var commandManager: CommandManager
     lateinit var eventManager: EventManager
+    lateinit var subscriptions: Subscriptions
     lateinit var fileManager: FileManager
     lateinit var scriptManager: ScriptManager
     lateinit var tipSoundManager: TipSoundManager
@@ -99,7 +105,10 @@ object LiquidBounce {
 
     val launchFilters = mutableListOf<EnumLaunchFilter>()
     private val dynamicLaunchOptions: Array<LaunchOption>
-        get() = ClassUtils.resolvePackage("${LaunchOption::class.java.`package`.name}.options", LaunchOption::class.java)
+        get() = ClassUtils.resolvePackage(
+            "${LaunchOption::class.java.`package`.name}.options",
+            LaunchOption::class.java
+        )
             .filter {
                 val annotation = it.getDeclaredAnnotation(LaunchFilterInfo::class.java)
                 if (annotation != null) {
@@ -107,17 +116,25 @@ object LiquidBounce {
                 }
                 false
             }
-            .map { try { it.newInstance() } catch (e: IllegalAccessException) { ClassUtils.getObjectInstance(it) as LaunchOption } }.toTypedArray()
+            .map {
+                try {
+                    it.newInstance()
+                } catch (e: IllegalAccessException) {
+                    ClassUtils.getObjectInstance(it) as LaunchOption
+                }
+            }.toTypedArray()
 
     /**
      * Execute if client will be started
      */
     fun initClient() {
         ClientUtils.logInfo("Loading $CLIENT_NAME $CLIENT_VERSION, by $CLIENT_CREATOR")
+        ClientUtils.setTitle("Initializing...");
         val startTime = System.currentTimeMillis()
         // Create file manager
         fileManager = FileManager()
         configManager = ConfigManager()
+        subscriptions = Subscriptions()
 
         // Create event manager
         eventManager = EventManager()
@@ -134,8 +151,12 @@ object LiquidBounce {
         // Create command manager
         commandManager = CommandManager()
 
-        fileManager.loadConfigs(fileManager.accountsConfig, fileManager.friendsConfig, fileManager.specialConfig)
-
+        fileManager.loadConfigs(
+            fileManager.accountsConfig,
+            fileManager.friendsConfig,
+            fileManager.specialConfig,
+            fileManager.subscriptsConfig
+        )
         // Load client fonts
         Fonts.loadFonts()
         eventManager.registerListener(FontsGC)
@@ -189,10 +210,22 @@ object LiquidBounce {
         }
 
         // run update checker
-        if(CLIENT_VERSION != "unknown") {
+        if (CLIENT_VERSION != "unknown") {
             thread(block = this::checkUpdate)
         }
-
+        ClientUtils.setTitle("Loading script subscripts...");
+        for (subscript in fileManager.subscriptsConfig.subscripts) {
+            //println(subscript.url+":"+subscript.name)
+            Subscriptions.addSubscribes(ScriptSubscribe(subscript.url, subscript.name))
+            scriptManager.disableScripts()
+            scriptManager.unloadScripts()
+            for (scriptSubscribe in Subscriptions.subscribes) {
+                scriptSubscribe.load()
+            }
+            scriptManager.loadScripts()
+            scriptManager.enableScripts()
+        }
+        ClientUtils.setTitle();
         ClientUtils.logInfo("$CLIENT_NAME $CLIENT_VERSION loaded in ${(System.currentTimeMillis() - startTime)}ms!")
     }
 
