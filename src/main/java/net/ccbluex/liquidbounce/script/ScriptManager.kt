@@ -55,6 +55,7 @@ class ScriptManager {
             ClientUtils.logInfo("[ScriptAPI] Successfully loaded script '${scriptFile.name}'.")
         } catch (t: Throwable) {
             ClientUtils.logError("[ScriptAPI] Failed to load script '${scriptFile.name}'.", t)
+
         }
     }
 

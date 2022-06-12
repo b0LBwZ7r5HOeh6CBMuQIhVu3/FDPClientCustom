@@ -65,6 +65,7 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
     }
 
     override fun onUpdate(event: UpdateEvent) {
+        fly.antiDesync = true
         mc.thePlayer.noClip = !MovementUtils.isMoving()
         if (smoothValue.get()) {
             if (!timer.hasTimePassed(1000) || !flyStart) {

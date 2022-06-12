@@ -62,12 +62,15 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
     private val lookValue = BoolValue("UseC06Packet", false)
     private val debugValue = BoolValue("DebugMessage", false)
-    // private val rsNofallValue = BoolValue("RedeNofall",true)
+    
+    var antiDesync = false
 
     val msTimer = MSTimer()
     private val minemoraTimer = MSTimer()
     private var usedTimer = false
     val flagTimer = MSTimer()
+
+    val syncTimer = MSTimer()
 
     private var target = 0
     private var needEdit = false
@@ -117,6 +120,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, ground))
                 }
             }
+
+            antiDesync = true
+            syncTimer.reset()
 
             when (modeValue.get().lowercase()) {
                 "vanilla" -> {
@@ -204,6 +210,8 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                         sendCriticalPacket(yOffset = 0.2, ground = false)
                         sendCriticalPacket(yOffset = 0.1216, ground = false)
                         attacks = 0
+                    }else{
+                        antiDesync = false
                     }
                 }
                 
@@ -216,22 +224,26 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 "matrixsemi" -> {
                     attacks++
                     if(attacks > 3) {
-                    sendCriticalPacket(yOffset = 0.110314, ground = false)
-                    sendCriticalPacket(yOffset = 0.0200081, ground = false)
-                    sendCriticalPacket(yOffset = 0.00000001300009, ground = false)
-                    sendCriticalPacket(yOffset = 0.000000000022, ground = false)
-                    sendCriticalPacket(ground = true)
-                    attacks = 0
+                        sendCriticalPacket(yOffset = 0.110314, ground = false)
+                        sendCriticalPacket(yOffset = 0.0200081, ground = false)
+                        sendCriticalPacket(yOffset = 0.00000001300009, ground = false)
+                        sendCriticalPacket(yOffset = 0.000000000022, ground = false)
+                        sendCriticalPacket(ground = true)
+                        attacks = 0
+                    }else{
+                        antiDesync = false
                     }
                 }
                 
-                "verus" -> {
+                "verussmart" -> {
                     attacks ++
                     if (attacks > 4) {
                         attacks = 0
                         
                         sendCriticalPacket(yOffset = 0.001, ground = true)
                         sendCriticalPacket(ground = false)
+                    }else{
+                        antiDesync = false
                     }
                 }
                 
@@ -408,10 +420,14 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
         
         if (packet is S08PacketPlayerPosLook) {
             flagTimer.reset()
+            antiDesync = false
             if (s08FlagValue.get()) {
                 jState = 0
             }
         }
+
+        if (packet is C03PacketPlayer && (MovementUtils.isMoving() || syncTimer.hasTimePassed(1000L) || msTimer.hasTimePassed(((delayValue.get() / 5) + 75).toLong())))
+            antiDesync = false
         
         if(s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
             return

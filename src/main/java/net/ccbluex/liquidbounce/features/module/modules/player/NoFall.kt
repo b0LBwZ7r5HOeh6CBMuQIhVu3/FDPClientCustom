@@ -407,10 +407,11 @@ class NoFall : Module() {
                 }
                 if(nextSpoof) {
                     mc.thePlayer.motionY = -0.1
-                    MovementUtils.strafe(0.343f)
+                    mc.thePlayer.fallDistance = -0.1f
+                    MovementUtils.strafe(0.3f)
                     nextSpoof = false
                 }
-                if(mc.thePlayer.fallDistance > 3.65) {
+                if(mc.thePlayer.fallDistance > 3.5625f) {
                     mc.thePlayer.fallDistance = 0.0f
                     doSpoof = true
                     nextSpoof = true

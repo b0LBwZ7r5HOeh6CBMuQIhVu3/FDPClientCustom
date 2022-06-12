@@ -25,6 +25,7 @@ class AntiVoid : Module() {
     private val resetMotion = BoolValue("ResetMotion", false).displayable { modeValue.equals("Blink") }
     private val startFallDistValue = FloatValue("BlinkStartFallDistance", 2F, 0F, 5F).displayable { modeValue.equals("Blink") }
     private val autoScaffold = BoolValue("BlinkAutoScaffold", true).displayable { modeValue.equals("Blink") }
+    private val motionflagValue = FloatValue("MotionFlag-MotionY", 1.0F, 0.0F, 5.0F).displayable { modeValue.equals("MotionFlag") }
     private val voidOnly = BoolValue("OnlyVoid", true)
 
     private val packetCache = ArrayList<C03PacketPlayer>()
@@ -68,7 +69,7 @@ class AntiVoid : Module() {
             "motionflag" -> {
                 if (!voidOnly.get() || checkVoid()) {
                     if (mc.thePlayer.fallDistance > maxFallDistValue.get() && !tried) {
-                        mc.thePlayer.motionY += 1
+                        mc.thePlayer.motionY += motionflagValue.get()
                         mc.thePlayer.fallDistance = 0.0F
                         tried = true
                     }
