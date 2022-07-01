@@ -208,13 +208,13 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val i = 0;
         val defaultHeight1 = (this.height).toDouble()
         val defaultWidth1 = (this.width).toDouble()
-        if (genshinImpactAnim.get()) RenderUtils.drawImage(
+/*        if (genshinImpactAnim.get()) RenderUtils.drawImage(
             LiquidBounce.venti,
             defaultWidth1.toInt() - (0.6 * defaultWidth1).toInt(),
             defaultHeight1.toInt() - (0.3 * defaultWidth1).toInt(),
             (0.6 * defaultWidth1).toInt(),
             (0.3 * defaultWidth1).toInt()
-        )
+        )*/
         FontLoaders.F40.drawCenteredString(
             LiquidBounce.CLIENT_NAME,
             this.width.toDouble() / 2,

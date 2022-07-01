@@ -19,7 +19,7 @@ import javax.script.ScriptEngineManager
 class Script(val scriptFile: File) : MinecraftInstance() {
 
     private var scriptEngine = ScriptEngineManager().getEngineByName("nashorn")
-    private val scriptText = scriptFile.readText(Charsets.UTF_8)
+//    private val scriptText = scriptFile.readText(Charsets.UTF_8)
     var scriptText: String =
         if (!scriptFile.path.contains("CloudLoad")) scriptFile.readText(Charsets.UTF_8) else "//api_version=2"
     var isOnline = false
