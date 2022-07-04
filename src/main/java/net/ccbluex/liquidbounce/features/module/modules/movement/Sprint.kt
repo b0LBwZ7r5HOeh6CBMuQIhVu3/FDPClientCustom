@@ -22,7 +22,7 @@ import net.minecraft.potion.Potion
 
 @ModuleInfo(name = "Sprint", category = ModuleCategory.MOVEMENT, defaultOn = true)
 class Sprint : Module() {
-    val jumpDirectionsValue = BoolValue("JumpDirection", true)
+    val jumpDirectionsValue = BoolValue("JumpDirections", false)
     val allDirectionsValue = BoolValue("AllDirections", true)
     private val allDirectionsBypassValue = ListValue("AllDirectionsBypass", arrayOf("Rotate", "Toggle", "Minemora", "Spoof", "LimitSpeed", "None"), "None").displayable { allDirectionsValue.get() }
     private val blindnessValue = BoolValue("Blindness", true)
@@ -71,7 +71,12 @@ class Sprint : Module() {
                         mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING))
                         mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
                     }
-                    "minemora" -> mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0000013, mc.thePlayer.posZ)
+                    "minemora" -> {
+                        if (mc.thePlayer.onGround) {
+                            mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0000013, mc.thePlayer.posZ)
+                            mc.thePlayer.motionY = 0.0
+                        }
+                    }
                     "limitspeed" -> {
                         if (!allDirectionsLimitSpeedGround.get() || mc.thePlayer.onGround) {
                             MovementUtils.limitSpeedByPercent(allDirectionsLimitSpeedValue.get())

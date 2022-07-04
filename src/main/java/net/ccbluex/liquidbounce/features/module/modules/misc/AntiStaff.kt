@@ -1,3 +1,8 @@
+/*
+ * FDPClient Hacked Client
+ * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
+ * https://github.com/UnlegitMC/FDPClient/
+ */
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -19,21 +24,22 @@ import net.minecraft.network.play.server.S1DPacketEntityEffect
 @ModuleInfo(name = "AntiStaff", category = ModuleCategory.MISC)
 class AntiStaff : Module() {
 
-    val server  = ListValue("Server", arrayOf("BlocksMC","Jartex","Pika","Minebox","Minemora","Zonecraft","Hycraft","Librecraft"),"BlocksMC")
+    val server  = ListValue("Server", arrayOf("BlocksMC", "Jartex", "Pika", "Minebox", "Minemora", "Zonecraft", "Hycraft", "Librecraft"),"BlocksMC")
+    val notify  = BoolValue("Notification",true)
     val chat    = BoolValue("SendChatMessage",false)
     val message = TextValue("Message", "%staff% was detected as a staff member!").displayable { chat.get() }
 
     val leave = BoolValue("Leave",true)
     val leaveMessage = TextValue("LeaveCommand","/hub").displayable { leave.get() }
     
-    private var bmcStaff : String = "1Exhausted 1HeylmHasson_ 1L7NN 1LaB 1M7mdz 1M7mmD 1Maarc 1Mhmmd 1Nzar 1Pepe_ 1RealFadi 1SaQeR 1Soin 1Sweet 1_3bdalH 1100 2xr1 3AmOdi 16_Turtle_9 7lawaah 7s0 8mhh 69Kaatrin 90fa 420kinaka 506_ 2526 A3loosh A7md_ AFG_progamer92 Abdullahlq Aboal3z14 Aboz3bl Agressives AhmedPROGG Ahmmd Alaam_FG Alfredo24151 Aliiyah AssassinTime AuthoritiesVenom Aymann_ Balz Ba6ee5man BaSiL_123 Banderr BinDontCare BoMshary Boviix CaughtVaping Creegam Criv_IQ Crysling DangPavel DeeRx DelacroiiX Destroyerxayu_ DrMonteeey Driction Du7ym Dusity Eissaa Ev2n EyesO_Diamond FSJFESDFSE FakeButReal FexoraNEP Firas Flineer ForMercyInsvun Fta7 G3rryx HM HackProtection HeartLost HerKing_ IMMT3H IScaryum I_can_See Igisa ImPablo_ ImXann Im_A Itchay IxKimo Jinaaan Jqlv JustDrink_ KaaReeeM Kh4nhMr KingHOYT Kuizano LEGITT1st LX_D LipstickSmoker Lunching Lysreax M4rwaan MK_F16 MR1_ MX_7mode_yt Malfore_ MaybeHeDoes Mercilees top/minotar. MrProfessorT Muntadher MythicalRain N6R Ne_TvOi_DeMoN Nikolas44 OP1_ OnlyY2MaaC PT7 PerfectRod_ Player31 R4Z_DIGITAL RIPPOR Raceth RealWayne Rebecca_jiaying Refolt Ruxq S217 S3rvox SOYRUSSO Sadlly SalemBayern_ ScarsFace Slave_Of_Sourish SlayerDarrk Solivion Spotzy. SpecialAdam_ StrangerM39ob StrengthSimp TheOnlyM7MAD TheRampage_king Thenvra ToFy__ Tostiebramkaas TryLegitt Trylenn Turnks Veshan Watchdog WherelsShe Y2men Y2serr Y_04 ZANAD _ImKH _JustMix _R3 _Vxpe _Seif _iSkyla _sadeq _z2_ abd0_369 bota_69 bushiba comsterr d5qq dxvilsoul feelupset fromthestart gwakf123 hsjwCZ i3li IA11 ¡AhmedGG ¡Dhoom iDrakola9 iLuvSG_ iMajedi1 iMehdi_ iS30d_ iSolom i_Ym5 ifeelgood91 ¡EsaTKing_ iiM7mdZ_ iiRaivy iikimo inVertice jaye kostasidk lovelywords lqcs manuelmaster mohmad_q8 mokgii 090x OMD_ obaida123445 opkp p89d puddinG_eee rcski rwaeaeaeaea QUQU sunv sweetyheartt testtest50 tmtmo uh8e uncolour vFahad vMohamed vNext_ vdhvm vxom w7r wl3d wtfprodm wzii xDupzHell xlBerryPlayz xlmAlone_ xlmM7mmd_ ximTaiG_ xLayrix xMz7 yQuack yasuisforsale yff3 yosife_7Y yzed zayedk zxcf_"
+    private var bmcStaff : String = " 1Exhausted 1HeylmHasson_ 1L7NN 1LaB 1M7mdz 1M7mmD 1Maarc 1Mhmmd 1Nzar 1Pepe_ 1RealFadi Jinaaa  _JustMix Eissaa mohmad_q8 1Brhom Aliiyah AssassinTime Ahmmd PerfectRod_ xImTaiG_ xIBerryPlayz comsterr 1Sweet Ev2 WhereIsShe 1Daykel iMehdi_ Aboz3bl xMz7 EyesO_Diamond qB6o6 506_ ZANAD Luvaa Muntadher devilsxul Thenvra Sadlly zayedk iDrakola9 MK_F16 iiRaivy rcski M7mmd M4rwaa pretiosus iLuvSG_ 420kinaka iS3od_ Aymann_ Refolt 1SaQeR Maarcii Flineer Fta7 Y2me KaaReeeM Drictio PT7 DeeRx A3loosh ImPablo_ lqcs Mercilees MrProfessor_T JustDrink_ BoMshary w7r Sql7 Igisa S3rvox SlayerDarrk DangPavel LEGITT1st iRxV drqoo ilybb0 KingHOYT AFG_progamer92 Vesha throughthesky Solivio 7moooody_ e_Tv0i_DeMo Firas 0Aix Im_A Watchdog ToFy_ MX_7mode_yt G3rryx Felings Nikolas44 Malfore_ 2xr1 yosife_7Y BaSiL_123 _sadeq Destroyerxayu_ wl3d 90fa HerKinq_ Mondoros IScaryum Hardwaay dxvilsoul uncolour R4Z_DIGITAL 1Soin 1_3bdalH 1100 3AmOdi 16_Turtle_9 7lawaah 7s0 8mhh 69Kaatrin 2526 A7md_ Abdullahlq Aboal3z14 Agressives AhmedPROGG Alaam_FG Alfredo24151 AuthoritiesVenom Balz Ba6ee5man Banderr BinDontCare Boviix CaughtVaping Creegam Criv_IQ Crysling DelacroiiX DrMonteeey Driction Du7ym Dusity Ev2n FSJFESDFSE FakeButReal FexoraNEP ForMercyInsvun HM HackProtection HeartLost HerKing_ IMMT3H I_can_See ImXann Itchay IxKimo Jinaaan Jqlv Kh4nhMr Kuizano LX_D LipstickSmoker Lunching Lysreax M4rwaan MR1_ MaybeHeDoes top/minotar. MrProfessorT MythicalRain N6R Ne_TvOi_DeMoN OP1_ OnlyY2MaaC Player31 RIPPOR Raceth RealWayne Rebecca_jiaying Ruxq S217 SOYRUSSO SalemBayern_ ScarsFace Slave_Of_Sourish Solivion Spotzy. SpecialAdam_ StrangerM39ob StrengthSimp TheOnlyM7MAD TheRampage_king ToFy__ Tostiebramkaas TryLegitt Trylenn Turnks Veshan WherelsShe Y2men Y2serr Y_04 _ImKH _R3 _Vxpe _Seif _iSkyla _z2_ abd0_369 bota_69 bushiba d5qq feelupset fromthestart gwakf123 hsjwCZ i3li IA11 ¡AhmedGG ¡Dhoom iMajedi1 iS30d_ iSolom i_Ym5 ifeelgood91 ¡EsaTKing_ iiM7mdZ_ iikimo inVertice jaye kostasidk lovelywords manuelmaster mokgii 090x OMD_ obaida123445 opkp p89d puddinG_eee rwaeaeaeaea QUQU sunv sweetyheartt testtest50 tmtmo uh8e vFahad vMohamed vNext_ vdhvm vxom wtfprodm wzii xDupzHell xlBerryPlayz xlmAlone_ xlmM7mmd_ ximTaiG_ xLayrix yQuack yasuisforsale yff3 yzed zxcf_"
     private var jartexStaff : String = "voodootje0, Max, Rodagave, Wrath, JustThiemo, Andeh, Nirahz, stupxd, Yumpii, Botervrij, Viclyn_, ovq, NotSansy, DrogonMC, NotLoLo1818, ItzCqldFxld, Mykkull, Flappix, MaybeItsDestiny_, Knowly, SabitTSDM07, QB_poke, Opalestia, iFlyYT, Verwelkte, UnMonsieur, KT_798, AX79, Djim, DaddyZoiko, Serpentsalamce, Almostlikeaboss, ataman, Sweazi, ZoneRGH, naranbaatar, HeadsBreker, Difficulted, FuzniX, xHasey, ReddyPush, sammyxt".toString()
     private var pikaStaff : String = " Max  voodootje0  MrFrenco  JustThiemo Wrath  Andeh  Nirahz  stupxd  Yumpii  Botervrij   0Mad0Max0  Krekkers  Subvalent  Apo2xd  Arrly  Minecraft_leg   Hellific  CaptainGeoGR  Thijme01  ChickenDinnr  Crni_    MrGownz   Outscale  MrEpiko  Crveni_Marlboro  zMqrcc  _Stella_xD   Alparo_  CandyOP  Astrospeh  StormTM577   ElementalMCR   SezarBD  ApocalypseFire2  Shivananda  "
     private var mineboxStaff : String = "xSp3ctro_  SaF3rC  Sagui  TheSuperXD_YT  xAnibal  xTheKillex25x  HankWalter  JavierFenix  inothayami  ChaosSoleil  ElChamo300  Robert TO1010  itachi_uchiha_s  roku__  rynne_ sushi dashi Vicky_21"
     private var zonecraftStaff : String = "002Aren Agu5 augusmaster BetTD d411 dunshbey85 ElMaGnific Pv ErCris Eugene FelmaxMC Gudaa ¡Enux ImMarvolo sleepless ismq ItzOmar16 joescam LuisPoMC Nicoxrm pacorro "
     private var hycraftStaff : String = "Alexander245 arqui Blandih Chony_15 jac0mc Ragen06 TheBryaan TMT_131 Yapecito MartynaGamer830 archeriam"
     private var librecraftStaff : String = "Kudos  H0DKIER  Iker_XD9  acreate  iJeanSC  acreate  Janet  Rosse_RM  aldoum23neko_  DERGO  MJKINGPAND"
-    private var minemoraStaff : String = "Ruficraft MariSG iSebaas MaxyMC LuhGleh Esmorall SrLucchel_ ninjagod98 DarkFumado iDrecs CuencaDeDiamante"
+    private var minemoraStaff : String = "Ruficraft MariSG iSebaas MaxyMC LuhGleh Esmorall SrLucchel_ ninjagod98 DarkFumado iDrecs CuencaDeDiamante PainSex"
     
     
     private var detected = false
@@ -90,10 +96,12 @@ class AntiStaff : Module() {
             val entity = mc.theWorld.getEntityByID(packet.entityId)
             if (entity != null && (staffs.contains(entity.name) || staffs.contains(entity.displayName.unformattedText))) {
                 if (!detected) {
-                    LiquidBounce.hud.addNotification(Notification(name, "Detected staff members with invis. You should quit ASAP.", NotifyType.WARNING, 8000))
+                    if (notify.get()){
+                        LiquidBounce.hud.addNotification(Notification(name, "Detected staff members with invis. You should quit ASAP.", NotifyType.WARNING, 8000))
+                    }
                     
                     if (chat.get()) {
-                        ClientUtils.displayChatMessage((message.get()).replace("%staff%", entity.name))
+                        mc.thePlayer.sendChatMessage((message.get()).replace("%staff%", entity.name))
                     }
                     if (leave.get()) {
                         mc.thePlayer.sendChatMessage(leaveMessage.get())
@@ -108,7 +116,9 @@ class AntiStaff : Module() {
 
             if (entity != null && (staffs.contains(entity.name) || staffs.contains(entity.displayName.unformattedText))) {
                 if (!detected) {
+                    if (notify.get()){
                     LiquidBounce.hud.addNotification(Notification(name, "Detected staff members. You should quit ASAP.", NotifyType.WARNING,8000))
+                    }
                     
                     if (chat.get()) {
                         ClientUtils.displayChatMessage((message.get()).replace("%staff%", entity.name))

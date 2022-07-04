@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.utils
 
 import net.ccbluex.liquidbounce.event.MoveEvent
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.potion.Potion
 import net.minecraft.util.AxisAlignedBB
@@ -18,6 +19,14 @@ object MovementUtils : MinecraftInstance() {
     fun getSpeed(): Float {
         return sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ).toFloat()
     }
+
+    /**
+     * Calculate speed based on the speed potion effect level/amplifier
+     */
+    fun getSpeedWithPotionEffects(speed: Double) =
+        mc.thePlayer.getActivePotionEffect(Potion.moveSpeed)?.let {
+            speed * (1 + (it.amplifier + 1) * 0.2)
+        } ?: speed
 
     fun strafe() {
         strafe(getSpeed())
@@ -53,6 +62,55 @@ object MovementUtils : MinecraftInstance() {
     fun strafe(speed: Double) {
         strafe(speed.toFloat())
     }
+
+    fun doTargetStrafe(curTarget: EntityLivingBase, direction_: Float, radius: Float, moveEvent: MoveEvent) {
+        if(!isMoving())
+            return
+        var forward_ = 0.0
+        var strafe_ = 0.0
+        val speed_ = sqrt(moveEvent.x * moveEvent.x + moveEvent.z * moveEvent.z)
+
+        if(speed_ <= 0.0001)
+            return
+
+        var _direction = 0.0
+        if(direction_ > 0.001) {
+            _direction = 1.0
+        }else if(direction_ < -0.001) {
+            _direction = -1.0
+        }
+        val curDistance = mc.thePlayer.getDistanceToEntity(curTarget)
+        if(curDistance < radius - speed_) {
+            forward_ = -1.0
+        }else if(curDistance > radius + speed_) {
+            forward_ = 1.0
+        }else {
+            forward_ = (curDistance - radius) / speed_
+        }
+        if(curDistance < radius + speed_*2 && curDistance > radius - speed_*2) {
+            strafe_ = 1.0
+        }
+        strafe_ *= _direction
+        var strafeYaw = RotationUtils.getRotationsEntity(curTarget).yaw.toDouble()
+        val covert_ = sqrt(forward_ * forward_ + strafe_ * strafe_)
+
+        forward_ = forward_ / covert_
+        strafe_ = strafe_ / covert_
+        var turnAngle = Math.toDegrees(Math.asin(strafe_.toDouble())).toDouble()
+        if(turnAngle > 0) {
+            if(forward_ < 0)
+                turnAngle = 180F - turnAngle
+        }else {
+            if(forward_ < 0)
+                turnAngle = -180F - turnAngle
+        }
+        strafeYaw = Math.toRadians((strafeYaw + turnAngle).toDouble())
+        moveEvent.x = -sin(strafeYaw) * speed_.toDouble()
+        moveEvent.z = cos(strafeYaw) * speed_.toDouble()
+        mc.thePlayer.motionX = moveEvent.x
+        mc.thePlayer.motionZ = moveEvent.z
+    }
+
     fun move(speed: Float) {
         if (!isMoving()) return
         val yaw = direction
@@ -88,7 +146,11 @@ object MovementUtils : MinecraftInstance() {
 
     fun forward(length: Double) {
         val yaw = Math.toRadians(mc.thePlayer.rotationYaw.toDouble())
-        mc.thePlayer.setPosition(mc.thePlayer.posX + -sin(yaw) * length, mc.thePlayer.posY, mc.thePlayer.posZ + cos(yaw) * length)
+        mc.thePlayer.setPosition(
+            mc.thePlayer.posX + -sin(yaw) * length,
+            mc.thePlayer.posY,
+            mc.thePlayer.posZ + cos(yaw) * length
+        )
     }
 
     val direction: Double
@@ -161,7 +223,13 @@ object MovementUtils : MinecraftInstance() {
         bps = distance * (20 * mc.timer.timerSpeed)
     }
 
-    fun setSpeed(moveEvent: MoveEvent, moveSpeed: Double, pseudoYaw: Float, pseudoStrafe: Double, pseudoForward: Double) {
+    fun setSpeed(
+        moveEvent: MoveEvent,
+        moveSpeed: Double,
+        pseudoYaw: Float,
+        pseudoStrafe: Double,
+        pseudoForward: Double
+    ) {
         var forward = pseudoForward
         var strafe = pseudoStrafe
         var yaw = pseudoYaw
@@ -182,8 +250,8 @@ object MovementUtils : MinecraftInstance() {
                     forward = -1.0
                 }
             }
-            val cos = Math.cos(Math.toRadians((yaw + 90.0f).toDouble()))
-            val sin = Math.sin(Math.toRadians((yaw + 90.0f).toDouble()))
+            val cos = cos(Math.toRadians((yaw + 90.0f).toDouble()))
+            val sin = sin(Math.toRadians((yaw + 90.0f).toDouble()))
             moveEvent.x = forward * moveSpeed * cos + strafe * moveSpeed * sin
             moveEvent.z = forward * moveSpeed * sin - strafe * moveSpeed * cos
         }
@@ -194,7 +262,14 @@ object MovementUtils : MinecraftInstance() {
         var blockHeight = 1.0
         var ground = mc.thePlayer.posY
         while (ground > 0.0) {
-            val customBox = AxisAlignedBB(playerBoundingBox.maxX, ground + blockHeight, playerBoundingBox.maxZ, playerBoundingBox.minX, ground, playerBoundingBox.minZ)
+            val customBox = AxisAlignedBB(
+                playerBoundingBox.maxX,
+                ground + blockHeight,
+                playerBoundingBox.maxZ,
+                playerBoundingBox.minX,
+                ground,
+                playerBoundingBox.minZ
+            )
             if (mc.theWorld.checkBlockCollision(customBox)) {
                 if (blockHeight <= 0.05) return ground + blockHeight
                 ground += blockHeight
@@ -222,6 +297,18 @@ object MovementUtils : MinecraftInstance() {
         }
         return false
     }
+        fun isOnGround(height: Double): Boolean {
+        return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)).isEmpty()
+    }
+
+    fun getBaseMoveSpeed(): Double {
+        var baseSpeed = 0.2875
+        if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
+            baseSpeed *= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed)
+                .getAmplifier() + 1)
+        }
+        return baseSpeed
+    }
     fun handleVanillaKickBypass() {
         val ground = calculateGround()
         run {
@@ -239,6 +326,13 @@ object MovementUtils : MinecraftInstance() {
             if (posY + 8.0 > mc.thePlayer.posY) break // Prevent next step
             posY += 8.0
         }
-        mc.netHandler.addToSendQueue(C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, false))
+        mc.netHandler.addToSendQueue(
+            C04PacketPlayerPosition(
+                mc.thePlayer.posX,
+                mc.thePlayer.posY,
+                mc.thePlayer.posZ,
+                true
+            )
+        )
     }
 }

@@ -8,8 +8,8 @@ package net.ccbluex.liquidbounce.injection.forge.mixins.network;
 import io.netty.buffer.Unpooled;
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.PacketEvent;
+import net.ccbluex.liquidbounce.features.module.modules.misc.AntiExploit;
 import net.ccbluex.liquidbounce.features.module.modules.misc.SilentDisconnect;
-//import net.ccbluex.liquidbounce.features.module.modules.exploit.AntiExploit;
 import net.ccbluex.liquidbounce.features.special.AntiForge;
 import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.minecraft.client.ClientBrandRetriever;
@@ -44,6 +44,8 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static net.ccbluex.liquidbounce.script.api.global.Chat.alert;
+
 @Mixin(NetHandlerPlayClient.class)
 public abstract class MixinNetHandlerPlayClient {
 
@@ -67,45 +69,44 @@ public abstract class MixinNetHandlerPlayClient {
     private void handleResourcePack(final S48PacketResourcePackSend p_handleResourcePack_1_, final CallbackInfo callbackInfo) {
         final String url = p_handleResourcePack_1_.getURL();
         final String hash = p_handleResourcePack_1_.getHash();
-        
-        // fix this later final AntiExploit antiExploit = (AntiExploit) LiquidBounce.moduleManager.getModule(AntiExploit.class);
+
+        final AntiExploit antiExploit = (AntiExploit) LiquidBounce.moduleManager.getModule(AntiExploit.class);
 
         try {
             final String scheme = new URI(url).getScheme();
             final boolean isLevelProtocol = "level".equals(scheme);
 
-            if (!"http".equals(scheme) && !"https".equals(scheme) && !isLevelProtocol){
-                // throw new URISyntaxException(url, "Wrong protocol");
-                ClientUtils.INSTANCE.logError("(resource exploit detected) Failed to handle resource pack (URL=" + url + ")");
-                netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
-                callbackInfo.cancel();
-            }
+            if(!"http".equals(scheme) && !"https".equals(scheme) && !isLevelProtocol)
+                throw new URISyntaxException(url, "Wrong protocol");
 
-            // ensure it performed like vanilla
             if(isLevelProtocol && (url.contains("..") || !url.endsWith(".zip"))) {
                 String s2 = url.substring("level://".length());
                 File file1 = new File(this.gameController.mcDataDir, "saves");
                 File file2 = new File(file1, s2);
-                if (file2.isFile()
-                        && !url.toLowerCase().contains(LiquidBounce.CLIENT_NAME.toLowerCase())
-                        /* nice exploit abuse, zqat dot top... */) {
-                    netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.ACCEPTED));
-                    // a legit client will send SUCCESSFULLY_LOADED back even [java.util.zip.ZipException] is thrown
+
+                if (file2.isFile() && !url.toLowerCase().contains("fdpclient")) {
+                    netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.ACCEPTED)); // perform like vanilla
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.SUCCESSFULLY_LOADED));
                 } else {
                     netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
                 }
-                // throw new IllegalStateException("Resource exploit detected!");
-                ClientUtils.INSTANCE.logError("(resource exploit detected) Failed to handle resource pack (URL=" + url + ")");
-                netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
-                callbackInfo.cancel();
+
+                if (antiExploit.getState() && antiExploit.getNotifyValue().get()) {
+                    alert("§7[§b!§7] §b§lFDPCLIENT §c» §6Resourcepack exploit detected.");
+                    alert("§7[§b!§7] §b§lFDPCLIENT §c» §7Exploit target directory: §r" + url);
+
+                    throw new IllegalStateException("Invalid levelstorage resourcepack path");
+                } else {
+                    callbackInfo.cancel(); // despite not having it enabled we still prevents anything from illegally checking files in your computer.
+                }
+
             }
         } catch (final URISyntaxException e) {
-            ClientUtils.INSTANCE.logError("Failed to handle resource pack (URL=" + url + ")", e);
+            alert("Failed to handle resource pack");
             netManager.sendPacket(new C19PacketResourcePackStatus(hash, C19PacketResourcePackStatus.Action.FAILED_DOWNLOAD));
             callbackInfo.cancel();
         } catch (final IllegalStateException e) {
-            ClientUtils.INSTANCE.logError("Failed to handle resource pack (URL=" + url + ")", e);
+            alert("Failed to handle resource pack");
             callbackInfo.cancel();
         }
     }

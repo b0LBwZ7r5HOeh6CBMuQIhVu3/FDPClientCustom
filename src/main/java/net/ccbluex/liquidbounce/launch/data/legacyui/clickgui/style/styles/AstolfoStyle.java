@@ -14,7 +14,6 @@ import net.ccbluex.liquidbounce.ui.font.Fonts;
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager;
 import net.ccbluex.liquidbounce.ui.font.GameFontRenderer;
 import net.ccbluex.liquidbounce.utils.block.BlockUtils;
-import net.ccbluex.liquidbounce.utils.misc.RandomUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.ccbluex.liquidbounce.value.*;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -30,7 +29,6 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Random;
 
 @SideOnly(Side.CLIENT)
 public class AstolfoStyle extends Style {
@@ -75,7 +73,7 @@ public class AstolfoStyle extends Style {
 
     @Override
     public void drawDescription(int mouseX, int mouseY, String text) {
-        int textWidth = Fonts.font35.getStringWidth(text);
+        int textWidth = Fonts.font35.getStringWidth(LanguageManager.INSTANCE.get(text.replaceAll("%","")));
 
         RenderUtils.drawRect(mouseX + 9, mouseY, mouseX + textWidth + 14, mouseY + Fonts.font35.FONT_HEIGHT + 3, new Color(26, 26, 26).getRGB());
         GlStateManager.resetColor();
@@ -110,7 +108,7 @@ public class AstolfoStyle extends Style {
         final List<Value<?>> moduleValues = moduleElement.getModule().getValues();
 
         if (!moduleValues.isEmpty()) {
-             Fonts.font35.drawString("+", moduleElement.getX() + moduleElement.getWidth() - 8,
+            Fonts.font35.drawString("+", moduleElement.getX() + moduleElement.getWidth() - 8,
                     moduleElement.getY() + (moduleElement.getHeight() / 2), new Color(255, 255, 255, 200).getRGB());
 
             if (moduleElement.isShowSettings()) {
@@ -119,7 +117,7 @@ public class AstolfoStyle extends Style {
                 for (final Value value : moduleValues) {
                     if (value instanceof BoolValue) {
                         String text = value.getName();
-                        float textWidth = Fonts.font35.getStringWidth(text);
+                        float textWidth = Fonts.font35.getStringWidth(LanguageManager.INSTANCE.get(text.replaceAll("%","")));
 
                         if (moduleElement.getSettingsWidth() < textWidth + 8)
                             moduleElement.setSettingsWidth(textWidth + 8);
@@ -261,8 +259,8 @@ public class AstolfoStyle extends Style {
                             final GameFontRenderer liquidFontRenderer = (GameFontRenderer) fontRenderer;
 
                             displayString = "Font: " + liquidFontRenderer.getDefaultFont().getFont().getName() + " - " + liquidFontRenderer.getDefaultFont().getFont().getSize();
-                        } else if (fontRenderer == Fonts.minecraftFont)
-                            displayString = "Font: Minecraft";
+                        } else if (fontRenderer == Fonts.font35)
+                            displayString = "Font: FONT35";
                         else {
                             final Object[] objects = Fonts.getFontDetails(fontRenderer);
 

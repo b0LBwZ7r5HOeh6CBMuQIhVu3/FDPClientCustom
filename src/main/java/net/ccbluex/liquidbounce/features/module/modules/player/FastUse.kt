@@ -44,7 +44,7 @@ import net.minecraft.util.EnumFacing
 class FastUse : Module() {
     private val modeValue = ListValue(
         "Mode",
-        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "AAC", "NewAAC"),
+        arrayOf("Instant", "Timer","medusa", "CustomDelay", "DelayedInstant", "AAC", "NewAAC"),
         "DelayedInstant"
     )
     private val packetValue = ListValue("Packet", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
@@ -102,6 +102,16 @@ class FastUse : Module() {
             mc.thePlayer.itemInUseCount = mc.thePlayer.inventory.getCurrentItem().maxItemUseDuration - 1
             }*/
             when (modeValue.get().lowercase()) {
+                "medusa" -> {
+                    if (mc.thePlayer.itemInUseDuration > 5 || !msTimer.hasTimePassed(360L))
+                        return
+
+                    repeat(20) {
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                    }
+
+                    msTimer.reset()
+                }
                 "delayedinstant" -> if (mc.thePlayer.itemInUseDuration > durationValue.get()) {
                     repeat(36 - mc.thePlayer.itemInUseDuration) {
                         sendPacket(packetValue.get())
@@ -109,6 +119,13 @@ class FastUse : Module() {
 
                     if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
+
+                "ncp" -> if (mc.thePlayer.itemInUseDuration > 14) {
+                    repeat(20) {
+                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                    }
+
+                    mc.playerController.onStoppedUsingItem(mc.thePlayer)}
 
                 "instant" -> {
                     repeat(35) {

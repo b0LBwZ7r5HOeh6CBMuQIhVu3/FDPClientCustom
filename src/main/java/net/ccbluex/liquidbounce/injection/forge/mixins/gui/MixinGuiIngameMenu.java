@@ -5,9 +5,7 @@
  */
 package net.ccbluex.liquidbounce.injection.forge.mixins.gui;
 
-import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.utils.ServerUtils;
-import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiIngameMenu;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +20,8 @@ public abstract class MixinGuiIngameMenu extends MixinGuiScreen {
     private void initGui(CallbackInfo callbackInfo) {
         if(!this.mc.isIntegratedServerRunning())
             this.buttonList.add(new GuiButton(1337, this.width / 2 - 100, this.height / 4 + 128, "%ui.reconnect%"));
+
+        this.buttonList.add(new GuiButton(727, this.width / 2 - 100, this.height - 30, "Keybind Helper"));
     }
 
     @Inject(method = "drawScreen", at = @At("RETURN"))

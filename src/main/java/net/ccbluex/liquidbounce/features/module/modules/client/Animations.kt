@@ -1,3 +1,8 @@
+/*
+ * FDPClient Hacked Client
+ * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
+ * https://github.com/UnlegitMC/FDPClient/
+ */
 package net.ccbluex.liquidbounce.features.module.modules.client
 
 import net.ccbluex.liquidbounce.features.module.Module
@@ -8,6 +13,7 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+
 
 @ModuleInfo(name = "Animations", category = ModuleCategory.CLIENT, canEnable = false)
 object Animations : Module() {
@@ -41,6 +47,9 @@ object Animations : Module() {
     val swingAnimValue = BoolValue("SwingAnim", false)
     val swingSpeed = FloatValue("SwingSpeed", 1f, 0.5f, 5.0f)
     val anythingBlockValue = BoolValue("AnythingBlock", false)
+    @JvmStatic
+    val noBlockParticles = BoolValue("NoBlockParticles", false)
+
 
     var flagRenderTabOverlay = false
         get() = field && tabShowPlayerSkin.get()

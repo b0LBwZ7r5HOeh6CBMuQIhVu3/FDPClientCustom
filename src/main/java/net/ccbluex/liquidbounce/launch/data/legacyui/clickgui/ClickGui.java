@@ -16,6 +16,7 @@ import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.elements.ModuleEle
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.style.Style;
 import net.ccbluex.liquidbounce.launch.data.legacyui.clickgui.style.styles.SlowlyStyle;
 import net.ccbluex.liquidbounce.launch.options.LegacyUiLaunchOption;
+import net.ccbluex.liquidbounce.utils.render.ColorUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,6 +26,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClickGui extends GuiScreen {
 
@@ -67,11 +69,20 @@ public class ClickGui extends GuiScreen {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
 
+        switch (((ClickGUIModule) Objects.requireNonNull(LiquidBounce.moduleManager.getModule(ClickGUIModule.class))).backgroundValue.get()) {
+            case "Default":
+                drawDefaultBackground();
+                break;
+            case "Gradient":
+                drawGradientRect(0, 0, width, height, ColorUtils.reAlpha(ClickGUIModule.generateColor(), 40).getRGB(), ClickGUIModule.generateColor().getRGB());
+                break;
+            default:
+                break;
+        }
+
         drawDefaultBackground();
         int defaultHeight1 = (this.height);
         int defaultWidth1 = (this.width);
-//        if(HUD.INSTANCE.getGenshinImpactAnim().get()) RenderUtils.drawImage(LiquidBounce.INSTANCE.getVenti(), defaultWidth1-(int) (0.6*defaultWidth1) ,defaultHeight1-(int) (0.3*defaultWidth1),(int) (0.6*defaultWidth1),(int) (0.3*defaultWidth1));
-
         GlStateManager.scale(scale, scale, scale);
 
         for (final Panel panel : panels) {
@@ -89,7 +100,6 @@ public class ClickGui extends GuiScreen {
                 }
             }
         }
-
 
 
         GlStateManager.disableLighting();
@@ -112,6 +122,14 @@ public class ClickGui extends GuiScreen {
             }
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+    
+    private void handleScroll(final int wheel) {
+        if (wheel == 0)
+            return;
+		
+        for(final Panel panel : panels)
+	        panel.setY(panel.getY() + wheel);
     }
 
     @Override

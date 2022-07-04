@@ -1,7 +1,7 @@
 /*
- * LiquidBounce Hacked Client
- * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge.
- * https://github.com/CCBlueX/LiquidBounce/
+ * FDPClient Hacked Client
+ * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
+ * https://github.com/UnlegitMC/FDPClient/
  */
 package net.ccbluex.liquidbounce.features.module.modules.world
 
@@ -34,12 +34,8 @@ import net.minecraft.util.Vec3
 import java.awt.Color
 import kotlin.math.roundToInt
 
-@ModuleInfo(name = "Nuker", description = "Breaks all blocks around you.", category = ModuleCategory.WORLD)
+@ModuleInfo(name = "Nuker", category = ModuleCategory.WORLD)
 class Nuker : Module() {
-
-    /**
-     * OPTIONS
-     */
 
     private val radiusValue = FloatValue("Radius", 5.2F, 1F, 6F)
     private val throughWallsValue = BoolValue("ThroughWalls", false)
@@ -50,10 +46,6 @@ class Nuker : Module() {
     private val nukeValue = IntegerValue("Nuke", 1, 1, 20)
     private val nukeDelay = IntegerValue("NukeDelay", 1, 1, 20)
 
-    /**
-     * VALUES
-     */
-
     private val attackedBlocks = arrayListOf<BlockPos>()
     private var currentBlock: BlockPos? = null
     private var blockHitDelay = 0
@@ -63,47 +55,42 @@ class Nuker : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        // Block hit delay
         if (blockHitDelay > 0 && !LiquidBounce.moduleManager[FastBreak::class.java]!!.state) {
             blockHitDelay--
             return
         }
 
-        // Reset bps
         nukeTimer.update()
         if (nukeTimer.hasTimePassed(nukeDelay.get())) {
             nuke = 0
             nukeTimer.reset()
         }
 
-        // Clear blocks
         attackedBlocks.clear()
 
         val thePlayer = mc.thePlayer!!
 
         if (!mc.playerController.isInCreativeMode) {
-            // Default nuker
-
             val validBlocks = searchBlocks(radiusValue.get().roundToInt() + 1)
-                    .filter { (pos, block) ->
-                        if (getCenterDistance(pos) <= radiusValue.get() && validBlock(block)) {
-                            if (layerValue.get() && pos.y < thePlayer.posY) { // Layer: Break all blocks above you
-                                return@filter false
-                            }
+                .filter { (pos, block) ->
+                    if (getCenterDistance(pos) <= radiusValue.get() && validBlock(block)) {
+                        if (layerValue.get() && pos.y < thePlayer.posY) { // Layer: Break all blocks above you
+                            return@filter false
+                        }
 
-                            if (!throughWallsValue.get()) { // ThroughWalls: Just break blocks in your sight
-                                // Raytrace player eyes to block position (through walls check)
-                                val eyesPos = Vec3(thePlayer.posX, thePlayer.entityBoundingBox.minY +
-                                        thePlayer.eyeHeight, thePlayer.posZ)
-                                val blockVec = Vec3(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5)
-                                val rayTrace = mc.theWorld!!.rayTraceBlocks(eyesPos, blockVec,
-                                        false, true, false)
+                        if (!throughWallsValue.get()) { // ThroughWalls: Just break blocks in your sight
+                            // Raytrace player eyes to block position (through walls check)
+                            val eyesPos = Vec3(thePlayer.posX, thePlayer.entityBoundingBox.minY +
+                                    thePlayer.eyeHeight, thePlayer.posZ)
+                            val blockVec = Vec3(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5)
+                            val rayTrace = mc.theWorld!!.rayTraceBlocks(eyesPos, blockVec,
+                                false, true, false)
 
-                                // Check if block is visible
-                                rayTrace != null && rayTrace.blockPos == pos
-                            }else true // Done
-                        }else false // Bad block
-                    }.toMutableMap()
+                            // Check if block is visible
+                            rayTrace != null && rayTrace.blockPos == pos
+                        }else true
+                    }else false // Bad block
+                }.toMutableMap()
 
             do{
                 val (blockPos, block) = when(priorityValue.get()) {
@@ -125,10 +112,10 @@ class Nuker : Module() {
                         else
                             hardness
                     }
-                    else -> return // what? why?
-                } ?: return // well I guess there is no block to break :(
+                    else -> return
+                } ?: return
 
-                // Reset current damage in case of block switch
+
                 if (blockPos != currentBlock)
                     currentDamage = 0F
 
@@ -189,34 +176,34 @@ class Nuker : Module() {
 
             // Search for new blocks to break
             searchBlocks(radiusValue.get().roundToInt() + 1)
-                    .filter { (pos, block) ->
-                        if (getCenterDistance(pos) <= radiusValue.get() && validBlock(block)) {
-                            if (layerValue.get() && pos.y < thePlayer.posY) { // Layer: Break all blocks above you
-                                return@filter false
-                            }
+                .filter { (pos, block) ->
+                    if (getCenterDistance(pos) <= radiusValue.get() && validBlock(block)) {
+                        if (layerValue.get() && pos.y < thePlayer.posY) { // Layer: Break all blocks above you
+                            return@filter false
+                        }
 
-                            if (!throughWallsValue.get()) { // ThroughWalls: Just break blocks in your sight
-                                // Raytrace player eyes to block position (through walls check)
-                                val eyesPos = Vec3(thePlayer.posX, thePlayer.entityBoundingBox.minY +
-                                        thePlayer.eyeHeight, thePlayer.posZ)
-                                val blockVec = Vec3(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5)
-                                val rayTrace = mc.theWorld!!.rayTraceBlocks(eyesPos, blockVec,
-                                        false, true, false)
+                        if (!throughWallsValue.get()) { // ThroughWalls: Just break blocks in your sight
+                            // Raytrace player eyes to block position (through walls check)
+                            val eyesPos = Vec3(thePlayer.posX, thePlayer.entityBoundingBox.minY +
+                                    thePlayer.eyeHeight, thePlayer.posZ)
+                            val blockVec = Vec3(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5)
+                            val rayTrace = mc.theWorld!!.rayTraceBlocks(eyesPos, blockVec,
+                                false, true, false)
 
-                                // Check if block is visible
-                                rayTrace != null && rayTrace.blockPos == pos
-                            } else true // Done
-                        } else false // Bad block
-                    }
-                    .forEach { (pos, _) ->
-                        // Instant break block
-                        mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.START_DESTROY_BLOCK,
-                                pos, EnumFacing.DOWN))
-                        thePlayer.swingItem()
-                        mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK,
-                                pos, EnumFacing.DOWN))
-                        attackedBlocks.add(pos)
-                    }
+                            // Check if block is visible
+                            rayTrace != null && rayTrace.blockPos == pos
+                        } else true // Done
+                    } else false // Bad block
+                }
+                .forEach { (pos, _) ->
+                    // Instant break block
+                    mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.START_DESTROY_BLOCK,
+                        pos, EnumFacing.DOWN))
+                    thePlayer.swingItem()
+                    mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK,
+                        pos, EnumFacing.DOWN))
+                    attackedBlocks.add(pos)
+                }
         }
     }
 
@@ -227,12 +214,12 @@ class Nuker : Module() {
             val safePos = BlockPos(mc.thePlayer!!.posX, mc.thePlayer!!.posY - 1, mc.thePlayer!!.posZ)
             val safeBlock = BlockUtils.getBlock(safePos)
             if (safeBlock != null && validBlock(safeBlock))
-                RenderUtils.drawBlockBox(safePos, Color.GREEN, true,true,3F)
+                RenderUtils.drawBlockBox(safePos, Color.GREEN, true)
         }
 
         // Just draw all blocks
         for (blockPos in attackedBlocks)
-            RenderUtils.drawBlockBox(blockPos, Color.RED, true,true,3F)
+            RenderUtils.drawBlockBox(blockPos, Color.RED, true)
     }
 
     /**

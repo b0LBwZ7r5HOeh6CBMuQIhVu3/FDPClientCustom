@@ -39,7 +39,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", ,"BlocksMC","Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -62,10 +62,11 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
     private val lookValue = BoolValue("UseC06Packet", false)
     private val debugValue = BoolValue("DebugMessage", false)
-    
+
     var antiDesync = false
 
     val msTimer = MSTimer()
+
     private val minemoraTimer = MSTimer()
     private var usedTimer = false
     val flagTimer = MSTimer()
@@ -105,8 +106,8 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 return
                 }
             }
-            
-            if(s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
+
+            if (s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
                 return
 
             needEdit = true
@@ -115,7 +116,16 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 val y = mc.thePlayer.posY + yOffset
                 val z = mc.thePlayer.posZ + zOffset
                 if (lookValue.get()) {
-                    mc.netHandler.addToSendQueue(C06PacketPlayerPosLook(x, y, z, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, ground))
+                    mc.netHandler.addToSendQueue(
+                        C06PacketPlayerPosLook(
+                            x,
+                            y,
+                            z,
+                            mc.thePlayer.rotationYaw,
+                            mc.thePlayer.rotationPitch,
+                            ground
+                        )
+                    )
                 } else {
                     mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, ground))
                 }
@@ -144,6 +154,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.1100013579, ground = false)
                     sendCriticalPacket(yOffset = 0.0000013579, ground = false)
                 }
+
                 "ncppacket2" -> {
                     sendCriticalPacket(yOffset = 0.0626, ground = onGroundPacketValue.get())
                     if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
@@ -161,6 +172,13 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                         mc.timer.timerSpeed = timerValue.get()
                     }
                     if(hytMorePacketValue.get()) {sendCriticalPacket(yOffset = 0.05250000000101, ground = false)}
+                 "blocksmc" -> {
+                    sendCriticalPacket(yOffset = 0.0825080378093, ground = false)
+                    sendCriticalPacket(yOffset = 0.0215634532004, ground = false)
+                    sendCriticalPacket(yOffset = 0.1040220332227, ground = false)
+                }
+
+                "aac5.0.4" -> { //aac5.0.4 moment but with bad cfg(cuz it will flag for timer)
                     sendCriticalPacket(yOffset = 0.00133545, ground = false)
                     if (hytMorePacketValue.get()) {
                         sendCriticalPacket(yOffset = 0.01400000001010, ground = false)
@@ -203,17 +221,18 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.0014749900000101, ground = false)
                     sendCriticalPacket(yOffset = 0.0000007451816400000, ground = false)
                 }
-                
+
                 "vulcansemi" -> {
                     attacks++
-                    if(attacks > 6) {
+                    if (attacks > 6) {
                         sendCriticalPacket(yOffset = 0.2, ground = false)
                         sendCriticalPacket(yOffset = 0.1216, ground = false)
                         attacks = 0
-                    }else{
+                    } else {
                         antiDesync = false
                     }
                 }
+
                 
                 "noteless" -> {
                     sendCriticalPacket(yOffset = 0.11921599284565, ground = false)
@@ -223,30 +242,29 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 }
                 "matrixsemi" -> {
                     attacks++
-                    if(attacks > 3) {
-                        sendCriticalPacket(yOffset = 0.110314, ground = false)
-                        sendCriticalPacket(yOffset = 0.0200081, ground = false)
-                        sendCriticalPacket(yOffset = 0.00000001300009, ground = false)
-                        sendCriticalPacket(yOffset = 0.000000000022, ground = false)
-                        sendCriticalPacket(ground = true)
+                    if (attacks > 3) {
+                    sendCriticalPacket(yOffset = 0.0825080378093, ground = false)
+                    sendCriticalPacket(yOffset = 0.023243243674, ground = false)
+                    sendCriticalPacket(yOffset = 0.0215634532004, ground = false)
+                    sendCriticalPacket(yOffset = 0.00150000001304, ground = false)
                         attacks = 0
-                    }else{
+                    } else {
                         antiDesync = false
                     }
                 }
-                
+
                 "verussmart" -> {
-                    attacks ++
+                    attacks++
                     if (attacks > 4) {
                         attacks = 0
-                        
+
                         sendCriticalPacket(yOffset = 0.001, ground = true)
                         sendCriticalPacket(ground = false)
-                    }else{
+                    } else {
                         antiDesync = false
                     }
                 }
-                
+
                 "hypixel2" -> {
                     sendCriticalPacket(yOffset = 0.05250000001304, ground = false)
                     sendCriticalPacket(yOffset = 0.00150000001304, ground = false)
@@ -257,6 +275,13 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                 "mineplex" -> {
                     sendCriticalPacket(yOffset = 0.0000000000000045, ground = false)
                     sendCriticalPacket(ground = false)
+                }
+                
+                "noground" -> {
+                    if (sNoGround.get()){
+                        sendCriticalPacket(ground = false)
+                        sendCriticalPacket(ground = false)
+                    }
                 }
 
                 "more" -> {
@@ -290,8 +315,18 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                         motionZ = 0.00
                     }
                     mc.thePlayer.triggerAchievement(StatList.jumpStat)
-                    sendCriticalPacket(xOffset = motionX / 3, yOffset = 0.20000004768372, zOffset = motionZ / 3, ground = false)
-                    sendCriticalPacket(xOffset = motionX / 1.5, yOffset = 0.12160004615784, zOffset = motionZ / 1.5, ground = false)
+                    sendCriticalPacket(
+                        xOffset = motionX / 3,
+                        yOffset = 0.20000004768372,
+                        zOffset = motionZ / 3,
+                        ground = false
+                    )
+                    sendCriticalPacket(
+                        xOffset = motionX / 1.5,
+                        yOffset = 0.12160004615784,
+                        zOffset = motionZ / 1.5,
+                        ground = false
+                    )
                 }
                 "aac4packet" -> {
                     val motionX: Double
@@ -417,7 +452,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
     @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
-        
+
         if (packet is S08PacketPlayerPosLook) {
             flagTimer.reset()
             antiDesync = false
@@ -426,10 +461,13 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
             }
         }
 
-        if (packet is C03PacketPlayer && (MovementUtils.isMoving() || syncTimer.hasTimePassed(1000L) || msTimer.hasTimePassed(((delayValue.get() / 5) + 75).toLong())))
+        if (packet is C03PacketPlayer && (MovementUtils.isMoving() || syncTimer.hasTimePassed(1000L) || msTimer.hasTimePassed(
+                ((delayValue.get() / 5) + 75).toLong()
+            ))
+        )
             antiDesync = false
-        
-        if(s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
+
+        if (s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
             return
 
         if (packet is C03PacketPlayer) {
@@ -487,7 +525,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                                 jState++
                                 if (jState % 2 == 0) {
                                     packet.y += 0.015625
-                                } else if (jState> 100) {
+                                } else if (jState > 100) {
                                     if (hoverNoFall.get()) packet.onGround = true
                                     jState = 1
                                 }
@@ -520,7 +558,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                                 jState++
                                 if (jState % 2 == 0) {
                                     packet.y += 0.0625
-                                } else if (jState> 50) {
+                                } else if (jState > 50) {
                                     if (hoverNoFall.get()) packet.onGround = true
                                     jState = 1
                                 }
@@ -604,7 +642,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                             } else jState = 0
                         }
                         "oldredesky" -> {
-                            if (hoverNoFall.get() && mc.thePlayer.fallDistance> 0) {
+                            if (hoverNoFall.get() && mc.thePlayer.fallDistance > 0) {
                                 packet.onGround = true
                                 return
                             }
