@@ -37,12 +37,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Timer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
-import net.minecraft.util.Vec3;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.GLUtessellator;
@@ -54,8 +54,9 @@ import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
 import java.util.List;
+import java.util.*;
+
 import static akka.actor.Nobody.start;
 import static akka.actor.Nobody.stop;
 import static java.lang.Math.*;
@@ -506,63 +507,6 @@ public final class RenderUtils extends MinecraftInstance {
         worldrenderer.pos((x + width), y, 0.0D).tex(((u + width) * f), (v * f1)).endVertex();
         worldrenderer.pos(x, y, 0.0D).tex((u * f), (v * f1)).endVertex();
         tessellator.draw();
-    }
-    public static void customRounded(float paramXStart, float paramYStart, float paramXEnd, float paramYEnd, float rTL, float rTR, float rBR, float rBL, int color) {
-        float alpha = (color >> 24 & 0xFF) / 255.0F;
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-
-        float z = 0;
-        if (paramXStart > paramXEnd) {
-            z = paramXStart;
-            paramXStart = paramXEnd;
-            paramXEnd = z;
-        }
-
-        if (paramYStart > paramYEnd) {
-            z = paramYStart;
-            paramYStart = paramYEnd;
-            paramYEnd = z;
-        }
-
-        double xTL = paramXStart + rTL;
-        double yTL = paramYStart + rTL;
-
-        double xTR = paramXEnd - rTR;
-        double yTR = paramYStart + rTR;
-
-        double xBR = paramXEnd - rBR;
-        double yBR = paramYEnd - rBR;
-
-        double xBL = paramXStart + rBL;
-        double yBL = paramYEnd - rBL;
-
-        glPushMatrix();
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glLineWidth(1);
-
-        glColor4f(red, green, blue, alpha);
-        glBegin(GL_POLYGON);
-
-        double degree = Math.PI / 180;
-        for (double i = 0; i <= 90; i += 0.25)
-            glVertex2d(xBR + Math.sin(i * degree) * rBR, yBR + Math.cos(i * degree) * rBR);
-        for (double i = 90; i <= 180; i += 0.25)
-            glVertex2d(xTR + Math.sin(i * degree) * rTR, yTR + Math.cos(i * degree) * rTR);
-        for (double i = 180; i <= 270; i += 0.25)
-            glVertex2d(xTL + Math.sin(i * degree) * rTL, yTL + Math.cos(i * degree) * rTL);
-        for (double i = 270; i <= 360; i += 0.25)
-            glVertex2d(xBL + Math.sin(i * degree) * rBL, yBL + Math.cos(i * degree) * rBL);
-        glEnd();
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glPopMatrix();
     }
 
     public static void drawRoundedCornerRect(float x, float y, float x1, float y1, float radius) {
@@ -1652,56 +1596,13 @@ public final class RenderUtils extends MinecraftInstance {
                 : null);
     }
 
-    public static void rectangle(double left, double top, double right, double bottom, int color) {
-        double var5;
-        if (left < right) {
-            var5 = left;
-            left = right;
-            right = var5;
-        }
-        if (top < bottom) {
-            var5 = top;
-            top = bottom;
-            bottom = var5;
-        }
-        float var11 = (float) (color >> 24 & 255) / 255.0f;
-        float var6 = (float) (color >> 16 & 255) / 255.0f;
-        float var7 = (float) (color >> 8 & 255) / 255.0f;
-        float var8 = (float) (color & 255) / 255.0f;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate((int) 770, (int) 771, (int) 1, (int) 0);
-        GlStateManager.color((float) var6, (float) var7, (float) var8, (float) var11);
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldRenderer.pos(left, bottom, 0.0).endVertex();
-        worldRenderer.pos(right, bottom, 0.0).endVertex();
-        worldRenderer.pos(right, top, 0.0).endVertex();
-        worldRenderer.pos(left, top, 0.0).endVertex();
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-    }
+
 
     public static Color reAlpha(Color cIn, float alpha){
         return new Color(cIn.getRed()/255f,cIn.getGreen()/255f,cIn.getBlue()/255f,cIn.getAlpha() / 255f * alpha);
     }
 
-    public static void rectangleBordered(double x, double y, double x1, double y1, double width, int internalColor,
-                                         int borderColor) {
-        RenderUtils.rectangle(x + width, y + width, x1 - width, y1 - width, internalColor);
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-        RenderUtils.rectangle(x + width, y, x1 - width, y + width, borderColor);
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-        RenderUtils.rectangle(x, y, x + width, y1, borderColor);
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-        RenderUtils.rectangle(x1 - width, y, x1, y1, borderColor);
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-        RenderUtils.rectangle(x + width, y1 - width, x1 - width, y1, borderColor);
-        GlStateManager.color((float) 1.0f, (float) 1.0f, (float) 1.0f, (float) 1.0f);
-    }
+
 
     public static void skeetRect(final double x, final double y, final double x1, final double y1, final double size) {
         RenderUtils.rectangleBordered(x, y + -4.0, x1 + size, y1 + size, 0.5, new Color(60, 60, 60).getRGB(), new Color(10, 10, 10).getRGB());
@@ -1913,15 +1814,7 @@ public final class RenderUtils extends MinecraftInstance {
         glPopAttrib();
     }
 
-    public static void drawLine(final double x, final double y, final double x1, final double y1, final float width) {
-        glDisable(GL_TEXTURE_2D);
-        glLineWidth(width);
-        glBegin(GL_LINES);
-        glVertex2d(x, y);
-        glVertex2d(x1, y1);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-    }
+
 
     public static void startDrawing() {
         GL11.glEnable(3042);
