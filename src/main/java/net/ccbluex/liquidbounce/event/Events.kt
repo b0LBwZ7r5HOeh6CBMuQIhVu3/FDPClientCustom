@@ -185,11 +185,6 @@ class StepEvent(var stepHeight: Float, val eventState: EventState) : Event()
 class TextEvent(var text: String?) : Event()
 
 /**
- * Called when a text is going to be rendered
- */
-class TextEvent(var text: String?) : Event()
-
-/**
  * tick... tack... tick... tack
  */
 class TickEvent : Event()

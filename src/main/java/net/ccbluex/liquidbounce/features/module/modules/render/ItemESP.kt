@@ -319,7 +319,7 @@ class ItemESP : Module() {
                 alert("An error occurred while rendering all item entities for shader esp")
             }
             OutlineShader.OUTLINE_SHADER.stopDraw(
-                if (colorRainbowValue.get()) rainbow() else Color(
+                if (colorRainbow.get()) rainbow() else Color(
                     colorRedValue.get(),
                     colorGreenValue.get(),
                     colorBlueValue.get()

@@ -284,13 +284,13 @@ class ArrowDodge : Module() {
         onGoingTimer = null
     }
 
-    @EventTarget
+/*    @EventTarget
     fun onRender3d(render3DEvent: Render3DEvent) {
         if (!render.get()) return
 
         entity2History.forEach { (_, mutableList) -> RenderUtils.drawPoses(Color(255, 255, 0), mutableList) }
         entity2Prediction.forEach { (_, mutableList) -> RenderUtils.drawPoses(Color(86, 156, 214), mutableList) }
-    }
+    }*/
 
     private fun predict(entity: Entity): MutableList<Vec3> {
         var motionX = entity.motionX

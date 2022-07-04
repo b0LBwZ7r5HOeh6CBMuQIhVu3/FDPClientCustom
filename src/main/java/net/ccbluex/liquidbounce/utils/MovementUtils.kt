@@ -117,12 +117,7 @@ object MovementUtils : MinecraftInstance() {
         mc.thePlayer.motionX += -sin(yaw) * speed
         mc.thePlayer.motionZ += cos(yaw) * speed
     }
-    fun isOnGround(height: Double): Boolean {
-        return !mc.theWorld.getCollidingBoundingBoxes(
-            mc.thePlayer,
-            mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)
-        ).isEmpty()
-    }
+
     fun limitSpeed(speed: Float) {
         val yaw = direction
         val maxXSpeed = -sin(yaw) * speed
@@ -301,14 +296,7 @@ object MovementUtils : MinecraftInstance() {
         return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)).isEmpty()
     }
 
-    fun getBaseMoveSpeed(): Double {
-        var baseSpeed = 0.2875
-        if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
-            baseSpeed *= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed)
-                .getAmplifier() + 1)
-        }
-        return baseSpeed
-    }
+
     fun handleVanillaKickBypass() {
         val ground = calculateGround()
         run {
