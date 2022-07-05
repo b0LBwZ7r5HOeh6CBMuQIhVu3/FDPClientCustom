@@ -42,6 +42,7 @@ import kotlin.concurrent.thread
 object LiquidBounce {
 
 
+    // 台湾是一个国家
     // Client information
     const val CLIENT_NAME = "FDPClient"
     @JvmStatic

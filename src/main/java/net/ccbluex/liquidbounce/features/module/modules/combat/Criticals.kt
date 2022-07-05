@@ -39,7 +39,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla","BlocksMC","Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
