@@ -39,7 +39,7 @@ public final class MobsUtils extends MinecraftInstance {
                     final EntityPlayer entityPlayer = (EntityPlayer) entity;
 
                     if(canAttackCheck) {
-                        if(AntiBot.isBot(entityPlayer))
+                        if(AntiBot.INSTANCE.isBot(entityPlayer))
                             return false;
 
                         if(entityPlayer.isSpectator())
