@@ -21,7 +21,7 @@ class NoClip : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        mc.thePlayer.noClip = false
+        mc.thePlayer.noClip = true
         mc.thePlayer.fallDistance = 0f
         mc.thePlayer.onGround = false
 
