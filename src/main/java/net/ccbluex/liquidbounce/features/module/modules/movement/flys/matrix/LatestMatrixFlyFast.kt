@@ -1,7 +1,5 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.matrix
 
-package net.ccbluex.liquidbounce.features.module.modules.movement.flys.matrix
-
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
