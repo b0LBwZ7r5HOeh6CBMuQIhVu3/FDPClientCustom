@@ -15,6 +15,7 @@ import net.ccbluex.liquidbounce.ui.i18n.LanguageManager
 import net.ccbluex.liquidbounce.utils.ClassUtils
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.MinecraftInstance
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.utils.render.Animation
 import net.ccbluex.liquidbounce.utils.render.ColorUtils.stripColor
 import net.ccbluex.liquidbounce.utils.render.EaseUtils
@@ -22,6 +23,11 @@ import net.ccbluex.liquidbounce.value.Value
 import org.lwjgl.input.Keyboard
 
 open class Module : MinecraftInstance(), Listenable {
+
+    fun Debug(msg: String){
+        if(ClientUtils.inDevMode)ClientUtils.displayChatMessage("§7"+RandomUtils.nextInt(0,100).toString()+" §a[Debug] §f$msg")
+    }
+
     // Module information
     var name: String
     var localizedName = ""
