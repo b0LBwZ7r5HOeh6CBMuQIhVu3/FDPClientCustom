@@ -1571,9 +1571,9 @@ public final class RenderUtils extends MinecraftInstance {
             return;
         }
         Map<Integer, Boolean> map = glCapMap.get(scale);
-        if(!map.isEmpty()) {
+/*        if(!map.isEmpty()) {
             ClientUtils.INSTANCE.logWarn("Cap map is not empty! [" + map.size() + "]");
-        }
+        }*/
         map.clear();
     }
 
