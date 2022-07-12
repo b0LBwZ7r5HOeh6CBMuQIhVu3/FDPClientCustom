@@ -25,14 +25,15 @@ class LatestMatrixFlyFly : FlyMode("LatestMatrixFlyFly") {
     }
 
     fun FlagPacket(yaw: Double) {
-        mc.netHandler.addToSendQueue(
+/*        mc.netHandler.addToSendQueue(
             C03PacketPlayer.C04PacketPlayerPosition(
                 mc.thePlayer.posX,
                 mc.thePlayer.posY,
                 mc.thePlayer.posZ,
                 true
             )
-        )
+        )*/
+        mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition()) //funni packet
         mc.netHandler.addToSendQueue(
             C03PacketPlayer.C04PacketPlayerPosition(
                 mc.thePlayer.posX + -sin(yaw) * 1.5,
