@@ -2,7 +2,6 @@
 //
 
 
-
 package net.ccbluex.liquidbounce.features.module.modules.misc
 
 import net.ccbluex.liquidbounce.LiquidBounce
@@ -10,7 +9,6 @@ import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.WorldEvent
-import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -25,14 +23,15 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.*
-import net.minecraft.item.ItemArmor
 import java.util.*
+import kotlin.concurrent.thread
 
 @ModuleInfo(name = "AntiBot", category = ModuleCategory.MISC)
 object AntiBot : Module() {
 
     private val tabValue = BoolValue("Tab", true)
-    private val tabModeValue = ListValue("TabMode", arrayOf("Equals", "Contains"), "Contains").displayable { tabValue.get() }
+    private val tabModeValue =
+        ListValue("TabMode", arrayOf("Equals", "Contains"), "Contains").displayable { tabValue.get() }
     private val entityIDValue = BoolValue("EntityID", true)
     private val colorValue = BoolValue("Color", false)
     private val livingTimeValue = BoolValue("LivingTime", false)
@@ -46,17 +45,25 @@ object AntiBot : Module() {
     private val minHealthValue = FloatValue("MinHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val derpValue = BoolValue("Derp", true)
     private val randomHealthValue = BoolValue("randomHealth", true)
-    private val randomHealthMaxHealthValue = FloatValue("randomHealthMaxHealth", 20f, 1f, 40f).displayable { randomHealthValue.get() }
-    private val randomHealthMinHealthValue = FloatValue("randomHealthMinHealth", 1f, 1f, 40f).displayable { randomHealthValue.get() }
-    private val randomHealthLivingTimeTicksValue = IntegerValue("randomHealthLivingTimeTicks", 15, 1, 50).displayable { randomHealthValue.get() }
-    private val randomHealthRadiusCheckOnlyXZValue = BoolValue("randomHealthRadiusCheckOnlyXZ", false).displayable { randomHealthValue.get() }
-    private val randomHealthRadiusValue = FloatValue("randomHealthRadiusCheckBlocks", 20f, 5f, 30f).displayable { randomHealthValue.get() }
+    private val randomHealthMaxHealthValue =
+        FloatValue("randomHealthMaxHealth", 20f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthMinHealthValue =
+        FloatValue("randomHealthMinHealth", 1f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthLivingTimeTicksValue =
+        IntegerValue("randomHealthLivingTimeTicks", 15, 1, 50).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusCheckOnlyXZValue =
+        BoolValue("randomHealthRadiusCheckOnlyXZ", false).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusValue =
+        FloatValue("randomHealthRadiusCheckBlocks", 20f, 5f, 30f).displayable { randomHealthValue.get() }
     private val hasCustomNameValue = BoolValue("hasCustomName", false)
-    private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
+    private val hasCustomNameStrictValue =
+        BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
-    private val validNameRegexValue = TextValue("ValidNameRegex", "[\\w|一-龥]{3,16}").displayable {validNameValue.get()}
+    private val validNameRegexValue =
+        TextValue("ValidNameRegex", "[\\w|一-龥]{3,16}").displayable { validNameValue.get() }
     private val armorValue = BoolValue("Armor", false)
+
     // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
     private val matrixBotValue = BoolValue("MatrixBot", false)
@@ -65,23 +72,35 @@ object AntiBot : Module() {
     private val lowWidthValue = BoolValue("LowWidth", true)
     private val neverMoveValue = BoolValue("NeverMove", false)
     private val neverRotationValue = BoolValue("neverRotation", false)
+
     // private val spawnInCombatValue = BoolValue("SpawnInCombat", false)
     private val noClipValue = BoolValue("NoClip", false)
     private val reusedEntityIdValue = BoolValue("ReusedEntityId", false)
 
     private val duplicateInWorldValue = BoolValue("DuplicateInWorld", false)
     private val duplicateInTabValue = BoolValue("DuplicateInTab", false)
-    private val duplicateCompareModeValue = ListValue("DuplicateCompareMode", arrayOf("OnTime", "WhenSpawn"), "OnTime").displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
+    private val duplicateCompareModeValue = ListValue(
+        "DuplicateCompareMode",
+        arrayOf("OnTime", "WhenSpawn"),
+        "OnTime"
+    ).displayable { duplicateInTabValue.get() || duplicateInWorldValue.get() }
     private val fastDamageValue = BoolValue("FastDamage", false)
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
+
     // private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
     private val alwaysInRadiusValue = BoolValue("AlwaysInRadius", false)
     private val alwaysInRadiusOnlyXZValue = BoolValue("AlwaysInRadiusOnlyXZ", false)
-    private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
+    private val alwaysRadiusValue =
+        FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
     private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
-    private val alwaysInRadiusWithTicksCheckValue = BoolValue("AlwaysInRadiusWithTicksCheck", false).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
-    private val alwaysInRadiusInCombatingValue = BoolValue("AlwaysInRadiusOnlyCombating", false).displayable { alwaysInRadiusValue.get()}
+    private val alwaysInRadiusWithTicksCheckValue = BoolValue(
+        "AlwaysInRadiusWithTicksCheck",
+        false
+    ).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
+    private val alwaysInRadiusInCombatingValue =
+        BoolValue("AlwaysInRadiusOnlyCombating", false).displayable { alwaysInRadiusValue.get() }
     private val hideBotValue = BoolValue("HideBot", false)
+    private val hytRespawnValue = BoolValue("hytRespawn", false)
 
     private val ground = mutableListOf<Int>()
     private val air = mutableListOf<Int>()
@@ -102,6 +121,7 @@ object AntiBot : Module() {
     private val duplicate = mutableListOf<UUID>()
     private val noClip = mutableListOf<Int>()
     private val hasRemovedEntities = mutableListOf<Int>()
+    private val hytNoAttack = mutableListOf<String>()
     private val regex = Regex("\\w{3,16}")
 
     fun isBot(entity: EntityLivingBase): Boolean {
@@ -135,7 +155,7 @@ object AntiBot : Module() {
         if (swingValue.get() && !swing.contains(entity.entityId)) {
             return true
         }
-        if (healthValue.get() && (entity.health > maxHealthValue.get() || entity.health <= minHealthValue.get() )) {
+        if (healthValue.get() && (entity.health > maxHealthValue.get() || entity.health <= minHealthValue.get())) {
             return true
         }
 
@@ -147,22 +167,25 @@ object AntiBot : Module() {
             return true
         }
 
-        if(noClipValue.get() && noClip.contains(entity.entityId)) {
+        if (noClipValue.get() && noClip.contains(entity.entityId)) {
             return true
         }
 
-        if(reusedEntityIdValue.get() && hasRemovedEntities.contains(entity.entityId)) {
+        if (reusedEntityIdValue.get() && hasRemovedEntities.contains(entity.entityId)) {
             return false
         }
-        if(randomHealthValue.get() && randomHealth.contains(entity.entityId)){
+        if (randomHealthValue.get() && randomHealth.contains(entity.entityId)) {
             return true
         }
 
         if (hasCustomNameValue.get() && entity.hasCustomName() && (!hasCustomNameStrictValue.get() || entity.getCustomNameTag()
-                .contains(entity.getName()))) {
+                .contains(entity.getName()))
+        ) {
             return true
         }
-
+        if(hytRespawnValue.get() && hytNoAttack.contains(entity.getName())){
+            return true
+        }
         if (entityIDValue.get() && (entity.entityId >= 1000000000 || entity.entityId <= -1)) {
             return true
         }
@@ -181,17 +204,18 @@ object AntiBot : Module() {
 
         if (armorValue.get()) {
             if (entity.inventory.armorInventory[0] == null && entity.inventory.armorInventory[1] == null &&
-                entity.inventory.armorInventory[2] == null && entity.inventory.armorInventory[3] == null) {
+                entity.inventory.armorInventory[2] == null && entity.inventory.armorInventory[3] == null
+            ) {
                 return true
             }
         }
-/*        if (invalidArmorValue.get()) {
-            for (it in entity.inventory.armorInventory){
-                if(it != null && it !is ItemArmor){
-                    return true
-                }
-            }
-        }*/
+        /*        if (invalidArmorValue.get()) {
+                    for (it in entity.inventory.armorInventory){
+                        if(it != null && it !is ItemArmor){
+                            return true
+                        }
+                    }
+                }*/
         if (pingValue.get()) {
             if (mc.netHandler.getPlayerInfo(entity.uniqueID)?.responseTime == 0) {
                 return true
@@ -288,14 +312,28 @@ object AntiBot : Module() {
             }
 
             if (!noClip.contains(entity.entityId)) {
-                val cb = mc.theWorld.getCollidingBoundingBoxes(entity, entity.entityBoundingBox.contract(0.0625, 0.0625, 0.0625))
+                val cb = mc.theWorld.getCollidingBoundingBoxes(
+                    entity,
+                    entity.entityBoundingBox.contract(0.0625, 0.0625, 0.0625)
+                )
 //                alert("NOCLIP[${cb.size}] ${entity.displayName.unformattedText} ${entity.posX} ${entity.posY} ${entity.posZ}")
-                if(cb.isNotEmpty()) {
+                if (cb.isNotEmpty()) {
                     noClip.add(entity.entityId)
                 }
-                val dist = mc.thePlayer.getDistance(entity.posX, if (alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
-                val dist2 = mc.thePlayer.getDistance(entity.posX, if (randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
-                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && dist > alwaysRadiusValue.get()) {
+                val dist = mc.thePlayer.getDistance(
+                    entity.posX,
+                    if (alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY,
+                    entity.posZ
+                )
+                val dist2 = mc.thePlayer.getDistance(
+                    entity.posX,
+                    if (randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY,
+                    entity.posZ
+                )
+                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(
+                        entity.entityId
+                    ) && dist > alwaysRadiusValue.get()
+                ) {
                     notAlwaysInRadius.add(entity.entityId)
                 }
                 if (!notAlwaysInRadius.contains(entity.entityId) && dist < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
@@ -307,18 +345,21 @@ object AntiBot : Module() {
                 if (!hasHitDelay.contains(entity.entityId) && entity.hurtResistantTime > 0 && entity.hurtTime > 9) {
                     hasHitDelay.add(entity.entityId)
                 }
-                if(!moved.contains(entity.entityId) && (entity.lastTickPosY != entity.posY || entity.lastTickPosX != entity.posX || entity.lastTickPosZ != entity.posZ)){
+                if (!moved.contains(entity.entityId) && (entity.lastTickPosY != entity.posY || entity.lastTickPosX != entity.posX || entity.lastTickPosZ != entity.posZ)) {
                     moved.add(entity.entityId)
                 }
-                if(!turnHead.contains(entity.entityId) && (entity.prevRotationYaw != entity.rotationYaw || entity.prevRotationPitch != entity.rotationPitch)){
+                if (!turnHead.contains(entity.entityId) && (entity.prevRotationYaw != entity.rotationYaw || entity.prevRotationPitch != entity.rotationPitch)) {
                     turnHead.add(entity.entityId)
                 }
-                if(!randomHealth.contains(entity.entityId) && entity.ticksExisted < randomHealthLivingTimeTicksValue.get() && (entity.health <= maxHealthValue.get() && entity.health >= minHealthValue.get() ) && dist2 < randomHealthRadiusValue.get()){
+                if (!randomHealth.contains(entity.entityId) && entity.ticksExisted < randomHealthLivingTimeTicksValue.get() && (entity.health <= maxHealthValue.get() && entity.health >= minHealthValue.get()) && dist2 < randomHealthRadiusValue.get()) {
                     randomHealth.add(entity.entityId)
                 }
             }
 
-            if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()) {
+            if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(
+                    entity.entityId
+                ) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()
+            ) {
                 notAlwaysInRadius.add(entity.entityId)
                 // if (alwaysInRadiusRemoveValue.get()) {
                 //     mc.theWorld.removeEntity(entity)
@@ -335,8 +376,24 @@ object AntiBot : Module() {
         }
 
         val packet = event.packet
-
-        if(packet is S18PacketEntityTeleport) {
+        if (packet is S02PacketChat) {
+            val chat = packet.chatComponent.unformattedText
+            if(hytRespawnValue.get() && !chat.contains(":")){
+                if(chat.contains("起床战争") && chat.contains("杀死了")){
+                        val hytKilledRegex = """杀死了\S*\(""".toRegex()
+                        val noSpaceChat = chat.replace(" ","")
+                        val player = hytKilledRegex.find(noSpaceChat)!!.value.replace("杀死了","").replace("(","").replace(")","")
+                        hytNoAttack.add(player)
+                        thread(start = true) {
+                            try {
+                                Thread.sleep(6000)
+                                hytNoAttack.remove(player)
+                            } catch (ignored: InterruptedException) {
+                            }
+                        }
+                }
+            }
+        } else if (packet is S18PacketEntityTeleport) {
             processEntityMove(mc.theWorld.getEntityByID(packet.entityId) ?: return, packet.onGround)
         } else if (packet is S14PacketEntity) {
             processEntityMove(packet.getEntity(mc.theWorld) ?: return, packet.onGround)
@@ -344,7 +401,8 @@ object AntiBot : Module() {
             val entity = mc.theWorld.getEntityByID(packet.entityID)
 
             if (entity != null && entity is EntityLivingBase && packet.animationType == 0 &&
-                !swing.contains(entity.entityId)) {
+                !swing.contains(entity.entityId)
+            ) {
                 swing.add(entity.entityId)
             }
         } else if (packet is S38PacketPlayerListItem) {
@@ -357,8 +415,8 @@ object AntiBot : Module() {
                     }
                 }
             }
-                    } else if (packet is S0CPacketSpawnPlayer) {
-            if(LiquidBounce.combatManager.inCombat && !hasRemovedEntities.contains(packet.entityID)) {
+        } else if (packet is S0CPacketSpawnPlayer) {
+            if (LiquidBounce.combatManager.inCombat && !hasRemovedEntities.contains(packet.entityID)) {
 
                 spawnInCombat.add(packet.entityID)
             }
@@ -368,14 +426,25 @@ object AntiBot : Module() {
         }
 
         if (packet is S19PacketEntityStatus && packet.opCode.toInt() == 2 || packet is S0BPacketAnimation && packet.animationType == 1) {
-            val entity = if (packet is S19PacketEntityStatus) { packet.getEntity(mc.theWorld) } else if (packet is S0BPacketAnimation) { mc.theWorld.getEntityByID(packet.entityID) } else { null } ?: return
+            val entity = if (packet is S19PacketEntityStatus) {
+                packet.getEntity(mc.theWorld)
+            } else if (packet is S0BPacketAnimation) {
+                mc.theWorld.getEntityByID(packet.entityID)
+            } else {
+                null
+            } ?: return
 
             if (entity is EntityPlayer) {
-                lastDamageVl[entity.entityId] = lastDamageVl.getOrDefault(entity.entityId, 0f) + if (entity.ticksExisted - lastDamage.getOrDefault(entity.entityId, 0) <= fastDamageTicksValue.get()) {
-                     1f
-                } else {
-                    -0.5f
-                }
+                lastDamageVl[entity.entityId] =
+                    lastDamageVl.getOrDefault(entity.entityId, 0f) + if (entity.ticksExisted - lastDamage.getOrDefault(
+                            entity.entityId,
+                            0
+                        ) <= fastDamageTicksValue.get()
+                    ) {
+                        1f
+                    } else {
+                        -0.5f
+                    }
                 lastDamage[entity.entityId] = entity.ticksExisted
             }
         }
@@ -395,10 +464,10 @@ object AntiBot : Module() {
         clearAll()
     }
 
-/*    fun isInTabList(player: EntityPlayer): Boolean {
-        return mc.ingameGUI.getTabList().getList()
-            .contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
-    }*/
+    /*    fun isInTabList(player: EntityPlayer): Boolean {
+            return mc.ingameGUI.getTabList().getList()
+                .contains(mc.getNetHandler().getPlayerInfo(player.getGameProfile().getId()))
+        }*/
 
     private fun clearAll() {
         hitted.clear()
