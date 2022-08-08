@@ -1,21 +1,15 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.other
 
-import net.ccbluex.liquidbounce.LiquidBounce
-import net.ccbluex.liquidbounce.event.EventState
-import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification
-import net.ccbluex.liquidbounce.ui.client.hud.element.elements.NotifyType
 import net.ccbluex.liquidbounce.event.*
-import net.ccbluex.liquidbounce.utils.MovementUtils
-import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
-import net.minecraft.network.NetHandlerPlayServer
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.minecraft.network.Packet
 import net.minecraft.network.play.INetHandlerPlayServer
 import net.minecraft.network.play.client.*
 import net.minecraft.network.play.client.C03PacketPlayer.*
 import java.util.*
 import java.util.concurrent.LinkedBlockingQueue
-import net.minecraft.client.settings.GameSettings
+
 
 class MinemoraFly : FlyMode("Minemora") {
     
@@ -33,7 +27,18 @@ class MinemoraFly : FlyMode("Minemora") {
         try {
             disableLogger = true
             while (!packetBuffer.isEmpty()) {
+
                 mc.netHandler.addToSendQueue(packetBuffer.take())
+                mc.netHandler.addToSendQueue(
+                    C08PacketPlayerBlockPlacement(
+                        mc.thePlayer.position.down(256),
+                        256,
+                        null,
+                        0f,
+                        0f,
+                        0f
+                    )
+                )
             }
             disableLogger = false
         } finally {
@@ -61,7 +66,7 @@ class MinemoraFly : FlyMode("Minemora") {
     override fun onMotion(event: MotionEvent) {
         if (event.eventState != EventState.PRE) return
         tick++
-        mc.timer.timerSpeed = 1.0f
+        if(tick > 4) mc.timer.timerSpeed = 1.0f
         if (tick == 1) {
             mc.timer.timerSpeed = 0.25f
             mc.netHandler.addToSendQueue(C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 3.42f, mc.thePlayer.posZ, false))

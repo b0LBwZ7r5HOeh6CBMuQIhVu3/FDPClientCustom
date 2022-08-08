@@ -9,7 +9,7 @@ import net.ccbluex.liquidbounce.value.FloatValue
 import net.minecraft.network.play.client.C03PacketPlayer
 import java.lang.Math.*
 
-class NewMatrixAirBounceFast : FlyMode("NewMatrixAirBounceFast") {
+class OldMatrixAirBounceFast : FlyMode("OldMatrixAirBounceFast") {
     private val speedValue = FloatValue("${valuePrefix}Speed", 1.5f, 0.2f, 1.7f)
     private val verticalSpeedValue = FloatValue("${valuePrefix}VerticalSpeed", 0.8f, 0.2f, 1.7f)
     private val timerValue = FloatValue("${valuePrefix}Timer", 0.8f, 0.3f, 1.3f)

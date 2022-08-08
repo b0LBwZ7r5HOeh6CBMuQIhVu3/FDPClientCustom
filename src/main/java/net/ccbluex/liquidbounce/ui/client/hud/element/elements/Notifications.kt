@@ -216,6 +216,8 @@ class Notification(
                         colors.rgb
                     )
                 }
+
+                else -> {}
             }
         }else{
             RenderUtils.drawRoundedCornerRect(0F+3f, 0F, width.toFloat()+5f, height.toFloat()-5f,2f ,colors.rgb)
