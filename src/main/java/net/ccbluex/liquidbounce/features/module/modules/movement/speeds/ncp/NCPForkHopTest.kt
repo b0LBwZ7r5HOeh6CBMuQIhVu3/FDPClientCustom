@@ -9,14 +9,13 @@ import net.ccbluex.liquidbounce.features.module.modules.movement.speeds.SpeedMod
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.minecraft.potion.Potion
 
-class NCPForkHopTest : SpeedMode("NCPForkHopTest") {
+class SlowHop2 : SpeedMode("SlowHop2") {
     override fun onEnable() {
 //        mc.timer.timerSpeed = 1.0866f
         super.onEnable()
     }
 
-    override fun onDisable() {
-        mc.thePlayer.speedInAir = 0.02f
+    override fun onDisable() { mc.thePlayer.speedInAir = 0.02f
         mc.timer.timerSpeed = 1f
         super.onDisable()
     }
@@ -39,10 +38,14 @@ class NCPForkHopTest : SpeedMode("NCPForkHopTest") {
                 } else if (mc.thePlayer.motionY < 0.2) mc.thePlayer.motionY -= 0.02
                 MovementUtils.strafe(0.38f)
             }
-        }else if (!MovementUtils.isMoving()) {
-            mc.thePlayer.motionX = 0.0
-            mc.thePlayer.motionZ = 0.0
+        } else {
+            mc.thePlayer.motionX *= 1.0199999809265137
+            mc.thePlayer.motionZ *= 1.0199999809265137
+            if (!MovementUtils.isMoving()) {
+                mc.thePlayer.motionX *= 0.6
+                mc.thePlayer.motionZ *= 0.6
+            }
         }
         super.onPreMotion()
-    } 
+    }
 }

@@ -37,6 +37,7 @@
     "gui.MixinGuiTextField",
     "gui.MixinGuiGameOver",
     "network.MixinC00Handshake",
+    "network.MixinC08PacketPlayerBlockPlacement",
     "network.MixinNetHandlerPlayClient",
     "network.MixinNetworkManager",
     "network.MixinNetworkPlayerInfo",
