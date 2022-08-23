@@ -101,7 +101,7 @@ public class RearView extends Element {
     }
 
     public void update() {
-        if (!isRecording() && isRendering()) {
+        if (!isRecording() && isRendering() && mc.thePlayer != null && mc.thePlayer.ticksExisted % 3 == 0) { //
             updateFbo();
         }
     }
@@ -141,22 +141,7 @@ public class RearView extends Element {
             int frameLimit = mc.gameSettings.limitFramerate;
             float fovSetting = mc.gameSettings.fovSetting;
 
-            mc.thePlayer.posX = this.getPos().xCoord;
-            mc.thePlayer.posY = this.getPos().yCoord;
-            mc.thePlayer.posZ = this.getPos().zCoord;
 
-            mc.thePlayer.prevPosX = this.getPos().xCoord;
-            mc.thePlayer.prevPosY = this.getPos().yCoord;
-            mc.thePlayer.prevPosZ = this.getPos().zCoord;
-
-            mc.thePlayer.lastTickPosX = this.getPos().xCoord;
-            mc.thePlayer.lastTickPosY = this.getPos().yCoord;
-            mc.thePlayer.lastTickPosZ = this.getPos().zCoord;
-
-            mc.thePlayer.rotationYaw = this.yaw;
-            mc.thePlayer.prevRotationYaw = this.yaw;
-            mc.thePlayer.rotationPitch = this.pitch;
-            mc.thePlayer.prevRotationPitch = this.pitch;
             mc.thePlayer.setSprinting(false);
 
             mc.gameSettings.hideGUI = true;

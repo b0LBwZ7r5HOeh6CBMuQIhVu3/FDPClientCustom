@@ -13,7 +13,8 @@ repositories {
     mavenCentral()
     maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
     maven { url = "https://jitpack.io/" }
-    maven { url = "https://repo.getfdp.today/" }
+    // maven { url = "https://repo.getfdp.today/" } //bigrat
+    maven { url = "https://lss233.littleservice.cn/repositories/minecraft/" }
 }
 
 version = "4.3.0"
@@ -66,10 +67,10 @@ dependencies {
         exclude module: "jna-platform"
     }
     include("com.jagrosh:DiscordIPC:0.4")
-    include("me.liuli:Elixir:1.2.1") {
-        exclude module: "kotlin-stdlib"
-        exclude module: "authlib"
-    }
+//    include("me.liuli:Elixir:1.2.1") {
+//        exclude module: "kotlin-stdlib"
+//        exclude module: "authlib"
+//    }
 
     include("com.github.zh79325:open-gif:1.0.4") {
         exclude module: "slf4j-api"

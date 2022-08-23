@@ -19,6 +19,7 @@ import net.ccbluex.liquidbounce.utils.FileUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.entity.player.EntityPlayer
 import java.io.File
 
@@ -31,10 +32,12 @@ object KillInsults : Module() {
             "Clear",
             "WithWords",
             "RawWords"
+        ,"idk"
         ), "RawWords"
     )
     private val waterMarkValue = BoolValue("WaterMark", true)
     private val hytShoutValue = BoolValue("hytShout", true)
+    private val messageValue = TextValue("message", "%name% how are you today")
     private val insultFile = File(LiquidBounce.fileManager.dir, "insult.json")
 
     init {
