@@ -540,16 +540,20 @@ class Velocity : Module() {
         } else if (packet is C0FPacketConfirmTransaction && mc.thePlayer.hurtTime > 0){
             if(modeValue.equals("Vulcan") && packet.uid > 0) {
                 event.cancelEvent()
-                if(alertValue.get()) alert("vc-"+packet.uid.toString())
+                if(alertValue.get()) alert("lag"+packet.uid.toString())
             }
         }else if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if (onlyHitVelocityValue.get() && (abs(packet.getMotionX()) < 0.02 || abs(packet.getMotionZ()) < 0.02 || abs(packet.getMotionY()) < 10 )) return
+            if (onlyHitVelocityValue.get() &&
+                 (abs(packet.getMotionX()) < 0.02 || abs(packet.getMotionZ()) < 0.02 || abs(packet.getMotionY()) < 10 ) //anti-cheat test
+                || (abs(packet.getMotionX()) > 6999 || abs(packet.getMotionZ()) > 6999) //p2w server long-jump block
+            )
+                return
             if (alertValue.get()) {
                 alert(
-                    "Velocity §7» " + (packet.getMotionX() + packet.getMotionY() + packet.getMotionZ()).toString()
+                    "Velocity §7» " + (packet.getMotionX().toString() + packet.getMotionY() + packet.getMotionZ())
                 )
             }
             velocityTimer.reset()

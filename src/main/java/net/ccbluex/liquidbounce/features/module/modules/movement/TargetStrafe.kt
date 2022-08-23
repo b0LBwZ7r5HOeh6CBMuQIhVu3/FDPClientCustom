@@ -6,6 +6,7 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.PlayerUtil
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.render.ColorManager.astolfoRainbow
@@ -30,6 +31,7 @@ class TargetStrafe : Module() {
     val holdSpaceValue = BoolValue("HoldSpace", false)
     private val onlySpeedValue = BoolValue("OnlySpeed", true)
     private val onlyflyValue = BoolValue("keyFly", false)
+    private val slowdownValue = BoolValue("slowdown", false)
     private var direction = -1
     private lateinit var killAura :KillAura
 
@@ -251,6 +253,9 @@ class TargetStrafe : Module() {
 
         event.x = asLast[0]
         event.z = asLast[1]
+        if (MovementUtils.getSpeed() > 0.18f) {
+            MovementUtils.strafe(0.15f)
+        }
         //        if (mc.thePlayer.isCollidedHorizontally || checkVoid()) direction = if (direction == 1) -1 else 1
 //        if(checkVoid() && canStrafe) return
 //        if (mc.gameSettings.keyBindLeft.isKeyDown) {
