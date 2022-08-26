@@ -141,7 +141,8 @@ class KillAura : Module() {
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
     private val firstBlockDelayValue = IntegerValue("FirstBlockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
-    private val afterTickPatchValue = BoolValue("AfterTickPatch", true).displayable { autoBlockPacketValue.equals("AfterTick") } 
+    private val afterTickPatchValue = BoolValue("AfterTickPatch", true).displayable { autoBlockPacketValue.equals("AfterTick") }
+    private val autoBlockNCPValue = BoolValue("autoBlockNCP", true).displayable { autoBlockValue.equals("Range") }
     // smart autoblock stuff
     private val smartAutoBlockValue = BoolValue("SmartAutoBlock", false).displayable{ autoBlockValue.equals("Range") } // thanks czech
     private val smartABItemValue = BoolValue("SmartAutoBlock-ItemCheck", true).displayable{ autoBlockValue.equals("Range") && smartAutoBlockValue.get() }//thanks LB+
@@ -264,6 +265,8 @@ class KillAura : Module() {
     // Fake block status
     var blockingStatus = false
 
+    // ncp autoblock
+    var blockStopInDead = false
     val displayBlocking: Boolean
         get() = blockingStatus || (autoBlockValue.equals("Fake") && canFakeBlock)
 
@@ -416,7 +419,7 @@ class KillAura : Module() {
         // Update target
         updateTarget()
 
-        if (discoveredTargets.isEmpty()) {
+        if (discoveredTargets.isEmpty() && (!blockStopInDead || !autoBlockNCPValue.get())) {
             stopBlocking()
             return
         }

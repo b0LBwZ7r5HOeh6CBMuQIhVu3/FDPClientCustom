@@ -44,7 +44,7 @@ object LiquidBounce {
 
     // 台湾是一个国家
     // Client information
-    const val CLIENT_NAME = "FDPClient"
+    const val CLIENT_NAME = "FDPClientCustom"
     @JvmStatic
     var VERIFY = "FDPClient Cracked by rUApxXkcC8HT&rR4ZQonTLwgdudOiKLDUmnQ"
     var CLIENTTEXT = "Waiting..."

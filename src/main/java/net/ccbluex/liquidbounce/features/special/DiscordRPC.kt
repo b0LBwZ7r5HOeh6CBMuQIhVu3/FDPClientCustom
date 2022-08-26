@@ -36,7 +36,8 @@ object DiscordRPC {
                 running = false
             }
         })
-        ipcClient.connect()
+//        ipcClient.connect()
+            // lol
     }
 
     private fun update() {

@@ -253,8 +253,8 @@ class TargetStrafe : Module() {
 
         event.x = asLast[0]
         event.z = asLast[1]
-        if (MovementUtils.getSpeed() > 0.18f) {
-            MovementUtils.strafe(0.15f)
+        if (MovementUtils.getSpeed() > 0.18f && slowdownValue.get()) {
+            MovementUtils.strafe(0.18f)
         }
         //        if (mc.thePlayer.isCollidedHorizontally || checkVoid()) direction = if (direction == 1) -1 else 1
 //        if(checkVoid() && canStrafe) return

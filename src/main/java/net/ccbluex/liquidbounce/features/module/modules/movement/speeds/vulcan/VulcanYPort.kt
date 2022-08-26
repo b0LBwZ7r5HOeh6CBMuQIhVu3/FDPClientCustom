@@ -17,12 +17,12 @@ class VulcanYPort : SpeedMode("VulcanYPort") {
         }
         mc.thePlayer.jumpMovementFactor = 0.0245f
         if (!mc.thePlayer.onGround && ticks > 3 && mc.thePlayer.motionY > 0) {
-            mc.thePlayer.motionY = -0.27
+            mc.thePlayer.motionY = -0.2
         }
 
         mc.gameSettings.keyBindJump.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindJump)
-        if (MovementUtils.getSpeed() < 0.215f && !mc.thePlayer.onGround) {
-            MovementUtils.strafe(0.215f)
+        if (MovementUtils.getSpeed() < 0.21f && !mc.thePlayer.onGround) {
+            MovementUtils.strafe(0.21f)
         }
         if (mc.thePlayer.onGround && MovementUtils.isMoving()) {
             ticks = 0
@@ -31,12 +31,12 @@ class VulcanYPort : SpeedMode("VulcanYPort") {
 	    if (!mc.thePlayer.isAirBorne) {
                 return //Prevent flag with Fly
             }
-            mc.timer.timerSpeed = 1.4f
+            mc.timer.timerSpeed = 1.1f
             wasTimer = true
             if(MovementUtils.getSpeed() < 0.48f) {
-                MovementUtils.strafe(0.48f)
+                MovementUtils.strafe(0.46f)
             }else{
-                MovementUtils.strafe((MovementUtils.getSpeed()*0.985).toFloat())
+                MovementUtils.strafe((MovementUtils.getSpeed()*0.9).toFloat())
             }
         }else if (!MovementUtils.isMoving()) {
             mc.timer.timerSpeed = 1.00f

@@ -13,7 +13,7 @@ class VulcanTimer : SpeedMode("VulcanTimer") {
 
     override fun onPreMotion() {
         if (MovementUtils.isMoving()) {
-            if (mc.thePlayer.ticksExisted % 3 == 0 || mc.thePlayer.ticksExisted % 4 == 0 || mc.thePlayer.ticksExisted % 5 == 0 || mc.thePlayer.ticksExisted % 7 == 0 || mc.thePlayer.ticksExisted % 8 == 0 || mc.thePlayer.ticksExisted % 9 == 0 || mc.thePlayer.ticksExisted % 10 == 0) {
+            if (/*mc.thePlayer.ticksExisted % 3 == 0 || */mc.thePlayer.ticksExisted % 4 == 0 || mc.thePlayer.ticksExisted % 5 == 0 || mc.thePlayer.ticksExisted % 7 == 0 || mc.thePlayer.ticksExisted % 8 == 0 || mc.thePlayer.ticksExisted % 9 == 0 || mc.thePlayer.ticksExisted % 10 == 0) {
                 mc.timer.timerSpeed = 2.8f
                 stage = true
             }else{
