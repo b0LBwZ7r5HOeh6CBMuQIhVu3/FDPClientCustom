@@ -64,7 +64,7 @@ class SuperKnockback : Module() {
                     mc.netHandler.addToSendQueue(C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING))
                     mc.thePlayer.serverSprintState = true
                 }
-                "c03" -> {repeat(35) {
+                "c03" -> {repeat(c03Packets.get()) {
                     mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                 }}
             }

@@ -86,6 +86,9 @@ open class Module : MinecraftInstance(), Listenable {
     fun onLoad() {
         if (this !is ScriptModule) {
             localizedName = "%module.$name.name%"
+            if(localizedName == "\%module.$name.name\%"){
+                localizedName = "$name"
+            }
         }
     }
 

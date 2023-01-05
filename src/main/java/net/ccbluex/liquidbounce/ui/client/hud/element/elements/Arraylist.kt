@@ -93,7 +93,7 @@ class Arraylist(
         module.tag ?: return ""
         return when (tagsValue.get().lowercase()) {
             "-" -> " - ${module.tag}"
-            "|" -> "|${module.tag}"
+            "|" -> " | ${module.tag}"
             "()" -> " (${module.tag})"
             "[]" -> " [${module.tag}]"
             "<>" -> " <${module.tag}>"

@@ -273,7 +273,7 @@ class LongJump : Module() {
                     "hyt4v4" -> {
                         mc.thePlayer.motionY += 0.031470000997
                         MovementUtils.strafe(MovementUtils.getSpeed() * 1.0114514f)
-                        if(mc.thePlayer.motionY > 0) mc.timer.timerSpeed = 0.8f else mc.timer.timerSpeed = 0.9f
+                        if(mc.thePlayer.motionY > 0) mc.timer.timerSpeed = 0.8f else mc.timer.timerSpeed = 1.0f
                     }
                 }
             }
