@@ -8,6 +8,8 @@ import net.minecraft.network.play.client.C03PacketPlayer
 
 class AAC1910Fly : FlyMode("AAC1.9.10") {
     private val speedValue = FloatValue("${valuePrefix}Speed", 0.3f, 0f, 1f)
+    private val motionYValue = FloatValue("${valuePrefix}motionY", 0.42f, 0f, 1f)
+    // private val c03packetsValue = FloatValue("${valuePrefix}c03packets", 0.3f, 0f, 1f)
 
     private var aacJump = 0.0
 
@@ -18,7 +20,7 @@ class AAC1910Fly : FlyMode("AAC1.9.10") {
 
         if (fly.launchY + aacJump > mc.thePlayer.posY) {
             mc.netHandler.addToSendQueue(C03PacketPlayer(true))
-            mc.thePlayer.motionY = 0.8
+            mc.thePlayer.motionY = motionYValue.get()
             MovementUtils.strafe(speedValue.get())
         }
 
