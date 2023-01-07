@@ -14,6 +14,7 @@ import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.*
@@ -37,8 +38,11 @@ object AntiBot : Module() {
     private val maxHealthValue = FloatValue("MaxHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val minHealthValue = FloatValue("MinHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val derpValue = BoolValue("Derp", true)
+    private val hasCustomNameValue = BoolValue("hasCustomName", false)
+    private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
+    private val validNameRegexValue = TextValue("ValidNameRegex", "\\w{3,16}").displayable {validNameValue.get()}
     private val armorValue = BoolValue("Armor", false)
     // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
@@ -123,6 +127,10 @@ object AntiBot : Module() {
             return true
         }
 
+        if (hasCustomNameValue.get() && entity.hasCustomName() && (!hasCustomNameStrictValue.get() || entity.getCustomNameTag().contains(entity.getName()))) ) {
+            return true
+        }
+
         if (entityIDValue.get() && (entity.entityId >= 1000000000 || entity.entityId <= -1)) {
             return true
         }
@@ -135,7 +143,7 @@ object AntiBot : Module() {
             return true
         }
 
-        if (validNameValue.get() && !entity.name.matches(Regex("\\w{3,16}"))) {
+        if (validNameValue.get() && !entity.name.matches(Regex(validNameRegexValue.get()))) {
             return true
         }
 
