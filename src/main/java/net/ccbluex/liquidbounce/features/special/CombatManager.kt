@@ -14,6 +14,8 @@ class CombatManager : Listenable, MinecraftInstance() {
 
     var inCombat = false
         private set
+    var attackRange = 0F
+        private set
     var target: EntityLivingBase? = null
         private set
     val attackedEntityList = mutableListOf<EntityLivingBase>()
@@ -54,6 +56,7 @@ class CombatManager : Listenable, MinecraftInstance() {
 
         if (target is EntityLivingBase && EntityUtils.isSelected(target, true)) {
             this.target = target
+            attackRange = mc.thePlayer.getDistanceToEntity(target)
             if (!attackedEntityList.contains(target)) {
                 attackedEntityList.add(target)
             }

@@ -422,7 +422,7 @@ class NoFall : Module() {
                 packet.onGround = false
             } else if (mode.equals("Hypixel", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
                 packet.onGround = mc.thePlayer.ticksExisted % 2 == 0
-            } else if (mode.equals("HypSpoof", ignoreCase = true)) {
+            } else if (mode.equals("HypSpoof", ignoreCase = true) && mc.thePlayer.fallDistance > 2.5F && mc.thePlayer.ticksExisted % 2 == 0) {
                 PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
             } else if (mode.equals("AACv4", ignoreCase = true) && aac4Fakelag) {
                 event.cancelEvent()
