@@ -7,6 +7,7 @@ package net.ccbluex.liquidbounce.ui.client.hud.element.elements
 
 import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
+import net.ccbluex.liquidbounce.features.module.modules.client.HUD
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.ui.client.hud.element.Border
 import net.ccbluex.liquidbounce.ui.client.hud.element.Element
@@ -128,14 +129,14 @@ class ScoreboardElement(
             val height = maxHeight - index * fontRenderer.FONT_HEIGHT
 
             GlStateManager.resetColor()
-
+            val hud = LiquidBounce.moduleManager.getModule(HUD::class.java) as HUD
             var listColor = textColor
             if (!serverValue.equals("none")) {
                 for (domain in allowedDomains) {
                     if (name.contains(domain, true)) {
                         name = when (serverValue.get().lowercase()) {
                             "clientname" -> LiquidBounce.COLORED_NAME
-                            "website" -> LiquidBounce.CLIENT_WEBSITE
+                            "website" -> hud.domainValue.get()
                             else -> "null"
                         }
                         listColor = ColorUtils.rainbow().rgb
