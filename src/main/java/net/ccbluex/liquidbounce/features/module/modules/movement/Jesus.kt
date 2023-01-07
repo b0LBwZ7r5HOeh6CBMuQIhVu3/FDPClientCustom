@@ -142,8 +142,8 @@ class Jesus : Module() {
             }
             "aactest" -> {
                 if (BlockUtils.getBlock(blockPos) === Blocks.water || mc.thePlayer.isInWater) {
-                    mc.thePlayer.onGround = false
-                    if(!mc.gameSettings.keyBindJump.pressed) mc.thePlayer.motionY = -0.1
+                    mc.thePlayer.onGround = true
+                    mc.thePlayer.isAirBorne = false
                 }
             }
             "horizon1.4.6" -> {

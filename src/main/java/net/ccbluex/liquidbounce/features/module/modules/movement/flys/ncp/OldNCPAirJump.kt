@@ -8,7 +8,7 @@ import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 class OldNCPAirJump : FlyMode("OldNCPAirump") {
 
     override fun onUpdate(event: UpdateEvent) {
-        mc.thePlayer.onGround = true;
-        mc.thePlayer.isAirBorne = false;
+        mc.thePlayer.onGround = true
+        mc.thePlayer.isAirBorne = false
     }
 }
