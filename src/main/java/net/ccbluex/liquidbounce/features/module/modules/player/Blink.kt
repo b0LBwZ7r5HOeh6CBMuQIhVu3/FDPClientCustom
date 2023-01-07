@@ -34,6 +34,7 @@ class Blink : Module() {
     private var disableLogger = false
     private val positions = LinkedList<DoubleArray>()
     private val pulseValue = BoolValue("Pulse", false)
+    private val c00Value = BoolValue("C00", false)
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
 
@@ -78,7 +79,8 @@ class Blink : Module() {
         if (packet is C04PacketPlayerPosition || packet is C06PacketPlayerPosLook ||
             packet is C08PacketPlayerBlockPlacement ||
             packet is C0APacketAnimation ||
-            packet is C0BPacketEntityAction || packet is C02PacketUseEntity) {
+            packet is C0BPacketEntityAction || packet is C02PacketUseEntity || 
+            (packet is C00PacketKeepAlive && c00Value.get()) ) {
             event.cancelEvent()
             packets.add(packet)
         }

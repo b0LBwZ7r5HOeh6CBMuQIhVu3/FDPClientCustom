@@ -70,7 +70,7 @@ class Scaffold : Module() {
     private val autoBlockValue = ListValue("AutoBlock", arrayOf("Spoof", "LiteSpoof", "Switch", "OFF"), "LiteSpoof")
 
     // Basic stuff
-    private val sprintValue = ListValue("Sprint", arrayOf("Always", "Dynamic", "OnGround", "OffGround", "OFF"), "Always")
+    private val sprintValue = ListValue("Sprint", arrayOf("Always", "Dynamic", "OnGround", "OffGround", "MotionY>0", "OFF"), "Always")
     private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val searchValue = BoolValue("Search", true)
     private val downValue = BoolValue("Down", true)
@@ -91,6 +91,7 @@ class Scaffold : Module() {
     private val customPitch = IntegerValue("CustomPitch", 79, -90, 90).displayable { rotationsValue.equals("Custom") }
     // private val tolleyBridgeValue = IntegerValue("TolleyBridgeTick", 0, 0, 10)
     // private val tolleyYawValue = IntegerValue("TolleyYaw", 0, 0, 90)
+    private val tolleyRotationValue = BoolValue("tolleyRotation", false).displayable { !rotationsValue.equals("None") }
     private val silentRotationValue = BoolValue("SilentRotation", true).displayable { !rotationsValue.equals("None") }
     private val minRotationSpeedValue: IntegerValue = object : IntegerValue("MinRotationSpeed", 180, 0, 180) {
         override fun onChanged(oldValue: Int, newValue: Int) {
@@ -413,7 +414,7 @@ class Scaffold : Module() {
         if (towerStatus) move()
 
         // Lock Rotation
-        if (rotationsValue.get() != "None" && keepLengthValue.get()> 0 && lockRotation != null && silentRotationValue.get()) {
+        if (rotationsValue.get() != "None" && keepLengthValue.get()> 0 && lockRotation != null && silentRotationValue.get() && (!tolleyRotationValue.get() || mc.thePlayer.motionY < 0)) {
             val limitedRotation = RotationUtils.limitAngleChange(RotationUtils.serverRotation, lockRotation, rotationSpeed)
             RotationUtils.setTargetRotation(limitedRotation, keepLengthValue.get())
         }
@@ -931,7 +932,7 @@ class Scaffold : Module() {
                     mc.thePlayer.rotationYaw + tolleyYawValue.get(),
                     placeRotation.rotation.pitch
                 )*/
-            if (silentRotationValue.get()) {
+            if (silentRotationValue.get() && (!tolleyRotationValue.get() || mc.thePlayer.motionY < 0)) {
                 val limitedRotation =
                     RotationUtils.limitAngleChange(RotationUtils.serverRotation, lockRotation!!, rotationSpeed)
                 RotationUtils.setTargetRotation(limitedRotation, keepLengthValue.get())
@@ -1034,6 +1035,7 @@ class Scaffold : Module() {
             "always", "dynamic" -> true
             "onground" -> mc.thePlayer.onGround
             "offground" -> !mc.thePlayer.onGround
+            "motiony>0" -> mc.thePlayer.motionY > 0
             else -> false
         }
 

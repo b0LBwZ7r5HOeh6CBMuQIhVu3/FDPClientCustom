@@ -79,7 +79,7 @@ class HighJump : Module() {
                     }
                 }
             }
-            "matrixWater" -> {
+            "matrixwater" -> {
                 if (mc.thePlayer.isInWater()) {
                     if (mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)).getBlock() == Block.getBlockById(9)) {
                         mc.thePlayer.motionY = 0.18
