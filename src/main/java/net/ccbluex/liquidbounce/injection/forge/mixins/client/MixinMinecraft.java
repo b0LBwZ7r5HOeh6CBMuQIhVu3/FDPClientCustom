@@ -42,6 +42,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import javax.swing.JOptionPane;
 
 import java.io.File;
 import java.nio.file.AccessDeniedException;
@@ -104,9 +105,9 @@ public abstract class MixinMinecraft {
     private void startGame(CallbackInfo callbackInfo) throws AccessDeniedException {
         if(PCLChecker.INSTANCE.fullCheck(this.mcDataDir)){
             Display.destroy();
-            String warnStr="Plain Craft Launcher is NOT supported with this client, please switch another Minecraft Launcher!";
-            MiscUtils.INSTANCE.showErrorPopup(warnStr);
-            throw new AccessDeniedException(warnStr);
+            String warnStr="Acha que a qunicao foi injusta?\n Voce podera enviar uma revisao de punicao a equipe da cheat.\n\nQuer ser desbanido agora?\n no.";
+            MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
+            JOptionPane.showMessageDialog(null, warnStr, "VOCE ESTA BANIDO", JOptionPane.ERROR_MESSAGE);
         }
         LiquidBounce.INSTANCE.initClient();
     }
