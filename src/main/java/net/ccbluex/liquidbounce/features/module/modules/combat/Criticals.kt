@@ -30,7 +30,7 @@ import net.minecraft.stats.StatList
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
 val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix","MiniPhase"), "packet")
-    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest"), "Jump")
+    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest","Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off","Normal","Strict"), "Normal")
     val hoverNoFall = BoolValue("HoverNoFall", true)
@@ -229,6 +229,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                         }
                         "minemoratest" -> {
                             mc.thePlayer.motionY = 0.114514886
+                        }
+                        "minis" -> {
+                            mc.thePlayer.motionY = 0.0000194382390
                         }
                     }
                 }

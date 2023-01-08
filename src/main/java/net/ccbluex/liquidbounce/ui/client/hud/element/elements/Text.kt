@@ -95,7 +95,7 @@ class Text(
                 "ydp" -> return mc.thePlayer.posY.toString()
                 "zdp" -> return mc.thePlayer.posZ.toString()
                 "velocity" -> return DECIMAL_FORMAT.format(sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ))
-                "ping" -> return EntityUtils.getPing(mc.thePlayer).toString()
+                "ping" -> return "${mc.thePlayer.ping}"
                 "health" -> return DECIMAL_FORMAT.format(mc.thePlayer.health)
                 "maxHealth" -> return DECIMAL_FORMAT.format(mc.thePlayer.maxHealth)
                 "healthInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.health)

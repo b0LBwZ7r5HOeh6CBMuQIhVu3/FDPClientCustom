@@ -121,8 +121,11 @@ class KillAura : Module() {
         }
     }.displayable { autoBlockValue.equals("Range") }
     private val autoBlockPacketValue = ListValue("AutoBlockPacket", arrayOf("AfterTick", "AfterAttack", "Vanilla"), "AfterTick").displayable { autoBlockValue.equals("Range") }
-    private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest","HypixelTest"), "Basic").displayable { autoBlockValue.equals("Range") }
-    private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val blockingPacketValue = ListValue("BlockingPacket", arrayOf("Basic", "NCPTest", "HypixelTest", "Normal", "AAC", "AACTest"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty","normal","onStoppedUsingItem"), "Basic").displayable { autoBlockValue.equals("Range") }
+    private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
+    private val stopBlockingBlockPosValue = ListValue("stopBlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
+    private val FakeUnblockValue = BoolValue("FakeUnblock", true).displayable { autoBlockValue.equals("Range") }
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
@@ -525,6 +528,10 @@ class KillAura : Module() {
                     GL11.glEnable(GL11.GL_TEXTURE_2D)
                     GL11.glPopMatrix()
                 }
+                "jello2" -> {
+                    renderESP()
+                    drawESP(target!!, Color(80, 255, 80).rgb, event)
+                }
                 "jello" -> {
                     val everyTime = 3000
                     val drawTime = (System.currentTimeMillis() % everyTime).toInt()
@@ -608,7 +615,130 @@ class KillAura : Module() {
             }
         }
     }
-
+    private fun esp(entity : EntityLivingBase, partialTicks : Float, radius : Float) {
+        GL11.glPushMatrix()
+        GL11.glDisable(3553)
+        GLUtils.startSmooth()
+        GL11.glDisable(2929)
+        GL11.glDepthMask(false)
+        GL11.glLineWidth(1.0F)
+        GL11.glBegin(3)
+        val x: Double = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks - mc.renderManager.viewerPosX
+        val y: Double = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks - mc.renderManager.viewerPosY
+        val z: Double = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks - mc.renderManager.viewerPosZ
+        for (i in 0..360) {
+            val rainbow = Color(Color.HSBtoRGB((mc.thePlayer.ticksExisted / 70.0 + sin(i / 50.0 * 1.75)).toFloat() % 1.0f, 0.7f, 1.0f))
+            GL11.glColor3f(rainbow.red / 255.0f, rainbow.green / 255.0f, rainbow.blue / 255.0f)
+            GL11.glVertex3d(x + radius * cos(i * 6.283185307179586 / 45.0), y + espAnimation, z + radius * sin(i * 6.283185307179586 / 45.0))
+        }
+        GL11.glEnd()
+        GL11.glDepthMask(true)
+        GL11.glEnable(2929)
+        GLUtils.endSmooth()
+        GL11.glEnable(3553)
+        GL11.glPopMatrix()
+    }
+    private fun renderESP(entity : EntityLivingBase) {
+        if (entity!=null){
+            if(markTimer.hasTimePassed(500) || entity!!.isDead){
+                entity=null
+                return
+            }
+            //can mark
+            val drawTime = (System.currentTimeMillis() % 2000).toInt()
+            val drawMode=drawTime>1000
+            var drawPercent=drawTime/1000F
+            //true when goes up
+            if(!drawMode){
+                drawPercent=1-drawPercent
+            }else{
+                drawPercent-=1
+            }
+            val points = mutableListOf<Vec3>()
+            val bb=entity!!.entityBoundingBox
+            val radius=bb.maxX-bb.minX
+            val height=bb.maxY-bb.minY
+            val posX = entity!!.lastTickPosX + (entity!!.posX - entity!!.lastTickPosX) * mc.timer.renderPartialTicks
+            var posY = entity!!.lastTickPosY + (entity!!.posY - entity!!.lastTickPosY) * mc.timer.renderPartialTicks
+            if(drawMode){
+                posY-=0.5
+            }else{
+                posY+=0.5
+            }
+            val posZ = entity!!.lastTickPosZ + (entity!!.posZ - entity!!.lastTickPosZ) * mc.timer.renderPartialTicks
+            for(i in 0..360 step 7){
+                points.add(Vec3(posX - sin(i * Math.PI / 180F) * radius,posY+height*drawPercent,posZ + cos(i * Math.PI / 180F) * radius))
+            }
+            points.add(points[0])
+            //draw
+            mc.entityRenderer.disableLightmap()
+            GL11.glPushMatrix()
+            GL11.glDisable(GL11.GL_TEXTURE_2D)
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+            GL11.glEnable(GL11.GL_LINE_SMOOTH)
+            GL11.glEnable(GL11.GL_BLEND)
+            GL11.glDisable(GL11.GL_DEPTH_TEST)
+            GL11.glBegin(GL11.GL_LINE_STRIP)
+            for(i in 0..20) {
+                var moveFace=(height/60F)*i
+                if(drawMode){
+                    moveFace=-moveFace
+                }
+                val firstPoint=points[0]
+                GL11.glVertex3d(
+                    firstPoint.xCoord - mc.renderManager.viewerPosX, firstPoint.yCoord - moveFace - mc.renderManager.viewerPosY,
+                    firstPoint.zCoord - mc.renderManager.viewerPosZ
+                )
+                GL11.glColor4f(1F, 1F, 1F, 0.7F*(i/20F))
+                for (vec3 in points) {
+                    GL11.glVertex3d(
+                        vec3.xCoord - mc.renderManager.viewerPosX, vec3.yCoord - moveFace - mc.renderManager.viewerPosY,
+                        vec3.zCoord - mc.renderManager.viewerPosZ
+                    )
+                }
+                GL11.glColor4f(0F,0F,0F,0F)
+            }
+            GL11.glEnd()
+            GL11.glEnable(GL11.GL_DEPTH_TEST)
+            GL11.glDisable(GL11.GL_LINE_SMOOTH)
+            GL11.glDisable(GL11.GL_BLEND)
+            GL11.glEnable(GL11.GL_TEXTURE_2D)
+            GL11.glPopMatrix()
+        }
+    }
+    private fun drawESP(entity: EntityLivingBase, color: Int, e: Render3DEvent) {
+        val x: Double =
+            entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * e.partialTicks.toDouble() - mc.renderManager.renderPosX
+        val y: Double =
+            entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * e.partialTicks.toDouble() - mc.renderManager.renderPosY
+        val z: Double =
+            entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * e.partialTicks.toDouble() - mc.renderManager.renderPosZ
+        val radius = 0.15f
+        val side = 4
+        GL11.glPushMatrix()
+        GL11.glTranslated(x, y + 2, z)
+        GL11.glRotatef(-entity.width, 0.0f, 1.0f, 0.0f)
+        RenderUtils.glColor1(color)
+        RenderUtils.enableSmoothLine(1.5F)
+        val c = Cylinder()
+        GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f)
+        c.drawStyle = 100012
+        RenderUtils.glColor(Color(80,255,80,200))
+        c.draw(0F, radius, 0.3f, side, 1)
+        c.drawStyle = 100012
+        GL11.glTranslated(0.0, 0.0, 0.3)
+        c.draw(radius, 0f, 0.3f, side, 1)
+        GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f)
+        c.drawStyle = 100011
+        GL11.glTranslated(0.0, 0.0, -0.3)
+        RenderUtils.glColor1(color)
+        c.draw(0F, radius, 0.3f, side, 1)
+        c.drawStyle = 100011
+        GL11.glTranslated(0.0, 0.0, 0.3)
+        c.draw(radius, 0F, 0.3f, side, 1)
+        RenderUtils.disableSmoothLine()
+        GL11.glPopMatrix()
+    }
     /**
      * Handle entity move
      */
@@ -649,6 +779,7 @@ class KillAura : Module() {
         val failHit = failRate > 0 && Random().nextInt(100) <= failRate
 
         // Check is not hitable or check failrate
+        updateHitable()
         if (hitable && !failHit) {
             // Close inventory when open
             if (openInventory) {
@@ -976,16 +1107,26 @@ class KillAura : Module() {
         if(!autoBlockTimer.hasTimePassed(reblockDelayValue.get().toLong()) || !firstBlockTimer.hasTimePassed(firstBlockDelayValue.get().toLong()) ){
             return
         }
-        if (interact) {
+        if (interact && hitable) {
             mc.netHandler.addToSendQueue(C02PacketUseEntity(interactEntity, interactEntity.positionVector))
             mc.netHandler.addToSendQueue(C02PacketUseEntity(interactEntity, C02PacketUseEntity.Action.INTERACT))
         }
+        val blockingBlockPos = when (blockingBlockPosValue.get().lowercase()) {
+                    "origin" -> BlockPos.ORIGIN
+                    "all-1" -> BlockPos(-1,-1,-1)
+                    "auto" -> if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN
+                }
             when (blockingPacketValue.get().lowercase()) {
                 "basic" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
-                "ncptest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, null, 0.0f, 0.0f, 0.0f))
-                "hypixeltest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
-                }
-        
+                "ncptest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(blockingBlockPos, 255, null, 0.0f, 0.0f, 0.0f))
+                "hypixeltest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(blockingBlockPos, 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f))
+                "normal" -> mc.thePlayer.setItemInUse(mc.thePlayer.inventory.getCurrentItem(), 51213)
+                "aac" -> mc.thePlayer.setItemInUse(mc.thePlayer.inventory.getCurrentItem(), 71999)
+                "aactest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(mc.thePlayer.posX, Math.floor(mc.thePlayer.entityBoundingBox.minY), mc.thePlayer.posZ), 1, mc.thePlayer.inventory.getCurrentItem(), 8F, 16F, 10F))
+            }
+        if(FakeUnblockValue.get()){
+            mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
+        }
         blockingStatus = true
     }
     /**
@@ -994,8 +1135,14 @@ class KillAura : Module() {
     private fun stopBlocking() {
         if (blockingStatus) {
             when (stopBlockingPacketValue.get().lowercase()) {
-                "basic" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+                // "basic" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+                "basic" -> when (stopBlockingBlockPosValue.lowercase()) {
+                    "origin" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN))
+                    "all-1" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos(-1,-1,-1), EnumFacing.DOWN))
+                    "auto" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, if (MovementUtils.isMoving()) BlockPos(-1, -1, -1) else BlockPos.ORIGIN, EnumFacing.DOWN))
+                }
                 "empty" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
+                "onstoppedusingitem" -> mc.playerController.onStoppedUsingItem(mc.thePlayer)
             }
             autoBlockTimer.reset()
             blockingStatus = false
