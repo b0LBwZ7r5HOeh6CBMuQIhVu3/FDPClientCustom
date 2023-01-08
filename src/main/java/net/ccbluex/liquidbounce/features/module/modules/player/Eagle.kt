@@ -17,11 +17,11 @@ import net.ccbluex.liquidbounce.value.BoolValue
 
 @ModuleInfo(name = "Eagle", category = ModuleCategory.PLAYER)
 class Eagle : Module() {
-    private val onlyVoidValue = BoolValue("OnlyPredictVoid", false)
+    private val onlyGroundValue = BoolValue("OnlyGround", false)
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (onlyVoidValue.get() && !checkVoid()) {
+        if (onlyGroundValue.get() && !mc.thePlayer.onGround) {
             return
         }
         mc.gameSettings.keyBindSneak.pressed =
@@ -36,15 +36,5 @@ class Eagle : Module() {
         if (!GameSettings.isKeyDown(mc.gameSettings.keyBindSneak)) {
             mc.gameSettings.keyBindSneak.pressed = false
         }
-    }
-    private fun checkVoid(): Boolean {
-        var i = (-(mc.thePlayer.posY-1.4857625)).toInt()
-        var dangerous = true
-        while (i <= 0) {
-            dangerous = mc.theWorld.getCollisionBoxes(mc.thePlayer.entityBoundingBox.offset(mc.thePlayer.motionX * 1.4, i.toDouble(), mc.thePlayer.motionZ * 1.4)).isEmpty()
-            i++
-            if (!dangerous) break
-        }
-        return dangerous
     }
 }

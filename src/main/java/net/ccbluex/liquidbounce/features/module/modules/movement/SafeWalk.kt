@@ -17,6 +17,9 @@ class SafeWalk : Module() {
 
     private val airSafeValue = BoolValue("AirSafe", false)
     private val onlyVoidValue = BoolValue("OnlyPredictVoid", false)
+    private val aacapTestValue = BoolValue("aacapTest", false)
+
+    private val sneaked = false
 
     @EventTarget
     fun onMove(event: MoveEvent) {
@@ -26,6 +29,16 @@ class SafeWalk : Module() {
             if (airSafeValue.get() || mc.thePlayer.onGround) {
                 event.isSafeWalk = true
             }
+            if(aacapTestValue.get()){if(event.x == 0 && event.y == 0 && event.z == 0 && !sneaked){
+                mc.gameSettings.keyBindSneak.pressed = true
+                sneaked = true
+            }else{
+                if(sneaked){
+                    mc.gameSettings.keyBindSneak.pressed = false
+                    sneaked = false
+                }
+            }}
+
         }
     }
 

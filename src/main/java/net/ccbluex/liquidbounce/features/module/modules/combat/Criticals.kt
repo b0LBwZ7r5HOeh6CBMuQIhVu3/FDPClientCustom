@@ -38,6 +38,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
     val delayValue = IntegerValue("Delay", 0, 0, 500)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
+    private val hytMorePacketValue = BoolValue("HYTMorePacket", false).displayable { modeValue.equals("AAC5.0.14HYT") }
     private val motionSlowValue = BoolValue("motionSlow", false).displayable { modeValue.equals("Motion") }
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
     private val critRate = IntegerValue("CritRate", 100, 1, 100)
@@ -122,7 +123,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                         usedTimer = true
                         mc.timer.timerSpeed = timerValue.get()
                     }
+                    if(hytMorePacketValue.get()) {sendCriticalPacket(yOffset = 0.05250000000101, ground = false)}
                     sendCriticalPacket(yOffset = 0.00133545, ground = false)
+                    if(hytMorePacketValue.get()) {sendCriticalPacket(yOffset = 0.01400000001010, ground = false)}
                     sendCriticalPacket(yOffset = -0.000000433, ground = false)
                 }
 
@@ -215,8 +218,8 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                         mc.timer.timerSpeed = timerValue.get()
                     }
                     if(motionSlowValue.get()){
-                        mc.thePlayer.motionX *= 0.4
-                        mc.thePlayer.motionZ *= 0.4
+                        mc.thePlayer.motionX *= 0.2
+                        mc.thePlayer.motionZ *= 0.2
                     }
                     when (motionValue.get().lowercase()) {
                         "jump" -> mc.thePlayer.motionY = 0.42
@@ -417,7 +420,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
         }
         if (packet is S0BPacketAnimation && debugValue.get()) {
             if (packet.animationType == 4 && packet.entityID == target) {
-                alert("CRIT")
+                alert("Criticals §7» "+acket.entityID.toString())
             }
         }
     }
