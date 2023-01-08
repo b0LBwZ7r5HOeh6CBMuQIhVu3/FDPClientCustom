@@ -640,7 +640,7 @@ class KillAura : Module() {
     }
     private fun renderESP(entity : EntityLivingBase) {
         if (entity!=null){
-            if(markTimer.hasTimePassed(500) || entity!!.isDead){
+            if(entity!!.isDead){
                 entity=null
                 return
             }
