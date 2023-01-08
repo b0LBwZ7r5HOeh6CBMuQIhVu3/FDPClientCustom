@@ -1,10 +1,13 @@
 package net.ccbluex.liquidbounce.features.module.modules.movement.flys.aac
 
 import net.ccbluex.liquidbounce.event.UpdateEvent
+import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.minecraft.network.play.client.C03PacketPlayer
+import net.ccbluex.liquidbounce.utils.render.RenderUtils
+import java.awt.Color
 
 class AAC1910Fly : FlyMode("AAC1.9.10") {
     private val speedValue = FloatValue("${valuePrefix}Speed", 0.3f, 0f, 1f)
@@ -25,5 +28,8 @@ class AAC1910Fly : FlyMode("AAC1.9.10") {
         }
 
         MovementUtils.strafe()
+    }
+    override fun onRender3d(event: Render3DEvent) {
+        RenderUtils.drawPlatform(fly.launchY + aacJump, Color(0, 0, 255, 90), 1)
     }
 }

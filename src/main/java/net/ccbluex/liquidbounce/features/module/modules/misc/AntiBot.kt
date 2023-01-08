@@ -42,7 +42,7 @@ object AntiBot : Module() {
     private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
-    private val validNameRegexValue = TextValue("ValidNameRegex", "\\w{3,16}").displayable {validNameValue.get()}
+    private val validNameRegexValue = TextValue("ValidNameRegex", "\\w{3,16}|[一-龥]{3,16}").displayable {validNameValue.get()}
     private val armorValue = BoolValue("Armor", false)
     // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
@@ -60,6 +60,7 @@ object AntiBot : Module() {
     private val fastDamageTicksValue = IntegerValue("FastDamageTicks", 5, 1, 20).displayable { fastDamageValue.get() }
     private val hypixelSWBotValue = BoolValue("HypixelSWBot", false)
     private val alwaysInRadiusValue = BoolValue("AlwaysInRadius", false)
+    private val alwaysInRadiusOnlyXZValue = BoolValue("AlwaysInRadiusOnlyXZ", false)
     private val alwaysRadiusValue = FloatValue("AlwaysInRadiusBlocks", 20f, 5f, 30f).displayable { alwaysInRadiusValue.get() }
     private val spawnInRadiusValue = BoolValue("SpawnInRadius", false).displayable { alwaysInRadiusValue.get() }
     private val alwaysInRadiusWithTicksCheckValue = BoolValue("AlwaysInRadiusWithTicksCheck", false).displayable { alwaysInRadiusValue.get() && livingTimeValue.get() }
@@ -273,16 +274,16 @@ object AntiBot : Module() {
                 if (entity.isInvisible && !invisible.contains(entity.entityId)) {
                     invisible.add(entity.entityId)
                 }
-
-                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) > alwaysRadiusValue.get()) {
+                val dist = mc.thePlayer.getDistanceSq(entity.posX,if(alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && dist > alwaysRadiusValue.get()) {
                     notAlwaysInRadius.add(entity.entityId)                }
-                if (!notAlwaysInRadius.contains(entity.entityId) && mc.thePlayer.getDistanceToEntity(entity) < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
+                if (!notAlwaysInRadius.contains(entity.entityId) && dist < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
                     alwaysInRadius.add(entity.entityId)
                 }
-                if (!noHitDelay.contains(entity.entityId) && entity.hurtResistantTime < 2 && entity.hurtTime > 9) {
+                if (!noHitDelay.contains(entity.entityId) && entity.hurtResistantTime < 1 && entity.hurtTime > 9) {
                     noHitDelay.add(entity.entityId)
                 }
-                if (!hasHitDelay.contains(entity.entityId) && entity.hurtResistantTime > 2 && entity.hurtTime > 9) {
+                if (!hasHitDelay.contains(entity.entityId) && entity.hurtResistantTime > 0 && entity.hurtTime > 9) {
                     hasHitDelay.add(entity.entityId)
                 }
                 if(!moved.contains(entity.entityId) && (entity.lastTickPosY != entity.posY || entity.lastTickPosX != entity.posX || entity.lastTickPosZ != entity.posZ)){
