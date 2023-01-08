@@ -25,6 +25,8 @@ import kotlin.math.sin
 @ModuleInfo(name = "PointerESP", category = ModuleCategory.RENDER)
 class PointerESP : Module() {
     private val modeValue = ListValue("Mode", arrayOf("Solid", "Line"), "Solid")
+    private val colorMode = ListValue("Color", arrayOf("Custom", "DistanceColor"), "Custom")
+    // private val onlyTargetsValue = BoolValue("onlyTargets", true)
     private val redValue = IntegerValue("Red", 140, 0, 255)
     private val greenValue = IntegerValue("Green", 140, 0, 255)
     private val blueValue = IntegerValue("Blue", 255, 0, 255)
@@ -34,7 +36,7 @@ class PointerESP : Module() {
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
         val sr = ScaledResolution(mc)
-        val color = Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get())
+        // val color = Color(redValue.get(), greenValue.get(), blueValue.get(), alphaValue.get())
 
         GlStateManager.pushMatrix()
         val size = 50 + sizeValue.get()
@@ -61,6 +63,13 @@ class PointerESP : Module() {
                     GlStateManager.translate(x, y, 0.0)
                     GlStateManager.rotate(angle, 0F, 0F, 1F)
                     GlStateManager.scale(1.5, 1.0, 1.0)
+                    var dist = (mc.thePlayer.getDistanceToEntity(entity) * 2).toInt()
+                    if (dist > 255) dist = 255
+                    val color = when {
+                        colorMode.equals("Custom") -> Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get(), alphaValue.get())
+                        colorMode.equals("DistanceColor") -> Color(255 - dist, dist, 0, alphaValue.get())
+                        else -> Color(255, 255, 255, 150)
+                    }
                     when (modeValue.get().lowercase()) {
                         "solid" -> {
                             drawTriAngle(0F, 0F, 2.2F, 3F, color)
