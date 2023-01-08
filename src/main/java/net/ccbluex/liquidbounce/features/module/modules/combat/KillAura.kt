@@ -125,7 +125,7 @@ class KillAura : Module() {
     private val stopBlockingPacketValue = ListValue("stopBlockingPacket", arrayOf("Basic", "Empty","normal","onStoppedUsingItem"), "Basic").displayable { autoBlockValue.equals("Range") }
     private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingBlockPosValue = ListValue("stopBlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
-    private val FakeUnblockValue = BoolValue("FakeUnblock", true).displayable { autoBlockValue.equals("Range") }
+    private val fakeUnblockValue = BoolValue("FakeUnblock", true).displayable { autoBlockValue.equals("Range") }
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
@@ -1124,7 +1124,7 @@ class KillAura : Module() {
                 "aac" -> mc.thePlayer.setItemInUse(mc.thePlayer.inventory.getCurrentItem(), 71999)
                 "aactest" -> mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(BlockPos(mc.thePlayer.posX, Math.floor(mc.thePlayer.entityBoundingBox.minY), mc.thePlayer.posZ), 1, mc.thePlayer.inventory.getCurrentItem(), 8F, 16F, 10F))
             }
-        if(FakeUnblockValue.get()){
+        if(fakeUnblockValue.get()){
             mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
         }
         blockingStatus = true
