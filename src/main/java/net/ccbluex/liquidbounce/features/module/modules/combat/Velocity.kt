@@ -76,6 +76,7 @@ class Velocity : Module() {
     private val onlyCombatValue = BoolValue("OnlyCombat", false)
     private val onlyHitVelocityValue = BoolValue("OnlyHitVelocity",false)
     private val noFireValue = BoolValue("noFire", false)
+    private val alertValueValue = BoolValue("alert", false)
     private val timerValue = FloatValue("timer", 0.8F, 0.1F, 1F)
     private val timerOnlyPullUpValue = BoolValue("timerOnlyPullUpValue", true)
     /**
@@ -495,7 +496,7 @@ class Velocity : Module() {
                 return
             }
             if(onlyHitVelocityValue.get() && (packet.getMotionX()<1 || packet.getMotionZ()<1) ) return
-            
+            if(alertValue.get()){alert( "Velocity §7» "+packet.getMotionX().toString()+","+packet.getMotionZ().toString() )}
             velocityTimer.reset()
             velocityTick = 0
 

@@ -126,6 +126,7 @@ class KillAura : Module() {
     private val blockingBlockPosValue = ListValue("BlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
     private val stopBlockingBlockPosValue = ListValue("stopBlockingBlockPos", arrayOf("ORIGIN","All-1","Auto"), "Auto").displayable { autoBlockValue.equals("Range") }
     private val fakeUnblockValue = BoolValue("FakeUnblock", true).displayable { autoBlockValue.equals("Range") }
+    private val stopBlockingSendHeldItemChangeValue = ListValue("stopBlockingSendHeldItemChange", arrayOf("Off","Empty","currentItem"), "Off").displayable { autoBlockValue.equals("Range") } 
     private val interactAutoBlockValue = BoolValue("InteractAutoBlock", true).displayable { autoBlockValue.equals("Range") }
     private val blockRate = IntegerValue("BlockRate", 100, 1, 100).displayable { autoBlockValue.equals("Range") }
     private val reblockDelayValue = IntegerValue("ReblockDelay", 100, -1, 850).displayable { autoBlockValue.equals("Range") }
@@ -1144,6 +1145,12 @@ class KillAura : Module() {
                 "empty" -> mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
                 "onstoppedusingitem" -> mc.playerController.onStoppedUsingItem(mc.thePlayer)
             }
+            when (stopBlockingSendHeldItemChangeValue.get().lowercase()){
+                "off" -> {}
+                "empty" -> mc.thePlayer.sendQueue.addToSendQueue(C09PacketHeldItemChange())
+                "currentitem" -> mc.thePlayer.sendQueue.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
+            }
+            //if(stopBlockingSendHeldItemChangeValue.get()) 
             autoBlockTimer.reset()
             blockingStatus = false
         }
