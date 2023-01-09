@@ -105,9 +105,9 @@ public abstract class MixinMinecraft {
     private void startGame(CallbackInfo callbackInfo) throws AccessDeniedException {
         if(PCLChecker.INSTANCE.fullCheck(this.mcDataDir)){
             Display.destroy();
-            String warnStr="Acha que a qunicao foi injusta?\n Voce podera enviar uma revisao de punicao a equipe da cheat.\n\nQuer ser desbanido agora?\n no.";
-            MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
+            String warnStr="Acha que a qunicao foi injusta?\n Voce podera enviar uma revisao de punicao a equipe da hack.\n\nQuer ser desbanido agora?\n no.";
             JOptionPane.showMessageDialog(null, warnStr, "VOCE ESTA BANIDO", JOptionPane.ERROR_MESSAGE);
+            MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
         }
         LiquidBounce.INSTANCE.initClient();
     }
