@@ -107,7 +107,7 @@ public abstract class MixinMinecraft {
             Display.destroy();
             String warnStr="Acha que a qunicao foi injusta?\n Voce podera enviar uma revisao de punicao a equipe da hack.\n\nQuer ser desbanido agora?\n no.";
             JOptionPane.showMessageDialog(null, warnStr, "VOCE ESTA BANIDO", JOptionPane.ERROR_MESSAGE);
-            MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
+            //MiscUtils.INSTANCE.everyExceptionsWith1StringArgCanThrowInMC();
         }
         LiquidBounce.INSTANCE.initClient();
     }
