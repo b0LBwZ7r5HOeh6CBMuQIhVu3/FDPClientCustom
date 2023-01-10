@@ -117,7 +117,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     sendCriticalPacket(yOffset = 0.00000000343, ground = false)
                 }
                 
-                "AAC5.0.14HYT" -> { //AAC5.0.14HYT moment but with bad cfg(cuz it will flag for timer)
+                "aac5.0.14hyt" -> { //AAC5.0.14HYT moment but with bad cfg(cuz it will flag for timer)
                     if(timerValue.get() != 1F){
                         minemoraTimer.reset()
                         usedTimer = true
@@ -263,7 +263,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                         }
                     }
                 }
-                "AAC5.0.14HYT","noteless" -> {
+                "aac5.0.14hyt","noteless" -> {
                     if(timerValue.get() != 1F) {
                         if (minemoraTimer.hasTimePassed(120L) && (mc.timer.timerSpeed < 1f) && usedTimer) {
                             mc.timer.timerSpeed = 1f
