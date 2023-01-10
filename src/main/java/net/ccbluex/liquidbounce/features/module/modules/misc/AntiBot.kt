@@ -38,6 +38,12 @@ object AntiBot : Module() {
     private val maxHealthValue = FloatValue("MaxHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val minHealthValue = FloatValue("MinHealth", 1f, 1f, 40f).displayable { healthValue.get() }
     private val derpValue = BoolValue("Derp", true)
+    private val randomHealthValue = BoolValue("randomHealth", true)
+    private val randomHealthMaxHealthValue = FloatValue("randomHealthMaxHealth", 20f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthMinHealthValue = FloatValue("randomHealthMinHealth", 1f, 1f, 40f).displayable { randomHealthValue.get() }
+    private val randomHealthLivingTimeTicksValue = IntegerValue("randomHealthLivingTimeTicks", 15, 1, 50).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusCheckOnlyXZValue = BoolValue("randomHealthRadiusCheckOnlyXZ", false).displayable { randomHealthValue.get() }
+    private val randomHealthRadiusValue = FloatValue("randomHealthRadiusCheckBlocks", 20f, 5f, 30f).displayable { randomHealthValue.get() }
     private val hasCustomNameValue = BoolValue("hasCustomName", false)
     private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
@@ -77,6 +83,7 @@ object AntiBot : Module() {
     private val alwaysInRadius = mutableListOf<Int>()
     private val noHitDelay = mutableListOf<Int>()
     private val moved = mutableListOf<Int>()
+    private val randomHealth = mutableListOf<Int>()
     private val turnHead = mutableListOf<Int>()
     private val hasHitDelay = mutableListOf<Int>()
     private val lastDamage = mutableMapOf<Int, Int>()
@@ -125,6 +132,10 @@ object AntiBot : Module() {
         }
 
         if (lowWidthValue.get() && entity.width < 0.5F) {
+            return true
+        }
+
+        if(randomHealthValue.get() && randomHealth.contains(entity.entityId)){
             return true
         }
 
@@ -275,6 +286,7 @@ object AntiBot : Module() {
                     invisible.add(entity.entityId)
                 }
                 val dist = mc.thePlayer.getDistanceSq(entity.posX,if(alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                val dist2 = mc.thePlayer.getDistanceSq(entity.posX,if(randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
                 if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && dist > alwaysRadiusValue.get()) {
                     notAlwaysInRadius.add(entity.entityId)                }
                 if (!notAlwaysInRadius.contains(entity.entityId) && dist < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
@@ -291,6 +303,9 @@ object AntiBot : Module() {
                 }
                 if(!turnHead.contains(entity.entityId) && (entity.prevRotationYaw != entity.rotationYaw || entity.prevRotationPitch != entity.rotationPitch)){
                     turnHead.add(entity.entityId)
+                }
+                if(!randomHealth.contains(entity.entityId) && entity.ticksExisted < randomHealthLivingTimeTicksValue.get() && (entity.health <= maxHealthValue.get() && entity.health >= minHealthValue.get() ) && dist2 < randomHealthRadiusValue.get()){
+                    randomHealth.add(entity.entityId)
                 }
             }
         } else if (packet is S0BPacketAnimation) {
