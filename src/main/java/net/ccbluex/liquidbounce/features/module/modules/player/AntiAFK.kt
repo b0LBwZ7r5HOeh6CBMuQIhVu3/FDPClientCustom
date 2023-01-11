@@ -10,6 +10,7 @@ import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
@@ -25,7 +26,7 @@ class AntiAFK : Module() {
     private val swingDelayTimer = MSTimer()
     private val delayTimer = MSTimer()
 
-    private val modeValue = ListValue("Mode", arrayOf("Old", "Random", "Custom"), "Random")
+    private val modeValue = ListValue("Mode", arrayOf("Old", "test", "Random", "Custom"), "Random")
 
     private val swingDelayValue = IntegerValue("SwingDelay", 100, 0, 1000)
     private val rotationDelayValue = IntegerValue("RotationDelay", 100, 0, 1000)
@@ -45,8 +46,22 @@ class AntiAFK : Module() {
             "old" -> {
                 mc.gameSettings.keyBindForward.pressed = true
 
-                if (delayTimer.hasTimePassed(500)) {
+                if (delayTi mer.hasTimePassed(500)) {
                     mc.thePlayer.rotationYaw += 180F
+                    delayTimer.reset()
+                }
+            }
+            "test" -> {
+                val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.1, mc.thePlayer.motionY * 1.1, mc.thePlayer.motionY * 1.1, 0f, 0f, 0f, 0f).findCollision(60)
+                if (pos != null && pos.y < (mc.thePlayer.posY - 7)) {
+                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-20,180)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-3,4)
+                    return
+                }
+                mc.gameSettings.keyBindForward.pressed = true
+                if (delayTimer.hasTimePassed(RandomUtils.nextInt(340, 685).toLong()) || mc.thePlayer.isCollidedHorizontally) {
+                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180,180)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-3,4)
                     delayTimer.reset()
                 }
             }
