@@ -48,7 +48,7 @@ object AntiBot : Module() {
     private val hasCustomNameStrictValue = BoolValue("hasCustomNameStrict", true).displayable { hasCustomNameValue.get() }
     private val wasInvisibleValue = BoolValue("WasInvisible", false)
     private val validNameValue = BoolValue("ValidName", true)
-    private val validNameRegexValue = TextValue("ValidNameRegex", "\\w{3,16}|[一-龥]{3,16}").displayable {validNameValue.get()}
+    private val validNameRegexValue = TextValue("ValidNameRegex", "[\\w|一-龥]{3,16}").displayable {validNameValue.get()}
     private val armorValue = BoolValue("Armor", false)
     // private val invalidArmorValue = BoolValue("invalidArmor", false)
     private val pingValue = BoolValue("Ping", false)
