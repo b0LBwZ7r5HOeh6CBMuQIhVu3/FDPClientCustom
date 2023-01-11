@@ -112,7 +112,7 @@ class AutoPlay : Module() {
                     if (clickState == 1 && text.contains("Only VIP players can join full servers!", true)) {
                         LiquidBounce.hud.addNotification(Notification(this.name, "Join failed! trying again...", NotifyType.WARNING, 3000))
                         // connect failed so try to join again
-                        Timer().schedule(1500L) {
+                        Timer().schedule(1000L) {
                             mc.netHandler.addToSendQueue(C09PacketHeldItemChange(7))
                             repeat(2) {
                                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
