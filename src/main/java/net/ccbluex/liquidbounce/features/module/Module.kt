@@ -89,6 +89,9 @@ open class Module : MinecraftInstance(), Listenable {
             if(localizedName == "\%module.${name}.name\%"){
                 localizedName = "$name"
             }
+            if(moduleInfo.description != "no description"){
+                description = moduleInfo.description
+            }
         }
     }
 
