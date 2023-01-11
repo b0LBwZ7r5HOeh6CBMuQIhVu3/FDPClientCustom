@@ -34,7 +34,9 @@ class Blink : Module() {
     private var disableLogger = false
     private val positions = LinkedList<DoubleArray>()
     private val pulseValue = BoolValue("Pulse", false)
-    private val c00Value = BoolValue("C00", false)
+    private val pingValue = BoolValue("ping", false)
+    private val actionValue = BoolValue("action", true)
+    private val moveValue = BoolValue("move", true)
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
 
@@ -73,14 +75,14 @@ class Blink : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
         if (mc.thePlayer == null || disableLogger) return
-        if (packet is C03PacketPlayer && (packet.isMoving() || packet.getRotating())) { // Cancel all movement stuff
+        if (packet is C03PacketPlayer && (packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
             event.cancelEvent()
         }
-        if (packet is C04PacketPlayerPosition || packet is C06PacketPlayerPosLook ||
+        if (( ( ||
             packet is C08PacketPlayerBlockPlacement ||
             packet is C0APacketAnimation ||
-            packet is C0BPacketEntityAction || packet is C02PacketUseEntity || 
-            (packet is C00PacketKeepAlive && c00Value.get()) ) {
+            packet is C0BPacketEntityAction || packet is C02PacketUseEntity) && actionValue.get() ) || 
+            ((packet is C00PacketKeepAlive || packet is C0FPacketConfirmTransaction) && pingValue.get()) ) {
             event.cancelEvent()
             packets.add(packet)
         }
