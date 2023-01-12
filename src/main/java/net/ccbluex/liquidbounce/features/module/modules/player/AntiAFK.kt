@@ -52,16 +52,19 @@ class AntiAFK : Module() {
                 }
             }
             "test" -> {
+                if(RandomUtils.nextInt(0, 3) == 3){mc.thePlayer.swingItem()}
+                if(RandomUtils.nextInt(0, 6) == 3 && mc.thePlayer.onGround){mc.thePlayer.jump()}
+                //if(mc.player.ticksExisted % 500 == 0){mc.thePlayer.sendChatMessage(RandomUtils.randomString(1))}
                 val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.1, mc.thePlayer.motionY * 1.1, mc.thePlayer.motionY * 1.1, 0f, 0f, 0f, 0f).findCollision(60)
                 if (pos != null && pos.y < (mc.thePlayer.posY - 7)) {
-                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-20,180)
-                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-3,4)
+                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(0,90)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10,10)
                     return
                 }
                 mc.gameSettings.keyBindForward.pressed = true
                 if (delayTimer.hasTimePassed(RandomUtils.nextInt(340, 685).toLong()) || mc.thePlayer.isCollidedHorizontally) {
                     mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180,180)
-                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-3,4)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10,10)
                     delayTimer.reset()
                 }
             }
