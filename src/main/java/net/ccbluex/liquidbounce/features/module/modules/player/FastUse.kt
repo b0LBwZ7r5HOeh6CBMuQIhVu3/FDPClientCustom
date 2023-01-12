@@ -34,9 +34,19 @@ import net.minecraft.util.EnumFacing
 
 @ModuleInfo(name = "FastUse", category = ModuleCategory.PLAYER)
 class FastUse : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC"), "DelayedInstant")
-    private val timerValue = FloatValue("Timer", 1.22F, 0.1F, 2.0F).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
-    private val durationValue = IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
+    private val modeValue = ListValue(
+        "Mode",
+        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC"),
+        "DelayedInstant"
+    )
+    private val timerValue = FloatValue(
+        "Timer",
+        1.22F,
+        0.1F,
+        2.0F
+    ).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
+    private val durationValue =
+        IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
     private val delayValue = IntegerValue("CustomDelay", 0, 0, 300).displayable { modeValue.equals("CustomDelay") }
     private val noMoveValue = BoolValue("NoMove", false)
     private val testValue = BoolValue("test", false)
@@ -83,7 +93,7 @@ class FastUse : Module() {
                         mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
-                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                    if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
 
                 "instant" -> {
@@ -91,17 +101,17 @@ class FastUse : Module() {
                         mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     }
 
-                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                    if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
                 "aac" -> {
                     mc.timer.timerSpeed = 0.49F
                     usedTimer = true
                     if (mc.thePlayer.itemInUseDuration > 14) {
-                    repeat(23) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        repeat(23) {
+                            mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        }
+                        if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                     }
-                    if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
-                }
                 }
                 "newaac" -> {
                     mc.timer.timerSpeed = 0.49F
@@ -122,7 +132,7 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.ticksExisted % 2 == 0) {
                         repeat(2) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                            mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                         }
                     }
                 }
@@ -134,12 +144,12 @@ class FastUse : Module() {
                         return
                     }
 
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                    mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
                     msTimer.reset()
                 }
             }
-            if(c03s >= 40) {
-                if(usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
+            if (c03s >= 40) {
+                if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 c03s = 0
             }
 /*            if(c05s >= 40){
@@ -164,8 +174,8 @@ class FastUse : Module() {
         if (event == null) return
         val packet = event.packet
 
-        if (packet is C03PacketPlayer && testValue.get() && packet !is C05PacketPlayerLook && packet !is C04PacketPlayerPosition && packet !is C06PacketPlayerPosLook){
-            if(mc.thePlayer.isUsingItem) c03s++ else c03s = 0
+        if (packet is C03PacketPlayer && testValue.get() && packet !is C05PacketPlayerLook && packet !is C04PacketPlayerPosition && packet !is C06PacketPlayerPosLook) {
+            if (mc.thePlayer.isUsingItem) c03s++ else c03s = 0
         }
 /*        if (packet is C05PacketPlayerLook && bowValue.get()){
             if(mc.thePlayer.isUsingItem) c05s++ else c05s = 0
