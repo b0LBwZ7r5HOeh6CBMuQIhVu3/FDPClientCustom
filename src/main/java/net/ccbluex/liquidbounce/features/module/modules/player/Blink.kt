@@ -43,12 +43,12 @@ class Blink : Module() {
     override fun onEnable() {
         if (mc.thePlayer == null) return
 
-            fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
-            fakePlayer!!.clonePlayer(mc.thePlayer, true)
-            fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
-            fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
-            mc.theWorld.addEntityToWorld(-1337, fakePlayer)
-        
+        fakePlayer = EntityOtherPlayerMP(mc.theWorld, mc.thePlayer.gameProfile)
+        fakePlayer!!.clonePlayer(mc.thePlayer, true)
+        fakePlayer!!.copyLocationAndAnglesFrom(mc.thePlayer)
+        fakePlayer!!.rotationYawHead = mc.thePlayer.rotationYawHead
+        mc.theWorld.addEntityToWorld(-1337, fakePlayer)
+
         synchronized(positions) {
             positions.add(
                 doubleArrayOf(
@@ -78,11 +78,13 @@ class Blink : Module() {
         if (packet is C03PacketPlayer && (packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
             event.cancelEvent()
         }
-        if (( ( ||
-            packet is C08PacketPlayerBlockPlacement ||
-            packet is C0APacketAnimation ||
-            packet is C0BPacketEntityAction || packet is C02PacketUseEntity) && actionValue.get() ) || 
-            ((packet is C00PacketKeepAlive || packet is C0FPacketConfirmTransaction) && pingValue.get()) ) {
+        if (
+            ((packet is C08PacketPlayerBlockPlacement ||
+                    packet is C0APacketAnimation ||
+                    packet is C0BPacketEntityAction ||
+                    packet is C02PacketUseEntity) && actionValue.get()) ||
+            ((packet is C00PacketKeepAlive || packet is C0FPacketConfirmTransaction) && pingValue.get())
+        ) {
             event.cancelEvent()
             packets.add(packet)
         }
@@ -101,7 +103,13 @@ class Blink : Module() {
         }
         if (pulseValue.get() && pulseTimer.hasTimePassed(pulseDelayValue.get().toLong())) {
             blink()
-            fakePlayer!!.setPositionAndRotation(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
+            fakePlayer!!.setPositionAndRotation(
+                mc.thePlayer.posX,
+                mc.thePlayer.posY,
+                mc.thePlayer.posZ,
+                mc.thePlayer.rotationYaw,
+                mc.thePlayer.rotationPitch
+            )
             pulseTimer.reset()
         }
     }
