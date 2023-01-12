@@ -38,7 +38,8 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
-    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Hypixel", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket"), "SpoofGround")
+    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket","OldMatrix","OldMatrix2","OldAACFlag"), "SpoofGround")
+    private val editDelayValue = IntegerValue("editDelay", 2, 0, 10)
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
     private val minFallDistance = FloatValue("MinMLGHeight", 5f, 2f, 50f).displayable { modeValue.equals("MLG") }
     private val flySpeed = FloatValue("MotionSpeed", -0.01f, -5f, 5f).displayable { modeValue.equals("MotionFlag") }
@@ -107,6 +108,38 @@ class NoFall : Module() {
                     mc.netHandler.addToSendQueue(C03PacketPlayer(true))
                     mc.thePlayer.fallDistance = 0f
                 }
+            }
+            "oldmatrix" -> {
+                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 5f){
+                    mc.thePlayer.capabilities.isFlying = true
+                    mc.thePlayer.isInWeb = true
+                    mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                }else{
+                    mc.thePlayer.capabilities.isFlying = false
+                }
+            }
+            "oldmatrix2" -> {
+                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f){
+                    mc.thePlayer.motionX = 0.04
+                    mc.thePlayer.motionY = -55
+                    mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                    mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                    mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+
+                }
+            }
+            "oldaacflag" -> {
+                mc.thePlayer.motionX = 0.01
+                mc.thePlayer.motionY = -0.0010101001323131
+                mc.thePlayer.motionX = 0.05
+                mc.thePlayer.motionY = -0.0010101001323131
+                mc.thePlayer.motionX = 0.00
+                mc.thePlayer.motionY = -0.0010101001323131
+                mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                mc.netHandler.addToSendQueue(C03PacketPlayer(false))
+                mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                mc.netHandler.addToSendQueue(C03PacketPlayer(false))
+                mc.netHandler.addToSendQueue(C03PacketPlayer(true))
             }
             "matrixpacket" -> {
 //                mc.timer.timerSpeed = if(abs((FallingPlayer(mc.thePlayer).findCollision(100)?.y ?: 0) - mc.thePlayer.posY) > 3) {
@@ -415,14 +448,14 @@ class NoFall : Module() {
         if (event.packet is C03PacketPlayer) {
             val packet = event.packet
             if (mode.equals("SpoofGround", ignoreCase = true) && mc.thePlayer.fallDistance > 2.5) {
-                packet.onGround = true
+                packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
             } else if (mode.equals("AlwaysSpoofGround", ignoreCase = true)) {
                 packet.onGround = true
             } else if (mode.equals("NoGround", ignoreCase = true)) {
                 packet.onGround = false
-            } else if (mode.equals("Hypixel", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
-                packet.onGround = mc.thePlayer.ticksExisted % 2 == 0
-            } else if (mode.equals("HypSpoof", ignoreCase = true) && mc.thePlayer.fallDistance > 2.5F && mc.thePlayer.ticksExisted % 2 == 0) {
+            } else if (mode.equals("Edit", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
+                packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
+            } else if (mode.equals("HypSpoof", ignoreCase = true) && mc.thePlayer.fallDistance > 2.5F && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                 PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
             } else if (mode.equals("AACv4", ignoreCase = true) && aac4Fakelag) {
                 event.cancelEvent()
