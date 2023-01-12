@@ -6,6 +6,7 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.features.module.modules.client.HUD
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.RotationUtils
@@ -26,12 +27,17 @@ class TargetStrafe : Module() {
     private val onlyGroundValue = BoolValue("OnlyGround", false)
     private val renderValue = BoolValue("Render", true)
     private val combatCheckValue = BoolValue("combatCheck", false)
+    private val voidCheckValue = BoolValue("voidCheck", true)
     private var direction = true
     private var yaw = 0f
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
         if (event.eventState === EventState.PRE) {
+            if(voidCheckValue.get() && isVoid()){
+                direction = !direction
+                return
+            }
             if (mc.gameSettings.keyBindLeft.isKeyDown) {
                 direction = true
             } else if (mc.gameSettings.keyBindRight.isKeyDown) {
@@ -51,6 +57,11 @@ class TargetStrafe : Module() {
             }
             MovementUtils.setSpeed(event, MovementUtils.getSpeed().toDouble(), yaw, if (direction) 1.0 else -1.0, if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()) 0.0 else 1.0)
         }
+    }
+
+    fun isVoid(): Boolean {
+        val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
+            return (pos != null && pos.y < (mc.thePlayer.posY - 7))
     }
 
     @EventTarget
