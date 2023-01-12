@@ -26,8 +26,8 @@ class AirLadder : Module() {
                 BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)) is BlockVine ||
                 BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)) is BlockVine) {
             mc.thePlayer.motionY = speedValue.get().toDouble()
-            mc.thePlayer.motionX = 0.0
-            mc.thePlayer.motionZ = 0.0
+            mc.thePlayer.motionX *= 0.6
+            mc.thePlayer.motionZ *= 0.6
         }
     }
 }
