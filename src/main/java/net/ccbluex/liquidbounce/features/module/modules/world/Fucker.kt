@@ -57,6 +57,8 @@ object Fucker : Module() {
     private val matrixValue = BoolValue("Matrix", false)
     private val teamsValue = BoolValue("Teams", false)
     private val rotationStrafeValue = BoolValue("rotationStrafe", true)
+    private val delayValue = BoolValue("Delay", false)
+    private val delayTimeValue = IntegerValue("DelayTime", 10000, 0, 30000)
 
     /**
      * VALUES
@@ -67,6 +69,7 @@ object Fucker : Module() {
     private var teamPos: BlockPos? = null
     private var blockHitDelay = 0
     private val switchTimer = MSTimer()
+    private val delayTimer = MSTimer()
     private var isRealBlock = false
     var currentDamage = 0F
 
@@ -78,6 +81,9 @@ object Fucker : Module() {
             return
         }
         if(BlockUtils.getCenterDistance(teamPos?:BlockPos(0,0,0)) > rangeValue.get()+3 && teamsValue.get()){
+            return
+        }
+        if(delayValue.get() && !delayTimer.hasTimePassed(delayTimeValue.get().toLong()) ){
             return
         }
         if (noHitValue.get()) {
@@ -264,6 +270,7 @@ object Fucker : Module() {
     @EventTarget
     fun onWorld(event: WorldEvent) {
         teamPos = null
+        delayTimer.reset()
     }
     override fun onEnable() {
         teamPos = null
