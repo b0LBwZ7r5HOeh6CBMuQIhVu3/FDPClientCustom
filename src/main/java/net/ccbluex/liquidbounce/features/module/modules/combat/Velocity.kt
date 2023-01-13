@@ -495,8 +495,13 @@ class Velocity : Module() {
             if (mc.thePlayer == null || (mc.theWorld?.getEntityByID(packet.entityID) ?: return) != mc.thePlayer) {
                 return
             }
-            if(onlyHitVelocityValue.get() && (packet.getMotionX()<1 || packet.getMotionZ()<1) ) return
-            if(alertValue.get()){alert( "Velocity §7» "+packet.getMotionX().toString()+","+packet.getMotionZ().toString() )}
+            if (onlyHitVelocityValue.get() && (packet.getMotionX() < 1 || packet.getMotionZ() < 1)) return
+            if (alertValue.get()) {
+                alert(
+                    "Velocity §7» " + packet.getMotionX().toString() + packet.getMotionY()
+                        .toString() + packet.getMotionZ().toString()
+                )
+            }
             velocityTimer.reset()
             velocityTick = 0
 
