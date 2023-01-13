@@ -25,7 +25,32 @@ import net.minecraft.util.EnumFacing
 
 @ModuleInfo(name = "LongJump", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.FLAG)
 class LongJump : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("NCP", "NCPDamage", "AACv1", "AACv2", "AACv3", "Mineplex", "Mineplex2", "Mineplex3", "RedeSkyTest", "RedeSky", "RedeSky2", "RedeSky3", "BlocksMC", "BlocksMC2", "HYT4v4"), "NCP")
+    private val modeValue = ListValue(
+        "Mode",
+        arrayOf(
+            "NCP",
+            "NCPDamage",
+            "AACv1",
+            "AACv2",
+            "AACv3",
+            "Mineplex",
+            "Mineplex2",
+            "Mineplex3",
+            "RedeSkyTest",
+            "RedeSky",
+            "RedeSky2",
+            "RedeSky3",
+            "BlocksMC",
+            "BlocksMC2",
+            "HYT4v4"
+        ),
+        "NCP"
+    )
+    private val ncpDamageMode = ListValue(
+        "ncpDamageMode",
+        arrayOf("Test", "Mini"),
+        "Test"
+    ).display { modeValue.equals("NCPDamage") }
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
 
     // redesky
@@ -102,15 +127,40 @@ class LongJump : Module() {
         if (modeValue.equals("ncpdamage")) {
             if (!damageStat) {
                 mc.thePlayer.setPosition(x, y, z)
-                if (balance > jumpYPosArr.size * 4) {
-                    repeat(4) {
-                        jumpYPosArr.forEach {
-                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + it, z, false))
+                when (ncpDamageMode.get().lowercase()) {
+                    "test" -> {
+                        if (balance > jumpYPosArr.size * 4) {
+                            repeat(4) {
+                                jumpYPosArr.forEach {
+                                    PacketUtils.sendPacketNoEvent(
+                                        C03PacketPlayer.C04PacketPlayerPosition(
+                                            x,
+                                            y + it,
+                                            z,
+                                            false
+                                        )
+                                    )
+                                }
+                                PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                            }
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
+                            damageStat = true
                         }
-                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
                     }
-                    PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
-                    damageStat = true
+                    "mini" -> {
+                        repeat(10) {
+                            PacketUtils.sendPacketNoEvent(
+                                C03PacketPlayer.C04PacketPlayerPosition(
+                                    x,
+                                    y + 0.3175,
+                                    z,
+                                    false
+                                )
+                            )
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                        }
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
+                    }
                 }
             } else {
                 MovementUtils.strafe(0.50f * ncpBoostValue.get())
@@ -315,6 +365,9 @@ class LongJump : Module() {
             mc.thePlayer.motionX = 0.0
             mc.thePlayer.motionZ = 0.0
             event.zeroXZ()
+        } else if (mode.equals("ncpdamage", ignoreCase = true) && !MovementUtils.isMoving()) {
+            mc.thePlayer.motionX *= 0.6
+            mc.thePlayer.motionZ *= 0.6
         }
     }
 
