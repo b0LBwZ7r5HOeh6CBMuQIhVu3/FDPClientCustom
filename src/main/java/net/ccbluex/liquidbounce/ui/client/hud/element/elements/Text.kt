@@ -106,7 +106,7 @@ class Text(
                 "pitchInt" -> return DECIMAL_FORMAT_INT.format(mc.thePlayer.rotationPitch)
                 "speed" -> return DECIMAL_FORMAT.format(MovementUtils.bps)
                 "hurtTime" -> return mc.thePlayer.hurtTime.toString()
-                "onGround" -> return mc.thePlayer.onGround.toString()
+                "onGround" -> return if (mc.thePlayer.onGround) "OnGround" else "OffGround"
                 "attackDist" -> return if (LiquidBounce.combatManager.target != null) LiquidBounce.combatManager.attackRange.toString() + " Blocks" else "Hasn't attacked"
             }
         }
