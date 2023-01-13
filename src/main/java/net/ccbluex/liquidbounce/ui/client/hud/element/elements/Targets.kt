@@ -25,7 +25,25 @@ import kotlin.math.roundToInt
 
 @ElementInfo(name = "Targets")
 class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vertical.MIDDLE)) {
-    private val modeValue = ListValue("Mode", arrayOf("Orange","Novoline","NewNovoline", "Astolfo", "Liquid", "Flux","NewFlux", "Rise", "Zamorozka", "Arris", "Tenacity","Slowly"), "Rise")
+    private val modeValue = ListValue(
+        "Mode",
+        arrayOf(
+            "Orange",
+            "Novoline",
+            "NewNovoline",
+            "Astolfo",
+            "Liquid",
+            "Flux",
+            "NewFlux",
+            "Rise",
+            "Zamorozka",
+            "Arris",
+            "Tenacity",
+            "Slowly",
+            "Fancy"
+        ),
+        "Rise"
+    )
     private val animSpeedValue = IntegerValue("AnimSpeed", 10, 5, 20)
     private val hpAnimTypeValue = EaseUtils.getEnumEasingList("HpAnimType")
     private val hpAnimOrderValue = EaseUtils.getEnumEasingOrderList("HpAnimOrder")
@@ -123,6 +141,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             "tenacity" -> drawTenacity(prevTarget!!)
             "newflux" -> drawNewFlux(prevTarget!!)
             "slowly" -> drawSlowly(prevTarget!!)
+            "fancy" -> drawFancy(prevTarget!!)
         }
 
         return getTBorder()
@@ -167,6 +186,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         RenderUtils.drawRect(0F, 32F, (easingHP / target.maxHealth.toFloat()).coerceIn(0F, target.maxHealth.toFloat()) * (length + 32F), 36F, ColorUtils.healthColor(getHealth(target), target.maxHealth).rgb)
 
     }
+
     private fun drawnewNovo(target: EntityLivingBase){
         val font = fontValue.get()
         font.FONT_HEIGHT
@@ -209,6 +229,26 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
         GL11.glPopMatrix()
     }
 
+    private fun drawFancy(target: EntityLivingBase) {
+        val font = fontValue.get()
+        val width = (48 + 9 + font.getStringWidth(target.name))
+            .coerceAtLeast(100)
+            .toFloat()
+
+        RenderUtils.drawRect(0f, 0f, width, 48 + 6f, Color(0, 0, 0, 150))
+        //ColorUtils.healthColor(getHealth(target), target.maxHealth)
+        //RenderUtils.drawRect(0f,0f,width,2f,Color(56,245,200))
+        RenderUtils.drawRect(0f, 0f, width, 2f, ColorUtils.healthColor(getHealth(target), target.maxHealth))
+
+        val playerInfo = mc.netHandler.getPlayerInfo(target.uniqueID)
+        if (playerInfo != null) {
+            RenderUtils.drawHead(playerInfo.locationSkin, 2, 4, 48, 48)
+        }
+
+        GL11.glTranslatef(48 + 3 + 3f, 7f, 0f)
+
+        Fonts.fontBold40.drawString(target.name, 0f, 0f, Color.WHITE.rgb)
+    }
     private fun drawNewFlux(target: EntityLivingBase){
         val font = fontValue.get()
         val width = (26F + font.getStringWidth(target.name)).coerceAtLeast(26F + font.getStringWidth("Health: ${decimalFormat.format(target.health)}")) + 15F
