@@ -26,7 +26,7 @@ class AutoAdvertise : Module() {
         Timer().schedule(2000L) {
             waiting = false
             if (mc.thePlayer != null) {
-                mc.thePlayer.sendChatMessage(Math.random().toString())
+                mc.thePlayer.sendChatMessage("±¾Á´½ÓÆ÷̀áÈ¡×Ô×îĐÂ°æ £¬È«²¿×îĐÂ¡£")
             }
         }
         waiting = true
