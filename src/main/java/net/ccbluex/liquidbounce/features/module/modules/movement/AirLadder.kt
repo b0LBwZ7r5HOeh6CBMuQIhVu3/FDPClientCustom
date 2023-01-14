@@ -22,9 +22,16 @@ class AirLadder : Module() {
     private val speedValue = FloatValue("Speed", 0.2872F, 0.01F, 5F)
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)) is BlockLadder && mc.thePlayer.isCollidedHorizontally ||
-                BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)) is BlockVine ||
-                BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)) is BlockVine) {
+        if (!mc.gameSettings.keyBindSneak.pressed && BlockUtils.getBlock(
+                BlockPos(
+                    mc.thePlayer.posX,
+                    mc.thePlayer.posY + 1,
+                    mc.thePlayer.posZ
+                )
+            ) is BlockLadder && mc.thePlayer.isCollidedHorizontally ||
+            BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)) is BlockVine ||
+            BlockUtils.getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)) is BlockVine
+        ) {
             mc.thePlayer.motionY = speedValue.get().toDouble()
             mc.thePlayer.motionX *= 0.6
             mc.thePlayer.motionZ *= 0.6
