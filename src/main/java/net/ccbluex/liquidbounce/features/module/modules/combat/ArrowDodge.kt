@@ -182,7 +182,7 @@ class ArrowDodge : Module() {
                 }
 
                 "HorizontalTp" -> {
-                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.6,mc.thePlayer.posZ)
+                    mc.thePlayer.setPosition(mc.thePlayer.posX + 0.6, mc.thePlayer.posY + 0.42, mc.thePlayer.posZ + 0.6)
                     restore()
                 }
 
