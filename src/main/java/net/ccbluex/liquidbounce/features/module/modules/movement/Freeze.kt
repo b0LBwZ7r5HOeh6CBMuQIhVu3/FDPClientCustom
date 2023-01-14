@@ -39,6 +39,7 @@ class Freeze : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        mc.thePlayer.isDead = true
         mc.thePlayer.motionX = 0.0
         mc.thePlayer.motionY = 0.0
         mc.thePlayer.motionZ = 0.0
@@ -61,6 +62,7 @@ class Freeze : Module() {
     }
 
     override fun onDisable() {
+        mc.thePlayer.isDead = falsebe
         mc.thePlayer.motionX = motionX
         mc.thePlayer.motionY = motionY
         mc.thePlayer.motionZ = motionZ
