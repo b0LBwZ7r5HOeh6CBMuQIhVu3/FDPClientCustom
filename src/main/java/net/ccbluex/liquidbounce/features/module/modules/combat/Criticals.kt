@@ -420,7 +420,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
         }
         if (packet is S0BPacketAnimation && debugValue.get()) {
             if (packet.animationType == 4 && packet.entityID == target) {
-                alert("Criticals §7» "+acket.entityID.toString())
+                alert("Criticals §7» " + packet.entityID.toString())
             }
         }
     }
