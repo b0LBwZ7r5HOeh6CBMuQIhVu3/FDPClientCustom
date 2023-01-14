@@ -142,8 +142,11 @@ class Jesus : Module() {
             }
             "aactest" -> {
                 if (BlockUtils.getBlock(blockPos) === Blocks.water || mc.thePlayer.isInWater) {
-                    mc.thePlayer.onGround = true
-                    mc.thePlayer.isAirBorne = false
+                    if (mc.thePlayer.ticksExisted % 2 == 0) {
+                        mc.thePlayer.motionY += 0.05
+                    } else {
+                        mc.thePlayer.motionY -= 0.05
+                    }
                 }
             }
             "horizon1.4.6" -> {
