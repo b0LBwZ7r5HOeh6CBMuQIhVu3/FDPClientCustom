@@ -46,62 +46,67 @@ class AntiAFK : Module() {
             "old" -> {
                 mc.gameSettings.keyBindForward.pressed = true
 
-                if (delayTi mer.hasTimePassed(500)) {
+                if (delayTimer.hasTimePassed(500)) {
                     mc.thePlayer.rotationYaw += 180F
                     delayTimer.reset()
                 }
             }
             "test" -> {
-                if(RandomUtils.nextInt(0, 3) == 3){mc.thePlayer.swingItem()}
-                if(RandomUtils.nextInt(0, 6) == 3 && mc.thePlayer.onGround){mc.thePlayer.jump()}
+                if (RandomUtils.nextInt(0, 3) == 3) {
+                    mc.thePlayer.swingItem()
+                }
+                if (RandomUtils.nextInt(0, 6) == 3 && mc.thePlayer.onGround) {
+                    mc.thePlayer.jump()
+                }
                 //if(mc.player.ticksExisted % 500 == 0){mc.thePlayer.sendChatMessage(RandomUtils.randomString(1))}
                 val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.1, mc.thePlayer.motionY * 1.1, mc.thePlayer.motionY * 1.1, 0f, 0f, 0f, 0f).findCollision(60)
                 if (pos != null && pos.y < (mc.thePlayer.posY - 7)) {
-                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(0,90)
-                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10,10)
+                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(0, 90)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10, 10)
                     return
                 }
                 mc.gameSettings.keyBindForward.pressed = true
-                if (delayTimer.hasTimePassed(RandomUtils.nextInt(340, 685).toLong()) || mc.thePlayer.isCollidedHorizontally) {
-                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180,180)
-                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10,10)
+                if (delayTimer.hasTimePassed(RandomUtils.nextInt(340, 685)
+                        .toLong()) || mc.thePlayer.isCollidedHorizontally) {
+                    mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180, 180)
+                    mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10, 10)
                     delayTimer.reset()
                 }
             }
             "random" -> {
                 KeyBinding.setKeyBindState(getRandomMoveKeyBind(), shouldMove)
                 if (!delayTimer.hasTimePassed(randomTimerDelay)) return
-                    shouldMove = false
-                    randomTimerDelay = 500L
-                    when (RandomUtils.nextInt(0, 6)) {
-                        0 -> {
-                            if (mc.thePlayer.onGround) mc.thePlayer.jump()
-                            delayTimer.reset()
-                        }
-                        1 -> {
-                            if (!mc.thePlayer.isSwingInProgress) mc.thePlayer.swingItem()
-                            delayTimer.reset()
-                        }
-                        2 -> {
-                            randomTimerDelay = RandomUtils.nextInt(0, 1000).toLong()
-                            shouldMove = true
-                            delayTimer.reset()
-                        }
-                        3 -> {
-                            mc.thePlayer.inventory.currentItem = RandomUtils.nextInt(0,9)
-                            mc.playerController.updateController()
-                            delayTimer.reset()
-                        }
-                        4 -> {
-                            mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180.0F, 180.0F)
-                            delayTimer.reset()
-                        }
-                        5 -> {
-                            if (mc.thePlayer.rotationPitch <= -90 || mc.thePlayer.rotationPitch >= 90) mc.thePlayer.rotationPitch = 0F
-                            mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10.0F, 10.0F)
-                            delayTimer.reset()
-                        }
+                shouldMove = false
+                randomTimerDelay = 500L
+                when (RandomUtils.nextInt(0, 6)) {
+                    0 -> {
+                        if (mc.thePlayer.onGround) mc.thePlayer.jump()
+                        delayTimer.reset()
                     }
+                    1 -> {
+                        if (!mc.thePlayer.isSwingInProgress) mc.thePlayer.swingItem()
+                        delayTimer.reset()
+                    }
+                    2 -> {
+                        randomTimerDelay = RandomUtils.nextInt(0, 1000).toLong()
+                        shouldMove = true
+                        delayTimer.reset()
+                    }
+                    3 -> {
+                        mc.thePlayer.inventory.currentItem = RandomUtils.nextInt(0, 9)
+                        mc.playerController.updateController()
+                        delayTimer.reset()
+                    }
+                    4 -> {
+                        mc.thePlayer.rotationYaw += RandomUtils.nextFloat(-180.0F, 180.0F)
+                        delayTimer.reset()
+                    }
+                    5 -> {
+                        if (mc.thePlayer.rotationPitch <= -90 || mc.thePlayer.rotationPitch >= 90) mc.thePlayer.rotationPitch = 0F
+                        mc.thePlayer.rotationPitch += RandomUtils.nextFloat(-10.0F, 10.0F)
+                        delayTimer.reset()
+                    }
+                }
             }
             "custom" -> {
                 if (moveValue.get())
@@ -117,7 +122,8 @@ class AntiAFK : Module() {
                     delayTimer.reset()
                 }
 
-                if (swingValue.get() && !mc.thePlayer.isSwingInProgress && swingDelayTimer.hasTimePassed(swingDelayValue.get().toLong())) {
+                if (swingValue.get() && !mc.thePlayer.isSwingInProgress && swingDelayTimer.hasTimePassed(swingDelayValue.get()
+                        .toLong())) {
                     mc.thePlayer.swingItem()
                     swingDelayTimer.reset()
                 }
@@ -126,9 +132,9 @@ class AntiAFK : Module() {
     }
 
     private fun getRandomMoveKeyBind(): Int {
-        when(RandomUtils.nextInt(0,4)) {
+        when (RandomUtils.nextInt(0, 4)) {
             0 -> {
-               return mc.gameSettings.keyBindRight.keyCode
+                return mc.gameSettings.keyBindRight.keyCode
             }
             1 -> {
                 return mc.gameSettings.keyBindLeft.keyCode
