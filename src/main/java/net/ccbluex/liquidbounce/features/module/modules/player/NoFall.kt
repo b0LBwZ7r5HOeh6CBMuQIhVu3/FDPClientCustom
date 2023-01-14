@@ -40,7 +40,7 @@ import kotlin.math.sqrt
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
     val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix", "OldMatrix2", "OldAACFlag"), "SpoofGround")
-    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"))
+    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"),"C04position")
     private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
     private val editDelayValue = IntegerValue("editDelay", 2, 1, 10)
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
