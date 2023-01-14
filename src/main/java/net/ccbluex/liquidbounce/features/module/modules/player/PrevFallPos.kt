@@ -54,7 +54,12 @@ class PrevFallPos : Module() {
     fun onRender3d(event: Render3DEvent) {
         pos ?: return
 
-        val color = if (colorRainbow.get()) ColorUtils.rainbowWithAlpha(colorAlphaValue.get()) else Color(colorRedValue.get(), colorGreenValue.get(), colorBlueValue.get(), colorAlphaValue.get())
+        val color = if (colorRainbow.get()) ColorUtils.rainbowWithAlpha(colorAlphaValue.get()) else Color(
+            colorRedValue.get(),
+            colorGreenValue.get(),
+            colorBlueValue.get(),
+            colorAlphaValue.get()
+        )
         when (modeValue.get().lowercase()) {
             "box" -> {
                 RenderUtils.drawBlockBox(pos, color, true, true, outlineWidth.get())
@@ -66,5 +71,15 @@ class PrevFallPos : Module() {
                 RenderUtils.drawBlockBox(pos, color, true, false, outlineWidth.get())
             }
         }
+        RenderUtils.renderNameTag(
+            java.lang.Math.round(
+                mc.thePlayer.getDistance(
+                    pos.getX().toDouble(),
+                    pos.getY().toDouble(),
+                    pos.getZ().toDouble()
+                )
+            ).toString() + "m",
+            pos.getX().toDouble(), pos.getY().toDouble(), pos.getZ().toDouble()
+        )
     }
 }
