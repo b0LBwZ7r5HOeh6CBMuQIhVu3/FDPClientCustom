@@ -5,10 +5,12 @@ import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.Render3DEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 // import net.ccbluex.liquidbounce.features.command.commands.HClipCommand
+import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.movement.Speed
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
@@ -31,6 +33,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.Vec3
 import java.awt.Color
 import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.atan2
 
 @ModuleInfo(name = "ArrowDodge", category = ModuleCategory.COMBAT)
@@ -152,9 +156,16 @@ class ArrowDodge : Module() {
             val leftDis = mc.thePlayer.positionVector.add(RotationUtils.getVectorForRotation(left))
                 .subtract(dodgingObject!!.positionVector).lengthVector()
 
-            val rot = if (rightDis > leftDis) right else left
-            rot.toPlayer(mc.thePlayer)
 
+            val posR = FallingPlayer(mc.thePlayer.posX + (-sin(right.yaw) * 4), mc.thePlayer.posY, mc.thePlayer.posZ + (cos(right.yaw) * 4), 0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+            if (posR != null && posR.y < (mc.thePlayer.posY - 7)) {
+                right.toPlayer(mc.thePlayer)
+            } else {
+                left.toPlayer(mc.thePlayer)
+            }
+            //val rot = if (rightDis > leftDis) right else left
+
+            //rot.toPlayer(mc.thePlayer)
 
 
             //This is fucking spaghetti
