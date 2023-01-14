@@ -93,8 +93,10 @@ class InventoryCleaner : Module() {
                 if (value) {
                     InventoryUtils.openPacket()
                 } else {
-                    if(closeDelayTimer.hasTimePassed(autoCloseDelayValue.get().toLong())){
+                    if (closeDelayTimer.hasTimePassed(autoCloseDelayValue.get().toLong())) {
                         InventoryUtils.closePacket()
+                    } else {
+                        value = field
                     }
                 }
             }
