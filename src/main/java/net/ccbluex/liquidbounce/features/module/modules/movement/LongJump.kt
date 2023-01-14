@@ -22,6 +22,7 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.util.EnumFacing
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 
 @ModuleInfo(name = "LongJump", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.FLAG)
 class LongJump : Module() {
@@ -77,6 +78,8 @@ class LongJump : Module() {
     private val rs3HeightValue = FloatValue("RedeSky3Height", 1F, 0.3F, 1.5F).displayable { modeValue.equals("RedeSky3") }
     private val rs3TimerValue = FloatValue("RedeSky3Timer", 1F, 0.1F, 5F).displayable { modeValue.equals("RedeSky3") }
     private val ncpdInstantValue = BoolValue("NCPDamageInstant", false).displayable { modeValue.equals("NCPDamage") }
+    private val ncpdRandomBoostValue = BoolValue("NCPDamageRandomBoost", false).displayable { modeValue.equals("NCPDamage") }
+
     // settings
     private val autoJumpValue = BoolValue("AutoJump", true)
     private val autoDisableValue = BoolValue("AutoDisable", true)
@@ -163,7 +166,7 @@ class LongJump : Module() {
                     }
                 }
             } else {
-                MovementUtils.strafe(0.50f * ncpBoostValue.get())
+                MovementUtils.strafe((if (ncpdRandomBoostValue.get()) RandomUtils.nextFloat(0.20f, 0.50f) else 0.50f) * ncpBoostValue.get())
                 mc.thePlayer.jump()
                 state = false
             }
