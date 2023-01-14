@@ -20,6 +20,7 @@ import net.ccbluex.liquidbounce.utils.timer.TickTimer
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.ccbluex.liquidbounce.value.BoolValue
 import net.minecraft.block.BlockLiquid
 import net.minecraft.init.Blocks
 import net.minecraft.init.Items
@@ -39,8 +40,9 @@ import kotlin.math.sqrt
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
     val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix", "OldMatrix2", "OldAACFlag"), "SpoofGround")
-    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C04position", "C05look", "C06position_look"))
-    private val editDelayValue = IntegerValue("editDelay", 2, 0, 10)
+    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"))
+    private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
+    private val editDelayValue = IntegerValue("editDelay", 2, 1, 10)
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
     private val minFallDistance = FloatValue("MinMLGHeight", 5f, 2f, 50f).displayable { modeValue.equals("MLG") }
     private val flySpeed = FloatValue("MotionSpeed", -0.01f, -5f, 5f).displayable { modeValue.equals("MotionFlag") }
@@ -105,8 +107,13 @@ class NoFall : Module() {
 
         when (modeValue.get().lowercase()) {
             "packet" -> {
-                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f) {
-                    mc.netHandler.addToSendQueue(C03PacketPlayer(true))
+                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
+                    when (hypixelSpoofPacketValue.get().lowercase()) {
+                        "c03flying" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
+                        "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
+                        "c05look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(packet.yaw, packet.pitch, true))
+                        "c06position_look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C06PacketPlayerPosLook(packet.x, packet.y, packet.z, packet.yaw, packet.pitch, true))
+                    }
                     mc.thePlayer.fallDistance = 0f
                 }
             }
@@ -461,11 +468,15 @@ class NoFall : Module() {
                 packet.onGround = false
             } else if (mode.equals("Edit", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
                 packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
-            } else if (mode.equals("HypSpoof", ignoreCase = true) && mc.thePlayer.fallDistance > 2.5F && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
+            } else if (mode.equals("HypSpoof", ignoreCase = true) && ((!hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance > 2.5F) || (hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f)) && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                 when (hypixelSpoofPacketValue.get().lowercase()) {
+                    "c03flying" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
                     "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
                     "c05look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(packet.yaw, packet.pitch, true))
                     "c06position_look" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C06PacketPlayerPosLook(packet.x, packet.y, packet.z, packet.yaw, packet.pitch, true))
+                }
+                if (hypSpoofMotionCheckValue.get()) {
+                    mc.thePlayer.fallDistance = 0f
                 }
             } else if (mode.equals("AACv4", ignoreCase = true) && aac4Fakelag) {
                 event.cancelEvent()
