@@ -55,7 +55,13 @@ class TargetStrafe : Module() {
             if(mc.thePlayer.onGround || !onlyGroundValue.get()) {
                 yaw = RotationUtils.getRotationsEntity(target).yaw
             }
-            MovementUtils.setSpeed(event, MovementUtils.getSpeed().toDouble(), yaw, if (direction) 1.0 else -1.0, if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()) 0.0 else 1.0)
+            MovementUtils.setSpeed(
+                event,
+                MovementUtils.getSpeed().toDouble(),
+                yaw,
+                if (direction) 0.8 else -0.8,
+                if (mc.thePlayer.getDistanceToEntity(target) <= radiusValue.get()) 0.2 else 0.9
+            )
         }
     }
 
