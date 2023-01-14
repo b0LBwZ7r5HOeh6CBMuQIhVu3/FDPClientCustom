@@ -14,9 +14,11 @@ import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
+import net.ccbluex.liquidbounce.value.BoolValue
 
 @ModuleInfo(name = "Freeze", category = ModuleCategory.MOVEMENT, autoDisable = EnumAutoDisableType.RESPAWN)
 class Freeze : Module() {
+    private val setDeadValue = BoolValue("SetDead", false)
     private var motionX = 0.0
     private var motionY = 0.0
     private var motionZ = 0.0
@@ -39,7 +41,9 @@ class Freeze : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        mc.thePlayer.isDead = true
+        if (setDeadValue.get()) {
+            mc.thePlayer.isDead = true
+        }
         mc.thePlayer.motionX = 0.0
         mc.thePlayer.motionY = 0.0
         mc.thePlayer.motionZ = 0.0
@@ -62,7 +66,9 @@ class Freeze : Module() {
     }
 
     override fun onDisable() {
-        mc.thePlayer.isDead = falsebe
+        if (setDeadValue.get()) {
+            mc.thePlayer.isDead = false
+        }
         mc.thePlayer.motionX = motionX
         mc.thePlayer.motionY = motionY
         mc.thePlayer.motionZ = motionZ
