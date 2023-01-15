@@ -11,10 +11,13 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.minecraft.util.BlockPos
+import net.ccbluex.liquidbounce.value.BoolValue
+import net.minecraft.network.play.client.C09PacketHeldItemChange
+import kotlin.math.max
 
 @ModuleInfo(name = "AutoTool", category = ModuleCategory.PLAYER)
 class AutoTool : Module() {
-
+    private val bypass = BoolValue("bypass", true)
     @EventTarget
     fun onClick(event: ClickBlockEvent) {
         switchSlot(event.clickedBlock ?: return)
@@ -36,7 +39,18 @@ class AutoTool : Module() {
             }
         }
 
-        if (bestSlot != -1) {
+        if (bestSlot != -1 && mc.thePlayer.inventory.currentItem != bestSlot) {
+            if (max(mc.thePlayer.inventory.currentItem, bestSlot) != 1 && bypass.get()) {
+                if (bestSlot > mc.thePlayer.inventory.currentItem) {
+                    for (i in mc.thePlayer.inventory.currentItem..bestSlot - 1) {
+                        mc.netHandler.addToSendQueue(C09PacketHeldItemChange(i))
+                    }
+                } else {
+                    for (i in mc.thePlayer.inventory.currentItem downTo bestSlot - 1) {
+                        mc.netHandler.addToSendQueue(C09PacketHeldItemChange(i))
+                    }
+                }
+            }
             mc.thePlayer.inventory.currentItem = bestSlot
         }
     }
