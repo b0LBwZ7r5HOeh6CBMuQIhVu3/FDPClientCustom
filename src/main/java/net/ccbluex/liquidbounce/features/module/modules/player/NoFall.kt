@@ -108,7 +108,7 @@ class NoFall : Module() {
 
         when (modeValue.get().lowercase()) {
             "packet" -> {
-                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
+                if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3.0645f && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                     when (hypixelSpoofPacketValue.get().lowercase()) {
                         "c03flying" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
                         "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
@@ -489,7 +489,7 @@ class NoFall : Module() {
                 packet.onGround = false
             } else if (mode.equals("Edit", ignoreCase = true) && mc.thePlayer != null && mc.thePlayer.fallDistance > 1.5) {
                 packet.onGround = mc.thePlayer.ticksExisted % editDelayValue.get() == 0
-            } else if (mode.equals("HypSpoof", ignoreCase = true) && ((!hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance > 2.5F) || (hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f)) && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
+            } else if (mode.equals("HypSpoof", ignoreCase = true) && ((!hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance > 2.5F) || (hypSpoofMotionCheckValue.get() && mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3.0645f)) && mc.thePlayer.ticksExisted % editDelayValue.get() == 0) {
                 when (hypixelSpoofPacketValue.get().lowercase()) {
                     "c03flying" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer(true))
                     "c04position" -> PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(packet.x, packet.y, packet.z, true))
