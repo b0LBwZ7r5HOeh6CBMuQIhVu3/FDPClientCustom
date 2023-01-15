@@ -31,7 +31,7 @@ class MurderMystery : Module() {
 
         @EventTarget
         fun onUpdate(event: UpdateEvent) {
-            if (sus.isDead) {
+            if (sus != null && sus.isDead) {
                 sus = null
                 return
             }
