@@ -13,6 +13,7 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.projectile.EntityFireball
 import net.minecraft.network.play.client.C02PacketUseEntity
@@ -24,13 +25,15 @@ class AntiFireBall : Module() {
 
     private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val rotationValue = BoolValue("Rotation", true)
+    private val rangeValue = FloatValue("Range", 5.5f, 1f, 6f)
+    private val rotationKeepLenValue = BoolValue("RotationKeepLen", true)
 
     @EventTarget
     private fun onUpdate(event: UpdateEvent) {
         for (entity in mc.theWorld.loadedEntityList) {
-            if (entity is EntityFireball && mc.thePlayer.getDistanceToEntity(entity) < 5.5 && timer.hasTimePassed(300)) {
+            if (entity is EntityFireball && mc.thePlayer.getDistanceToEntity(entity) < rangeValue.get() && timer.hasTimePassed(300)) {
                 if (rotationValue.get()) {
-                    RotationUtils.setTargetRotation(RotationUtils.getRotationsNonLivingEntity(entity))
+                    RotationUtils.setTargetRotation(RotationUtils.getRotationsNonLivingEntity(entity),if(rotationKeepLenValue.get()) 15 else 0)
                 }
 
                 mc.thePlayer.sendQueue.addToSendQueue(C02PacketUseEntity(entity, C02PacketUseEntity.Action.ATTACK))
