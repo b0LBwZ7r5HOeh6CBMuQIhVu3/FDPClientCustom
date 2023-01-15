@@ -66,8 +66,11 @@ class TargetStrafe : Module() {
     }
 
     fun isVoid(): Boolean {
-        val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
-            return (pos != null && pos.y < (mc.thePlayer.posY - 7))
+        val pos = FallingPlayer(mc.thePlayer.posX + mc.thePlayer.motionX * 2,
+            mc.thePlayer.posY,
+            mc.thePlayer.posZ + mc.thePlayer.motionZ * 2,
+            mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
+        return (pos != null && pos.y < (mc.thePlayer.posY - 7))
     }
 
     @EventTarget
