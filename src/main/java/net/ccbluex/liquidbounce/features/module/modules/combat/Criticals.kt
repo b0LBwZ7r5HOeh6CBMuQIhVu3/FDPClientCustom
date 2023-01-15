@@ -29,13 +29,14 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix","MiniPhase"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix","MiniPhase","phasePacket","packet1","packet2","AAC4Packet"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest","Minis"), "Jump")
-    val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit"), "AAC4")
+    val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit","hover","phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off","Normal","Strict"), "Normal")
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
+    private val onGroundPacketValue = BoolValue("onGroundPacket", true)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hytMorePacketValue = BoolValue("HYTMorePacket", false).displayable { modeValue.equals("AAC5.0.14HYT") }
@@ -192,7 +193,26 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     sendCriticalPacket(xOffset = motionX / 3, yOffset = 0.20000004768372, zOffset = motionZ / 3, ground = false)
                     sendCriticalPacket(xOffset = motionX / 1.5, yOffset = 0.12160004615784, zOffset = motionZ / 1.5, ground = false)
                 }
-
+                "aac4packet" -> {
+                    val motionX: Double
+                    val motionZ: Double
+                    if (MovementUtils.isMoving()) {
+                        motionX = mc.thePlayer.motionX
+                        motionZ = mc.thePlayer.motionZ
+                    } else {
+                        motionX = 0.00
+                        motionZ = 0.00
+                    }
+                    sendCriticalPacket(xOffset = -(motionX / 3), yOffset = 3e-14, zOffset = -(motionZ / 3), ground = onGroundPacketValue.get())
+                    sendCriticalPacket(xOffset = -(motionX / 1.5), yOffset = 8e-15, zOffset = -(motionZ / 1.5), ground = false)
+                }
+                "packet1" -> {
+                    sendCriticalPacket(yOffset = 8e-15, ground = onGroundPacketValue.get())
+                }
+                "packet2" -> {
+                    sendCriticalPacket(yOffset = 0.012, ground = onGroundPacketValue.get())
+                    sendCriticalPacket(yOffset = 0.012008726, ground = false)
+                }
                 "tphop" -> {
                     sendCriticalPacket(yOffset = 0.02, ground = false)
                     sendCriticalPacket(yOffset = 0.01, ground = false)
@@ -208,6 +228,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     sendCriticalPacket(yOffset = -0.0125, ground = false)
                     sendCriticalPacket(yOffset = 0.01275, ground = false)
                     sendCriticalPacket(yOffset = -0.00025, ground = true)
+                }
+                "phasepacket" -> {
+                    sendCriticalPacket(yOffset = -8e-15, ground = false)
                 }
                 "visual" -> mc.thePlayer.onCriticalHit(entity)
 
@@ -386,6 +409,28 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                             }
                             aacLastState = mc.thePlayer.onGround
                             packet.y += 0.000000000000036
+                            if (mc.thePlayer.onGround || !hoverNoFall.get()) packet.onGround = false
+                        }
+                        "hover" -> {
+                            if (mc.thePlayer.onGround && !aacLastState && hoverNoFall.get()) {
+                                packet.onGround = mc.thePlayer.onGround
+                                aacLastState = mc.thePlayer.onGround
+                                packet.y += 1e-13
+                                return
+                            }
+                            aacLastState = mc.thePlayer.onGround
+                            packet.y += 1e-13
+                            if (mc.thePlayer.onGround || !hoverNoFall.get()) packet.onGround = false
+                        }
+                        "phase" -> {
+                            if (mc.thePlayer.onGround && !aacLastState && hoverNoFall.get()) {
+                                packet.onGround = mc.thePlayer.onGround
+                                aacLastState = mc.thePlayer.onGround
+                                packet.y -= 1e-13
+                                return
+                            }
+                            aacLastState = mc.thePlayer.onGround
+                            packet.y -= 1e-13
                             if (mc.thePlayer.onGround || !hoverNoFall.get()) packet.onGround = false
                         }
                         "normal2" -> {
