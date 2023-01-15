@@ -1148,6 +1148,11 @@ class KillAura : Module() {
             }
         if(fakeUnblockValue.get()){
             mc.netHandler.addToSendQueue(C07PacketPlayerDigging())
+            when (stopBlockingSendHeldItemChangeValue.get().lowercase()){
+                "off" -> {}
+                "empty" -> mc.thePlayer.sendQueue.addToSendQueue(C09PacketHeldItemChange())
+                "currentitem" -> mc.thePlayer.sendQueue.addToSendQueue(C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem))
+            }
         }
         blockingStatus = true
     }
