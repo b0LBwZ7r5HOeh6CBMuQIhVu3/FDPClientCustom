@@ -285,10 +285,11 @@ object AntiBot : Module() {
                 if (entity.isInvisible && !invisible.contains(entity.entityId)) {
                     invisible.add(entity.entityId)
                 }
-                val dist = mc.thePlayer.getDistanceSq(entity.posX,if(alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
-                val dist2 = mc.thePlayer.getDistanceSq(entity.posX,if(randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                val dist = mc.thePlayer.getDistance(entity.posX, if (alwaysInRadiusOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
+                val dist2 = mc.thePlayer.getDistance(entity.posX, if (randomHealthRadiusCheckOnlyXZValue.get()) mc.thePlayer.posY else entity.posY, entity.posZ)
                 if ((!livingTimeValue.get() || entity.ticksExisted > livingTimeTicksValue.get() || !alwaysInRadiusWithTicksCheckValue.get()) && !notAlwaysInRadius.contains(entity.entityId) && dist > alwaysRadiusValue.get()) {
-                    notAlwaysInRadius.add(entity.entityId)                }
+                    notAlwaysInRadius.add(entity.entityId)
+                }
                 if (!notAlwaysInRadius.contains(entity.entityId) && dist < alwaysRadiusValue.get() && alwaysInRadiusValue.get() && spawnInRadiusValue.get() && (LiquidBounce.combatManager.inCombat || !alwaysInRadiusInCombatingValue.get())) {
                     alwaysInRadius.add(entity.entityId)
                 }
