@@ -39,6 +39,7 @@ class FastUse : Module() {
         arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC"),
         "DelayedInstant"
     )
+    private val packetValue = ListValue("Packet", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
     private val timerValue = FloatValue(
         "Timer",
         1.22F,
@@ -58,6 +59,14 @@ class FastUse : Module() {
     private var c05s = 0
     private var yaw = 0.0f
     private var pitch = 0.0f
+    private fun sendPacket(packet: String = "C03flying") {
+        when (packet.get().lowercase()) {
+            "c03flying" -> mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+            "c04position" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.onGround))
+            "c05look" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround))
+            "c06position_look" -> Pmc.netHandler.addToSendQueue(C03PacketPlayer.C06PacketPlayerPosLook(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, mc.thePlayer.onGround))
+        }
+    }
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
@@ -71,7 +80,6 @@ class FastUse : Module() {
         }
 
         val usingItem = mc.thePlayer.itemInUse.item
-
         if (usingItem is ItemFood || usingItem is ItemBucketMilk || usingItem is ItemPotion/* || (usingItem is ItemBow && bowValue.get())*/) {
 /*            if(usingItem is ItemBow && bowValue.get()){
             yaw = if (RotationUtils.targetRotation != null)
@@ -90,7 +98,7 @@ class FastUse : Module() {
             when (modeValue.get().lowercase()) {
                 "delayedinstant" -> if (mc.thePlayer.itemInUseDuration > durationValue.get()) {
                     repeat(36 - mc.thePlayer.itemInUseDuration) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        sendPacket(packetValue.get())
                     }
 
                     if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -98,7 +106,7 @@ class FastUse : Module() {
 
                 "instant" -> {
                     repeat(35) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        sendPacket(packetValue.get())
                     }
 
                     if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -108,7 +116,7 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.itemInUseDuration > 14) {
                         repeat(23) {
-                            mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                            sendPacket(packetValue.get())
                         }
                         if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                     }
@@ -117,7 +125,7 @@ class FastUse : Module() {
                     mc.timer.timerSpeed = 0.49F
                     usedTimer = true
                     repeat(2) {
-                        mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                        sendPacket(packetValue.get())
                     }
 
                     // mc.playerController.onStoppedUsingItem(mc.thePlayer)
@@ -132,7 +140,7 @@ class FastUse : Module() {
                     usedTimer = true
                     if (mc.thePlayer.ticksExisted % 2 == 0) {
                         repeat(2) {
-                            mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                            sendPacket(packetValue.get())
                         }
                     }
                 }
@@ -144,7 +152,7 @@ class FastUse : Module() {
                         return
                     }
 
-                    mc.netHandler.addToSendQueue(C03PacketPlayer(mc.thePlayer.onGround))
+                    sendPacket(packetValue.get())
                     msTimer.reset()
                 }
             }
