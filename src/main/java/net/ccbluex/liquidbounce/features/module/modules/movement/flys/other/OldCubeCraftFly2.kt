@@ -20,7 +20,7 @@ class CubeCraftFly : FlyMode("CubeCraft") {
     override fun onMove(event: MoveEvent) {
         val yaw = MovementUtils.direction
 
-        if (timer.hasTimePassed(10) && mc.gameSettings.keyBindForward.pressed) {
+        if (timer.hasTimePassed(1) && mc.gameSettings.keyBindForward.pressed) {
             event.x = -sin(yaw) * 2.4
             event.z = cos(yaw) * 2.4
             event.y *= 0.3
