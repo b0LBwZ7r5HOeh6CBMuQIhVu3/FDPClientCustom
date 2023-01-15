@@ -39,8 +39,8 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "NoFall", category = ModuleCategory.PLAYER)
 class NoFall : Module() {
-    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix", "OldMatrix2", "OldAACFlag"), "SpoofGround")
-    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"),"C04position")
+    val modeValue = ListValue("Mode", arrayOf("SpoofGround", "AlwaysSpoofGround", "NoGround", "Packet", "Packet1", "Packet2", "MLG", "OldAAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "AACv4", "AAC5.0.14", "Spartan", "CubeCraft", "Edit", "HypSpoof", "Phase", "Verus", "Damage", "MotionFlag", "Matrix", "MatrixPacket", "OldMatrix", "OldMatrix2", "OldAACFlag", "HYTFlag"), "SpoofGround")
+    private val hypixelSpoofPacketValue = ListValue("hypixelSpoofPacket", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
     private val hypSpoofMotionCheckValue = BoolValue("hypSpoofMotionCheck", true)
     private val editDelayValue = IntegerValue("editDelay", 2, 1, 10)
     private val phaseOffsetValue = IntegerValue("PhaseOffset", 1, 0, 5).displayable { modeValue.equals("Phase") }
@@ -48,6 +48,7 @@ class NoFall : Module() {
     private val flySpeed = FloatValue("MotionSpeed", -0.01f, -5f, 5f).displayable { modeValue.equals("MotionFlag") }
 
     private var oldaacState = 0
+    private var usedTimer = false
     private var jumped = false
     private val spartanTimer = TickTimer()
     private var aac4Fakelag = false
@@ -153,14 +154,16 @@ class NoFall : Module() {
 //                mc.timer.timerSpeed = if(abs((FallingPlayer(mc.thePlayer).findCollision(100)?.y ?: 0) - mc.thePlayer.posY) > 3) {
 //                    (mc.timer.timerSpeed * 0.8f).coerceAtLeast(0.3f)
 //                } else { 1f }
-                if (mc.thePlayer.onGround) {
+                if (mc.thePlayer.onGround && usedTimer) {
                     mc.timer.timerSpeed = 1f
+                    usedTimer = false
                 } else if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f) {
                     mc.timer.timerSpeed = (mc.timer.timerSpeed * if (mc.timer.timerSpeed < 0.6) {
                         0.25f
                     } else {
                         0.5f
                     }).coerceAtLeast(0.2f)
+                    usedTimer = true
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
@@ -169,6 +172,24 @@ class NoFall : Module() {
                     mc.netHandler.addToSendQueue(C03PacketPlayer(true))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
+                    mc.thePlayer.fallDistance = 0f
+                }
+            }
+            "hytflag" -> {
+                if (mc.thePlayer.onGround && usedTimer) {
+                    mc.timer.timerSpeed = 1f
+                    usedTimer = false
+                } else if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 5f) {
+                    mc.timer.timerSpeed = (mc.timer.timerSpeed * if (mc.timer.timerSpeed < 0.6) {
+                        0.6f
+                    } else {
+                        0.8f
+                    }).coerceAtLeast(0.2f)
+                    usedTimer = true
+                    mc.thePlayer.motionY *= 0.6
+                    mc.thePlayer.motionX = 0.0
+                    mc.thePlayer.motionZ = mc.thePlayer.motionX
+                    mc.thePlayer.isInWeb = true
                     mc.thePlayer.fallDistance = 0f
                 }
             }
