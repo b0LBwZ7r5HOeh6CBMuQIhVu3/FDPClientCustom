@@ -81,4 +81,10 @@ object EntityUtils : MinecraftInstance() {
     fun isMob(entity: Entity): Boolean {
         return entity is EntityMob || entity is EntitySlime || entity is EntityGhast || entity is EntityDragon
     }
+
+    fun getPing(entityPlayer: EntityPlayer?): Int {
+        if (entityPlayer == null) return 0
+        val networkPlayerInfo: NetworkPlayerInfo = mc.getNetHandler().getPlayerInfo(entityPlayer.getUniqueID())
+        return if (networkPlayerInfo == null) 0 else networkPlayerInfo.getResponseTime()
+    }
 }

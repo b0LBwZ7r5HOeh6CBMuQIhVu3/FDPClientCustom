@@ -17,6 +17,7 @@ import net.ccbluex.liquidbounce.features.module.modules.render.Breadcrumbs
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.minecraft.client.entity.EntityOtherPlayerMP
 import net.minecraft.network.Packet
@@ -25,6 +26,8 @@ import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook
 import org.lwjgl.opengl.GL11
 import java.util.*
+import kotlin.math.min
+import kotlin.math.roundToInt
 import java.util.concurrent.LinkedBlockingQueue
 
 @ModuleInfo(name = "Blink", category = ModuleCategory.PLAYER)
@@ -37,8 +40,19 @@ class Blink : Module() {
     private val pingValue = BoolValue("ping", false)
     private val actionValue = BoolValue("action", true)
     private val moveValue = BoolValue("move", true)
+    private val moveActionCheckValue = BoolValue("moveActionCheck", true)
+    private val pingCalcValue = BoolValue("PingCalc", true)
+    private val pingCalcDupePacketValue = BoolValue("PingCalcDupePacket", true)
+    private val dupePacketsPerMSValue = IntegerValue("dupePacketsPerMS", 30, 5, 500).displayable { pingCalcDupePacketValue.get() }
+    private val maxDupePacketsValue = IntegerValue("MaxDupePackets", 5, 0, 15).displayable { pingCalcDupePacketValue.get() }
+    private val dupeC00Value = BoolValue("dupeC00", true)
+    private val dupeC0FValue = BoolValue("dupeC0F", true)
+    private val debugValue = BoolValue("debug", true)
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
+    private var packetsDuped = 0
+    private var c00PacketToDupe? = null
+    private var c0fPacketToDupe? = null
 
     override fun onEnable() {
         if (mc.thePlayer == null) return
@@ -75,7 +89,7 @@ class Blink : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
         if (mc.thePlayer == null || disableLogger) return
-        if (packet is C03PacketPlayer && (packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
+        if (packet is C03PacketPlayer && (!moveActionCheckValue.get() || packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
             event.cancelEvent()
         }
         if (
@@ -85,6 +99,12 @@ class Blink : Module() {
                     packet is C02PacketUseEntity) && actionValue.get()) ||
             ((packet is C00PacketKeepAlive || packet is C0FPacketConfirmTransaction) && pingValue.get())
         ) {
+            if (packet is C0FPacketConfirmTransaction)
+                c0fPacketToDupe = packet
+
+            if (packet is C00PacketKeepAlive)
+                c00PacketToDupe = packet
+
             event.cancelEvent()
             packets.add(packet)
         }
@@ -101,14 +121,35 @@ class Blink : Module() {
                 )
             )
         }
-        if (pulseValue.get() && pulseTimer.hasTimePassed(pulseDelayValue.get().toLong())) {
-            blink()
-            fakePlayer!!.setPositionAndRotation(
-                mc.thePlayer.posX,
-                mc.thePlayer.posY,
-                mc.thePlayer.posZ,
-                mc.thePlayer.rotationYaw,
-                mc.thePlayer.rotationPitch
+        if (pulseValue.get() && pulseTimer.hasTimePassed((pulseDelayValue.get() - (if (pingCalcValue.get()) EntityUtils.getPing(mc.thePlayer) else 0)).toLong())) {
+            if (pingCalcValue.get() && EntityUtils.getPing(mc.thePlayer) > pulseDelayValue.get() && pingCalcDupePacketValue.get() {
+                    private val packetsAmounts = min(
+                        roundToInt(
+                            (pulseDelayValue.get() - EntityUtils.getPing(mc.thePlayer)) / dupePacketsPerMSValue.get()
+                        ),
+                        if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 114514
+                    )
+
+                    repeat(packetsAmounts) {
+                        if (dupeC00Value.get()) {
+                            packets.add(c00PacketToDupe)
+                        }
+                        if (dupeC0FValue.get()) {
+                            packets.add(c0fPacketToDupe)
+                        }
+                    }
+                    if (debugValue.get()) {
+                        alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to sure your ping is the Blink value you set §7(" + EntityUtils.getPing(mc.thePlayer)
+                            .toString() + "," + pulseDelayValue.get().toString() + ")")
+                    }
+                }
+                blink ()
+                fakePlayer !!. setPositionAndRotation (
+                        mc.thePlayer.posX,
+            mc.thePlayer.posY,
+            mc.thePlayer.posZ,
+            mc.thePlayer.rotationYaw,
+            mc.thePlayer.rotationPitch
             )
             pulseTimer.reset()
         }
