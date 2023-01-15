@@ -28,13 +28,14 @@ class TargetStrafe : Module() {
     private val renderValue = BoolValue("Render", true)
     private val combatCheckValue = BoolValue("combatCheck", false)
     private val voidCheckValue = BoolValue("voidCheck", true)
+    private val fallCheckValue = BoolValue("fallCheck", true)
     private var direction = true
     private var yaw = 0f
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
         if (event.eventState === EventState.PRE) {
-            if(voidCheckValue.get() && isVoid()){
+            if ((voidCheckValue.get() && isVoid()) || (fallCheckValue.get() && isDanger())) {
                 direction = !direction
                 return
             }
@@ -70,7 +71,19 @@ class TargetStrafe : Module() {
             mc.thePlayer.posY,
             mc.thePlayer.posZ + mc.thePlayer.motionZ * 2,
             mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
-        return (pos == null || pos.y > (mc.thePlayer.posY - 10))
+        return (pos == null)
+    }
+
+    fun isDanger(): Boolean {
+        val pos = FallingPlayer(mc.thePlayer.posX + mc.thePlayer.motionX * 2,
+            mc.thePlayer.posY,
+            mc.thePlayer.posZ + mc.thePlayer.motionZ * 2,
+            mc.thePlayer.motionX * 1.5, mc.thePlayer.motionY * -0.5, mc.thePlayer.motionY * 1.5, mc.thePlayer.rotationYaw, 0f, 0f, 0f).findCollision(60)
+        if (pos == null) {
+            return true
+        } else {
+            return (pos.y < (mc.thePlayer.posY - 7))
+        }
     }
 
     @EventTarget
