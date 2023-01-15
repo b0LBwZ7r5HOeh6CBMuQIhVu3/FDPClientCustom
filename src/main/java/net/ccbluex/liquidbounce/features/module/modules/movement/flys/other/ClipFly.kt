@@ -16,12 +16,16 @@ class ClipFly : FlyMode("Clip") {
     private val delayValue = IntegerValue("${valuePrefix}-Delay", 1000, 0, 3000)
     private val timerValue = FloatValue("${valuePrefix}-Timer", 0.7f, 0.2f, 1f)
     private val packetOnGroundValue = BoolValue("${valuePrefix}packetOnGround", true)
+    private val stopMoveValue = BoolValue("${valuePrefix}stopMove", true)
+    private val stopMoveIIValue = BoolValue("${valuePrefix}stopMoveII", true)
+    private val stopMoveIIIValue = BoolValue("${valuePrefix}stopMoveIII", true)
 
     private val timer = MSTimer()
 
     override fun onEnable() {
         timer.reset()
     }
+
     override fun onPacket(event: PacketEvent) {
         val packet = event.packet
 
@@ -29,12 +33,22 @@ class ClipFly : FlyMode("Clip") {
             packet.onGround = packetOnGroundValue.get()
         }
     }
+
     override fun onUpdate(event: UpdateEvent) {
         mc.thePlayer.onGround = false
         mc.timer.timerSpeed = timerValue.get()
-        mc.thePlayer.motionX = 0.0
-        mc.thePlayer.motionY = 0.0
-        mc.thePlayer.motionZ = 0.0
+        if (stopMoveValue.get()) {
+            mc.thePlayer.motionX = 0.0
+            mc.thePlayer.motionY = 0.0
+            mc.thePlayer.motionZ = 0.0
+            if (stopMoveIIValue.get()) {
+                mc.thePlayer.isInWeb = true
+                if (stopMoveIIIValue.get()) {
+                    mc.thePlayer.speedOnGround = 0.0f
+                    mc.thePlayer.speedInAir = 0.0f
+                }
+            }
+        }
         if (timer.hasTimePassed(delayValue.get().toLong())) {
             val yaw = Math.toRadians(mc.thePlayer.rotationYaw.toDouble())
             mc.thePlayer.setPosition(mc.thePlayer.posX + (-sin(yaw) * xValue.get()), mc.thePlayer.posY + yValue.get(), mc.thePlayer.posZ + (cos(yaw) * zValue.get()))
