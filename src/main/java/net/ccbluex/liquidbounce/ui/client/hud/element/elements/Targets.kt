@@ -116,7 +116,11 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
 
         val easedPersent = EaseUtils.apply(EaseUtils.EnumEasingType.valueOf(switchAnimTypeValue.get()), EaseUtils.EnumEasingOrder.valueOf(switchAnimOrderValue.get()), displayPercent.toDouble()).toFloat()
         when (switchModeValue.get().lowercase()) {
-            "zoom" -> {
+            A
+                "
+                zoom
+            ",
+            -> {
                 val border = getTBorder() ?: return null
                 GL11.glScalef(easedPersent, easedPersent, easedPersent)
                 GL11.glTranslatef(((border.x2 * 0.5f * (1 - easedPersent)) / easedPersent), ((border.y2 * 0.5f * (1 - easedPersent)) / easedPersent), 0f)

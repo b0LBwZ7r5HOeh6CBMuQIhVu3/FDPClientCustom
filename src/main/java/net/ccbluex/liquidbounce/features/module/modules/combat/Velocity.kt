@@ -225,12 +225,12 @@ class Velocity : Module() {
             }
             "hyt3" -> if (mc.thePlayer.hurtTime > 0) {
                 if (mc.thePlayer.onGround) {
-                    mc.thePlayer.motionX *= 0.0.toDouble()
-                    mc.thePlayer.motionZ *= 0.0.toDouble()
+                    mc.thePlayer.motionX *= 0.6.toDouble()
+                    mc.thePlayer.motionZ *= 0.6.toDouble()
                     // mc.timer.timerSpeed = 0.8F
                 } else {
-                    mc.thePlayer.motionX *= 0.5.toDouble()
-                    mc.thePlayer.motionZ *= 0.5.toDouble()
+                    mc.thePlayer.motionX *= 0.8.toDouble()
+                    mc.thePlayer.motionZ *= 0.8.toDouble()
                     // mc.timer.timerSpeed = 0.7F
                 }
             }
