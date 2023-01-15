@@ -140,7 +140,8 @@ class Blink : Module() {
                     }
                     if (debugValue.get()) {
                         alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to sure your ping is the Blink value you set §7(" + EntityUtils.getPing(mc.thePlayer)
-                            .toString() + "," + pulseDelayValue.get().toString() + ")")
+                            .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
+                            .toString() + ")")
                     }
                 }
                 blink ()
