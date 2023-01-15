@@ -203,7 +203,7 @@ class KillAura : Module() {
     private val limitedTargetsValue = IntegerValue("LimitedTargets", 0, 0, 50)
 
     // Visuals
-    private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Sims", "None"), "FDP")
+    private val markValue = ListValue("Mark", arrayOf("Liquid", "FDP", "Block", "Jello", "Jello2", "Sims", "None"), "FDP")
     private val fakeSharpValue = BoolValue("FakeSharp", true)
     private val circleValue = BoolValue("Circle", false)
     private val oldTagValue = BoolValue("OldTag", false)
