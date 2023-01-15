@@ -52,10 +52,10 @@ class AntiAFK : Module() {
                 }
             }
             "test" -> {
-                if (RandomUtils.nextInt(0, 3) == 3) {
+                if (RandomUtils.nextInt(0, 8) == 3) {
                     mc.thePlayer.swingItem()
                 }
-                if (RandomUtils.nextInt(0, 6) == 3 && mc.thePlayer.onGround) {
+                if (RandomUtils.nextInt(0, 10) == 3 && mc.player.ticksExisted % 150 == 0 && mc.thePlayer.onGround) {
                     mc.thePlayer.jump()
                 }
                 //if(mc.player.ticksExisted % 500 == 0){mc.thePlayer.sendChatMessage(RandomUtils.randomString(1))}
