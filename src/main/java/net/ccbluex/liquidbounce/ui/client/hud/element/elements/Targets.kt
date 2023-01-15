@@ -105,7 +105,7 @@ class Targets : Element(-46.0, -40.0, 1F, Side(Side.Horizontal.MIDDLE, Side.Vert
             if (displayPercent > 0) {
                 displayPercent -= pct
             }
-            if (displayPercent < 0) {
+            if (displayPercent < 0 || mc.netHandler.getPlayerInfo(prevTarget.uniqueID) == null || !LiquidBounce.combatManager.inCombat) {
                 displayPercent = 0f
                 prevTarget = null
                 return getTBorder()
