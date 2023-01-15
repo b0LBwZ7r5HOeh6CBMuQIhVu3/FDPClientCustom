@@ -49,7 +49,7 @@ class LongJump : Module() {
     )
     private val ncpDamageMode = ListValue(
         "ncpDamageMode",
-        arrayOf("Test", "Mini"),
+        arrayOf("Test", "Mini", "OldCubeCraft2", "Vanilla"),
         "Test"
     ).display { modeValue.equals("NCPDamage") }
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
@@ -152,15 +152,24 @@ class LongJump : Module() {
                     }
                     "mini" -> {
                         repeat(10) {
-                            PacketUtils.sendPacketNoEvent(
-                                C03PacketPlayer.C04PacketPlayerPosition(
-                                    x,
-                                    y + 0.3175,
-                                    z,
-                                    false
-                                )
-                            )
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.3175, z, false))
                             PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                        }
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
+                    }
+                    "oldcubecraft2" -> {
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.prevRotationYaw, prevRotationPitch, false))
+                        repeat(49) {
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.06249, z, false))
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                        }
+                        PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.09, z, false))
+                    }
+                    "vanilla" -> {
+                        repeat(2) {
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.00001, z, false))
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, true))
                         }
                         PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
                     }
