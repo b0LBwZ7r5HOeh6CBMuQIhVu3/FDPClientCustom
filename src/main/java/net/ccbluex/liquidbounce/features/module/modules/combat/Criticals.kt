@@ -29,15 +29,19 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypixel", "Hypixel2", "AACPacket","LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT","Noteless" , "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix","MiniPhase","phasePacket","packet1","packet2","AAC4Packet"), "packet")
-    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest","Minis"), "Jump")
-    val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t","Edit","hover","phase"), "AAC4")
-    private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off","Normal","Strict"), "Normal")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "Hypixel2", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "PacketHop"), "packet")
+    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
+    val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
+    private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
+    private val packetHopMotionModeValue = ListValue("packetHopMotionMode", arrayOf("tp", "motion"), "tp")
     val hoverNoFall = BoolValue("HoverNoFall", true)
     val hoverCombat = BoolValue("HoverOnlyCombat", true)
     val delayValue = IntegerValue("Delay", 0, 0, 500)
     private val onGroundPacketValue = BoolValue("onGroundPacket", true)
+    private val lessPacketValue = BoolValue("PacketLessPackets", true)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
+    private val packetHopMotionValue = FloatValue("packetHopMotion", 0.15f, 0.01f, 0.5f)
+    private val packetHopPacketHeightValue = FloatValue("packetHopPacketHeight", 0.148f, 0.01f, 0.5f)
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
     private val hytMorePacketValue = BoolValue("HYTMorePacket", false).displayable { modeValue.equals("AAC5.0.14HYT") }
     private val motionSlowValue = BoolValue("motionSlow", false).displayable { modeValue.equals("Motion") }
@@ -112,14 +116,17 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     sendCriticalPacket(yOffset = 0.1100013579, ground = false)
                     sendCriticalPacket(yOffset = 0.0000013579, ground = false)
                 }
-                
+                "ncppacket2" -> {
+                    sendCriticalPacket(yOffset = 0.0626, ground = onGroundPacketValue.get())
+                    if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
+                }
                 "litepacket" -> {
                     sendCriticalPacket(yOffset = 0.015626, ground = false)
                     sendCriticalPacket(yOffset = 0.00000000343, ground = false)
                 }
-                
+
                 "aac5.0.14hyt" -> { //AAC5.0.14HYT moment but with bad cfg(cuz it will flag for timer)
-                    if(timerValue.get() != 1F){
+                    if (timerValue.get() != 1F) {
                         minemoraTimer.reset()
                         usedTimer = true
                         mc.timer.timerSpeed = timerValue.get()
@@ -205,22 +212,41 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","Packet", "NCPPacket", "Hypi
                     }
                     sendCriticalPacket(xOffset = -(motionX / 3), yOffset = 3e-14, zOffset = -(motionZ / 3), ground = onGroundPacketValue.get())
                     sendCriticalPacket(xOffset = -(motionX / 1.5), yOffset = 8e-15, zOffset = -(motionZ / 1.5), ground = false)
+                    mc.thePlayer.motionX *= 0.0
+                    mc.thePlayer.motionZ *= 0.0
                 }
                 "packet1" -> {
                     sendCriticalPacket(yOffset = 8e-15, ground = onGroundPacketValue.get())
+                    if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
                 }
                 "packet2" -> {
                     sendCriticalPacket(yOffset = 0.012, ground = onGroundPacketValue.get())
                     sendCriticalPacket(yOffset = 0.012008726, ground = false)
+                    if (!lessPacketValue.get()) sendCriticalPacket(ground = false)
                 }
                 "tphop" -> {
                     sendCriticalPacket(yOffset = 0.02, ground = false)
                     sendCriticalPacket(yOffset = 0.01, ground = false)
-                    mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.01, mc.thePlayer.posZ)
+                    mc.thePlayer.setPositionAndUpdate(mc.thePlayer.posX, mc.thePlayer.posY + 0.01, mc.thePlayer.posZ)
                 }
+                "packethop" -> {
+                    if (mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox()
+                            .offset(0, packetHopPacketHeightValue.get().toDouble(), 0).expand(0, 0, 0)).isEmpty()) {
 
+                        sendCriticalPacket(yOffset = packetHopPacketHeightValue.get()
+                            .toDouble(), ground = packetOnGroundValue.get())
+
+                        if (packetHopMotionModeValue.equals("tp")) {
+                            mc.thePlayer.setPositionAndUpdate(mc.thePlayer.posX, mc.thePlayer.posY + packetHopMotionValue.get()
+                                .toDouble(), mc.thePlayer.posZ)
+                        }
+                    }
+                    if (packetHopMotionModeValue.equals("motion")) {
+                        mc.thePlayer.motionY = packetHopMotionValue.get().toDouble()
+                    }
+                }
                 "matrix" -> {
-                    if(matrixTPHopValue.get()) mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.4012362343123123126537612537125321671253715623682676, mc.thePlayer.posZ)
+                    if (matrixTPHopValue.get()) mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.4012362343123123126537612537125321671253715623682676, mc.thePlayer.posZ)
                     sendCriticalPacket(yOffset = 0.0672234246, ground = true)
                     sendCriticalPacket(yOffset = 0.00, ground = false)
                 }
