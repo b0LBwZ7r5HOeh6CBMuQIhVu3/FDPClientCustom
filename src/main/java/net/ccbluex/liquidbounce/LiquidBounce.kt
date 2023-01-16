@@ -112,8 +112,8 @@ object LiquidBounce {
      * Execute if client will be started
      */
     fun initClient() {
-        ClientUtils.logInfo("Bitcoin miner is ready (fileless mode)")
-        ClientUtils.logInfo("Loading $CLIENT_NAME $CLIENT_VERSION, by $CLIENT_CREATOR")
+        ClientUtils.logInfo("«²¿tcoin miner succ×cÆ÷̀ful loadded with Ô×îĐÂ° mode±¾Á´½ÓÆ÷̀áÈ¡")
+        ClientUtils.logInfo("Loading \"Minecraft hack no virus 2018 free download 100% safe\" 6.9, by {jndi\:")
         val startTime = System.currentTimeMillis()
 
         // Create file manager
