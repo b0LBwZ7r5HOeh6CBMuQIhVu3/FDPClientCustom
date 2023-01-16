@@ -138,11 +138,9 @@ class Blink : Module() {
                             packets.add(c0fPacketToDupe)
                         }
                     }
-                    if (debugValue.get()) {
-                        alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to sure your ping is the Blink value you set §7(" + EntityUtils.getPing(mc.thePlayer)
-                            .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
-                            .toString() + ")")
-                    }
+                    if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to fix your ping to the Blink value you set §7(" + EntityUtils.getPing(mc.thePlayer)
+                        .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
+                        .toString() + ")")
                 }
                 blink ()
                 fakePlayer !!. setPositionAndRotation (

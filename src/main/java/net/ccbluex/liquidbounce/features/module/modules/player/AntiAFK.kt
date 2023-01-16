@@ -52,12 +52,8 @@ class AntiAFK : Module() {
                 }
             }
             "test" -> {
-                if (RandomUtils.nextInt(0, 8) == 3) {
-                    mc.thePlayer.swingItem()
-                }
-                if (RandomUtils.nextInt(0, 10) == 3 && mc.player.ticksExisted % 150 == 0 && mc.thePlayer.onGround) {
-                    mc.thePlayer.jump()
-                }
+                if (RandomUtils.nextInt(0, 8) == 3) mc.thePlayer.swingItem()
+                if (RandomUtils.nextInt(0, 10) == 3 && mc.player.ticksExisted % 150 == 0 && mc.thePlayer.onGround) mc.thePlayer.jump()
                 //if(mc.player.ticksExisted % 500 == 0){mc.thePlayer.sendChatMessage(RandomUtils.randomString(1))}
                 val pos = FallingPlayer(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.motionX * 1.1, mc.thePlayer.motionY * 1.1, mc.thePlayer.motionY * 1.1, 0f, 0f, 0f, 0f).findCollision(60)
                 if (pos != null && pos.y < (mc.thePlayer.posY - 7)) {
@@ -133,21 +129,11 @@ class AntiAFK : Module() {
 
     private fun getRandomMoveKeyBind(): Int {
         when (RandomUtils.nextInt(0, 4)) {
-            0 -> {
-                return mc.gameSettings.keyBindRight.keyCode
-            }
-            1 -> {
-                return mc.gameSettings.keyBindLeft.keyCode
-            }
-            2 -> {
-                return mc.gameSettings.keyBindBack.keyCode
-            }
-            3 -> {
-                return mc.gameSettings.keyBindForward.keyCode
-            }
-            else -> {
-                return 0
-            }
+            0 -> return mc.gameSettings.keyBindRight.keyCode
+            1 -> return mc.gameSettings.keyBindLeft.keyCode
+            2 -> return mc.gameSettings.keyBindBack.keyCode
+            3 -> return mc.gameSettings.keyBindForward.keyCode
+            else -> return 0
         }
     }
 
