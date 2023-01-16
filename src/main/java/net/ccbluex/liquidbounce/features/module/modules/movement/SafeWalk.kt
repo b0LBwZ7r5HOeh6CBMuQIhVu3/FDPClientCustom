@@ -29,18 +29,14 @@ class SafeWalk : Module() {
             if (airSafeValue.get() || mc.thePlayer.onGround) {
                 event.isSafeWalk = true
             }
-            if (aacapTestValue.get()) {
-                if (event.x == 0 && event.y == 0 && event.z == 0) {
-                    if (!sneaked) {
-                        mc.gameSettings.keyBindSneak.pressed = true
-                        sneaked = true
-                    }
-                } else {
-                    if (sneaked) {
-                        mc.gameSettings.keyBindSneak.pressed = false
-                        sneaked = false
-                    }
+            if (aacapTestValue.get()) if (event.x == 0 && event.y == 0 && event.z == 0) {
+                if (!sneaked) {
+                    mc.gameSettings.keyBindSneak.pressed = true
+                    sneaked = true
                 }
+            } else if (sneaked) {
+                mc.gameSettings.keyBindSneak.pressed = false
+                sneaked = false
             }
 
         }
