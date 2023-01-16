@@ -36,7 +36,7 @@ import net.minecraft.util.EnumFacing
 class FastUse : Module() {
     private val modeValue = ListValue(
         "Mode",
-        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC"),
+        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC", "StableAAC"),
         "DelayedInstant"
     )
     private val packetValue = ListValue("Packet", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
@@ -122,6 +122,12 @@ class FastUse : Module() {
                         sendPacket(packetValue.get())
                     }
 
+                    // mc.playerController.onStoppedUsingItem(mc.thePlayer)
+                }
+                "stableaac" -> {
+                    mc.timer.timerSpeed = 0.5F
+                    usedTimer = true
+                    sendPacket(packetValue.get())
                     // mc.playerController.onStoppedUsingItem(mc.thePlayer)
                 }
                 "timer" -> {
