@@ -74,7 +74,10 @@ class InventoryMove : Module() {
     @EventTarget
     fun onMotion(event: MotionEvent) {
         updateKeyState()
-        if(invOpen && MovementUtils.isMoving()){
+        if (invOpen && MovementUtils.isMoving() && bypassValue.equals("test") &&
+            ((event.eventState == EventState.POST && !testPreValue.get()) ||
+                    (event.eventState == EventState.PRE && testPreValue.get()))
+        ) {
             sendPacketNoEvent(C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT))
         }
     }

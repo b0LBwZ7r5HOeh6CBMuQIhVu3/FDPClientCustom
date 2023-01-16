@@ -49,7 +49,7 @@ class LongJump : Module() {
     )
     private val ncpDamageMode = ListValue(
         "ncpDamageMode",
-        arrayOf("Test", "Mini", "OldCubeCraft2", "Vanilla", "MushMC"),
+        arrayOf("Test", "Mini", "OldCubeCraft2", "Vanilla", "MushMC", "OldNCP"),
         "Test"
     ).display { modeValue.equals("NCPDamage") }
     private val ncpBoostValue = FloatValue("NCPBoost", 4.25f, 1f, 10f)
@@ -156,6 +156,12 @@ class LongJump : Module() {
                             PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
                         }
                         PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 0.01025, z, false))
+                    }
+                    "oldncp" -> {
+                        repeat(3) {
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y + 1.01, z, false))
+                            PacketUtils.sendPacketNoEvent(C03PacketPlayer.C04PacketPlayerPosition(x, y, z, false))
+                        }
                     }
                     "oldcubecraft2" -> {
                         PacketUtils.sendPacketNoEvent(C03PacketPlayer.C05PacketPlayerLook(mc.thePlayer.prevRotationYaw, prevRotationPitch, false))
