@@ -72,6 +72,7 @@ class Fly : Module() {
 
         mc.timer.timerSpeed = 1F
         mc.thePlayer.speedInAir = 0.02F
+        mc.thePlayer.speedOnGround = 0.1F
 
         if (motionResetValue.get()) {
             mc.thePlayer.motionX = 0.0
