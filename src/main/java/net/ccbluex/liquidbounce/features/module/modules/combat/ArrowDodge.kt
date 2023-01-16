@@ -337,5 +337,5 @@ class ArrowDodge : Module() {
     }
 
     override val tag: String?
-        get() = if (dodgingObject != null) "Dodging " + dodgingObject!!.name else "Idle"
+        get() = if (dodgingObject != null) "Dodging " + dodgingObject!!.name else ""
 }
