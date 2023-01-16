@@ -50,6 +50,7 @@ object Fucker : Module() {
     private val instantValue = BoolValue("Instant", false)
     private val switchValue = IntegerValue("SwitchDelay", 250, 0, 1000)
     private val rotationsValue = BoolValue("Rotations", true)
+    private val otherRatationsValue = BoolValue("otherRatations", false)
     private val surroundingsValue = BoolValue("Surroundings", true)
     private val noHitValue = BoolValue("NoHit", false)
     private val bypassValue = BoolValue("Bypass", false)
@@ -155,6 +156,7 @@ object Fucker : Module() {
         when {
             // Destory block
             actionValue.equals("destroy") || surroundings || !isRealBlock -> {
+                mc.thePlayer.isSprinting = false
                 // Auto Tool
                 val autoTool = LiquidBounce.moduleManager[AutoTool::class.java]!!
                 if (autoTool.state && autoToolValue.get()) {
@@ -214,6 +216,7 @@ object Fucker : Module() {
                     blockHitDelay = 4
                     currentDamage = 0F
                     pos = null
+                    mc.thePlayer.isSprinting = true
                 }
                 if(matrixValue.get()) mc.gameSettings.keyBindUseItem.pressed = false
             }
@@ -295,7 +298,7 @@ object Fucker : Module() {
         }
 
         isRealBlock = true
-        return block
+        return if (otherRatationsValue.get()) block.add(0.5, 0.5, 0.5) else block
     }
 
     /**
