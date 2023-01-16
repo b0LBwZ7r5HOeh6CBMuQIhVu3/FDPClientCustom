@@ -40,14 +40,8 @@ class FastUse : Module() {
         "DelayedInstant"
     )
     private val packetValue = ListValue("Packet", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
-    private val timerValue = FloatValue(
-        "Timer",
-        1.22F,
-        0.1F,
-        2.0F
-    ).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
-    private val durationValue =
-        IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
+    private val timerValue = FloatValue("Timer",1.22F,0.1F,2.0F).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
+    private val durationValue =IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
     private val delayValue = IntegerValue("CustomDelay", 0, 0, 300).displayable { modeValue.equals("CustomDelay") }
     private val noMoveValue = BoolValue("NoMove", false)
     private val testValue = BoolValue("test", false)
