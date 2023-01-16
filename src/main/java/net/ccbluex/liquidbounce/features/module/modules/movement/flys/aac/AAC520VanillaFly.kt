@@ -163,10 +163,10 @@ class AAC520VanillaFly : FlyMode("AAC5.2.0-Vanilla") {
                             pitch = packet.pitch
                         }
                         if (useC04Value.get()) {
-                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, 2147483600 + RandomUtils.nextDouble(43.469983, 69), packet.z, true))
+                            sendPacketNoEvent(C04PacketPlayerPosition(packet.x, -8.0E+307 + RandomUtils.nextDouble(43.469983, 69), packet.z, true))
                             sendPacketNoEvent(C04PacketPlayerPosition(packet.x, packet.y, packet.z, false))
                         } else {
-                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, 2147483600 + RandomUtils.nextDouble(43.469983, 69), packet.z, yaw, pitch, true))
+                            sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, -8.0E+307 + RandomUtils.nextDouble(43.469983, 69), packet.z, yaw, pitch, true))
                             sendPacketNoEvent(C06PacketPlayerPosLook(packet.x, packet.y, packet.z, yaw, pitch, false))
                         }
                     }

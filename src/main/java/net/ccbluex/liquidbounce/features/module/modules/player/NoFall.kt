@@ -186,7 +186,7 @@ class NoFall : Module() {
                         0.8f
                     }).coerceAtLeast(0.2f)
                     usedTimer = true
-                    mc.thePlayer.motionY *= 0.6
+                    mc.thePlayer.motionY *= 0.3
                     mc.thePlayer.motionX = 0.0
                     mc.thePlayer.motionZ = mc.thePlayer.motionX
                     mc.thePlayer.isInWeb = true
