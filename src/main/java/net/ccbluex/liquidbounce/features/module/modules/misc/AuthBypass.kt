@@ -29,6 +29,8 @@ import net.minecraft.network.play.server.S2DPacketOpenWindow
 import net.minecraft.network.play.server.S2FPacketSetSlot
 import org.apache.commons.io.IOUtils
 import java.nio.charset.StandardCharsets
+import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.utils.ClientUtils
 import java.util.*
 
 /***
@@ -37,8 +39,9 @@ import java.util.*
  */
 @ModuleInfo(name = "AuthBypass", category = ModuleCategory.MISC)
 class AuthBypass : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("RedeSky", "RemiCraft"), "RedeSky")
+    private val modeValue = ListValue("Mode", arrayOf("RedeSky", "RemiCraft", "clickSay"), "RedeSky")
     private val delayValue = IntegerValue("Delay", 1500, 100, 5000)
+    private val debugValue = BoolValue("Debug", true)
 
     private var skull: String? = null
     private var type = "none"
@@ -81,6 +84,7 @@ class AuthBypass : Module() {
         when(modeValue.get().lowercase()) {
             "redesky" -> handleRedeSky(event)
             "remicraft" -> handleRemiCraft(event)
+            "clicksay" -> handleClickSay(event)
         }
     }
 
@@ -95,9 +99,31 @@ class AuthBypass : Module() {
             } else {
                 component.siblings.forEach { sib ->
                     val clickEvent = sib.chatStyle.chatClickEvent
-                    if(clickEvent != null && clickEvent.action == ClickEvent.Action.RUN_COMMAND && clickEvent.value.startsWith(".say")) {
+                    if (clickEvent != null && clickEvent.action == ClickEvent.Action.RUN_COMMAND && clickEvent.value.startsWith(".say")) {
                         timer.reset()
                         packets.add(C01PacketChatMessage(clickEvent.value))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleClickSay(event: PacketEvent) {
+        val packet = event.packet
+        if (packet is S02PacketChat) {
+            val component = packet.chatComponent
+            val raw = component.unformattedText
+            if (raw.contains("/captcha ")) {
+                timer.reset()
+                packets.add(C01PacketChatMessage(raw.substring(raw.indexOf("/captcha"))))
+            } else {
+                component.siblings.forEach { sib ->
+                    val clickEvent = sib.chatStyle.chatClickEvent
+                    if (clickEvent != null && (clickEvent.value.startsWith(".") || clickEvent.value.startsWith("${LiquidBounce.commandManager.prefix}"))) {
+                        if (debugValue.get()) alert("AuthBypass §7» " + ClickEvent.toString())
+                        timer.reset()
+                        if (clickEvent.action == ClickEvent.Action.RUN_COMMAND) packets.add(C01PacketChatMessage(clickEvent.value))
+                        if (clickEvent.action == ClickEvent.Action.SUGGEST_COMMAND) //?
                     }
                 }
             }
