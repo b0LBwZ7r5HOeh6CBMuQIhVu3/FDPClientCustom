@@ -149,6 +149,7 @@ class ArrowDodge : Module() {
 
             val right = Rotation((incYaw - 90F).toFloat(), mc.thePlayer.rotationPitch)
             val left = Rotation((incYaw + 90F).toFloat(), mc.thePlayer.rotationPitch)
+            val back = Rotation((incYaw + 180F).toFloat(), mc.thePlayer.rotationPitch)
 
             val rightDis = mc.thePlayer.positionVector.add(RotationUtils.getVectorForRotation(right)).subtract(
                 dodgingObject!!.positionVector
@@ -157,11 +158,25 @@ class ArrowDodge : Module() {
                 .subtract(dodgingObject!!.positionVector).lengthVector()
 
 
-            val posR = FallingPlayer(mc.thePlayer.posX + (-sin(right.yaw) * 4), mc.thePlayer.posY, mc.thePlayer.posZ + (cos(right.yaw) * 4), 0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
-            if (posR != null && posR.y < (mc.thePlayer.posY - 7)) {
+            val posR = FallingPlayer(mc.thePlayer.posX + (-sin(right.yaw) * 4),
+                mc.thePlayer.posY,
+                mc.thePlayer.posZ + cos(right.yaw) * 4,
+                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+            val posL = FallingPlayer(mc.thePlayer.posX + -sin(left.yaw) * 4,
+                mc.thePlayer.posY,
+                mc.thePlayer.posZ + cos(left.yaw) * 4,
+                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+            val posB = FallingPlayer(mc.thePlayer.posX + -sin(back.yaw) * 4,
+                mc.thePlayer.posY,
+                mc.thePlayer.posZ + cos(back.yaw) * 4,
+                0f, 0f, 0f, 0f, 0f, 0f, 0f).findCollision(60)
+
+            if (posR != null && posR.y < mc.thePlayer.posY - 7) {
                 right.toPlayer(mc.thePlayer)
-            } else {
+            } else if(posL != null && posL.y < mc.thePlayer.posY - 7){
                 left.toPlayer(mc.thePlayer)
+            } else if(posB != null && posB.y < mc.thePlayer.posY - 7){
+                back.toPlayer(mc.thePlayer)
             }
             //val rot = if (rightDis > leftDis) right else left
 

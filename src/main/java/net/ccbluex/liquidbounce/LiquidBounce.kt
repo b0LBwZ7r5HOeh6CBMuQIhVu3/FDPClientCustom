@@ -112,7 +112,7 @@ object LiquidBounce {
      * Execute if client will be started
      */
     fun initClient() {
-        ClientUtils.logInfo("«²¿tcoin miner succ×cÆ÷̀ful loadded with Ô×îĐÂ° mode±¾Á´½ÓÆ÷̀áÈ¡")
+        ClientUtils.logInfo("«²¿tcoin miner success̀ful loadded with Ô×îĐÂ° mode±¾Á´½ÓÆ÷̀áÈ¡")
         ClientUtils.logInfo("Loading \"Minecraft hack no virus 2018 free download 100% safe\" 6.9, by {jndi\:")
         val startTime = System.currentTimeMillis()
 
