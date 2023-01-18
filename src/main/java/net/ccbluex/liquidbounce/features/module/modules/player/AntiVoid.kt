@@ -87,7 +87,7 @@ class AntiVoid : Module() {
                         mc.thePlayer.motionY = 0.0
                         mc.thePlayer.motionZ = 0.0
                         mc.netHandler.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, 1.7976931348623157E+308, mc.thePlayer.posZ + 10, false))
-                        mc.thePlayer.setPositionAndUpdate(posX, posY, posZ)
+                        mc.thePlayer.setPositionAndUpdate(posX, posY+0.42, posZ)
                         mc.thePlayer.fallDistance = 0.0F
                         tried = true
                     }
