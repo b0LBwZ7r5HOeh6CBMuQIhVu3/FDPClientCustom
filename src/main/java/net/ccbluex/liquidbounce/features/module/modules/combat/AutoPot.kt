@@ -50,7 +50,7 @@ class AutoPot : Module() {
 
         if (throwing) {
             throwTime++
-            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.rotationYaw, 90F))
+            RotationUtils.setTargetRotation(Rotation(mc.thePlayer.prevRotationYaw, 88F))
             if (throwTime == throwTickValue.get()) {
                 mc.netHandler.addToSendQueue(C09PacketHeldItemChange(pot - 36))
                 mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.heldItem))
