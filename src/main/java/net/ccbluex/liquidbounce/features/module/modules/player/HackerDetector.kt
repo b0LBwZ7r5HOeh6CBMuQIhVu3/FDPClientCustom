@@ -227,7 +227,7 @@ class HackerDetector : Module() {
                 limit *= 1.5
             }
             if (distanceXZ > limit) {
-                data.flag("speed", 20, "moves very fast on ground(speed=$distanceXZ,limit=$limit)")
+                data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + " on the ground(speed=$distanceXZ,limit=$limit)")
             }
         } else {
             val multiplier = 0.985
@@ -248,7 +248,7 @@ class HackerDetector : Module() {
             }
 
             if (distanceXZ - predict > limit) {
-                data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + "(speed=$distanceXZ,limit=$limit,predict=$predict)")
+                data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + " in the air(speed=$distanceXZ,limit=$limit,predict=$predict)")
             }
         }
 //        if (abs(data.motionX) > 0.42
@@ -281,7 +281,7 @@ class HackerDetector : Module() {
                 use += "$typ,"
             }
             use = use.substring(0, use.length - 1)
-            alert("§f${this.player.name} §eis suspected for §a$use #2")
+            alert("§f${this.player.name} §eis suspected for §a$use §e#2")
             if (notify.get()) {
                 LiquidBounce.hud.addNotification(Notification(name, "${this.player.name} is suspected for ($use) #2", NotifyType.WARNING))
             }
@@ -299,7 +299,7 @@ class HackerDetector : Module() {
         var attackerCount = 0
 
         for (worldEntity in mc.theWorld.loadedEntityList) {
-            if (worldEntity !is EntityPlayer || worldEntity.getDistanceToEntity(entity) > 7 || worldEntity.equals(entity)) continue
+            if (worldEntity !is EntityPlayer || worldEntity.getDistanceToEntity(entity) > 6 || worldEntity.equals(entity)) continue
             attackerCount++
             attacker = worldEntity
         }
@@ -318,7 +318,7 @@ class HackerDetector : Module() {
         // aim check
         val yawDiff = calculateYawDifference(attacker, entity)
         if (yawDiff > 50) {
-            data.flag("killaura", 100, "has exhibited yaw patterns characteristic of aimbot ($yawDiff)")
+            data.flag("aimbot", 100, "has exhibited yaw patterns characteristic of aimbot ($yawDiff)")
         }
     }
 
