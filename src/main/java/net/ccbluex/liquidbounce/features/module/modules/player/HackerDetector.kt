@@ -8,6 +8,9 @@ import net.ccbluex.liquidbounce.event.WorldEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.utils.timer.MSTimer
+import net.ccbluex.liquidbounce.utils.EntityUtils
+import net.ccbluex.liquidbounce.utils.PacketUtils
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.NotifyType
 import net.ccbluex.liquidbounce.utils.EntityUtils
@@ -35,10 +38,12 @@ class HackerDetector : Module() {
     private val debugMode = BoolValue("Debug", false)
     private val notify = BoolValue("Notify", true)
     private val report = BoolValue("AutoReport", true)
+    private val lagCheck = BoolValue("LagCheck", true)
     private val vlValue = IntegerValue("VL", 300, 100, 500)
 
     private val datas = HashMap<EntityPlayer, HackerData>()
     private val hackers = ArrayList<String>()
+    private var lagTimer = MSTimer()
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
@@ -63,6 +68,12 @@ class HackerDetector : Module() {
 
     @EventTarget
     fun onPacket(event: PacketEvent) {
+        if (PacketUtils.getPacketType(event.packet) == PacketUtils.PacketType.SERVERSIDE) {
+            lagTimer.reset()
+        }
+        if (lagTimer.hasTimePassed((EntityUtils.getPing(mc.thePlayer!!) + 250).toLong()) && lagCheck.get()) {
+            return
+        }
         if (event.packet is S19PacketEntityStatus) {
             val packet = event.packet
             if (combatCheck.get() && packet.opCode.toInt() == 2) {
@@ -109,7 +120,7 @@ class HackerDetector : Module() {
         if (datas[player] == null) datas[player] = HackerData(player)
         val data = datas[player] ?: return
         data.update()
-        if (data.aliveTicks <20) return
+        if (data.aliveTicks < 20) return
 
         // settings
         var minAirTicks = 10
@@ -131,7 +142,7 @@ class HackerDetector : Module() {
         if (packetBalance >= triggerBalance) {
             val ticks = (packetBalance / 50).roundToInt()
             packetBalance = (-1 * (triggerBalance / 2)).toDouble()
-            data.flag("timer", 25, "OVERSHOT TIMER $ticks")
+            data.flag("timer", 25, "is trying to speed up time $ticks")
         } else if (packetBalance < -1 * minimumClamp) {
             // Clamp minimum, 50ms=1tick of lag leniency
             packetBalance = (-1 * minimumClamp).toDouble()
@@ -141,16 +152,17 @@ class HackerDetector : Module() {
             data.lastMovePacket = packetTimeNow
         }
 
-        if (player.hurtTime> 0) {
+        if (player.hurtTime > 0) {
             // velocity
             if (player.hurtResistantTime in 7..11 &&
                 player.prevPosX == player.posX && player.posZ == player.lastTickPosZ &&
-                !mc.theWorld.checkBlockCollision(player.entityBoundingBox.expand(0.05, 0.0, 0.05))) {
-                data.flag("velocity", 50, "NO KNOCKBACK")
+                !mc.theWorld.checkBlockCollision(player.entityBoundingBox.expand(0.05, 0.05, 0.05))) {
+                data.flag("velocity", 50, "ignores horizontal knockback")
             }
             if (player.hurtResistantTime in 7..11 &&
-                player.lastTickPosY == player.posY) {
-                data.flag("velocity", 50, "NO KNOCKBACK")
+                player.lastTickPosY == player.posY &&
+                !mc.theWorld.checkBlockCollision(player.entityBoundingBox.expand(0.0, 0.05, 0.00))) {
+                data.flag("velocity", 50, "ignores vertical knockback")
             }
             return
         }
@@ -162,32 +174,36 @@ class HackerDetector : Module() {
 //        }
 
         // killaura from jigsaw
-        if (data.aps >= 10) {
-            data.flag("killaura", 30, "HIGH APS(aps=${data.aps})")
+        if (data.aps >= 12) {
+            data.flag("killaura", 30, "clicks too fast during combat (aps=${data.aps})")
             passed = false
         }
-        if (data.aps > 2 && data.aps == data.preAps && data.aps != 0) {
-            data.flag("killaura", 30, "STRANGE APS(aps=${data.aps})")
+        if (data.aps > 4 && data.aps == data.preAps && data.aps != 0) {
+            data.flag("killaura", 30, "attacks per second is little strange (aps=${data.aps})")
             passed = false
         }
         if (abs(player.rotationYaw - player.prevRotationYaw) > 50 && player.swingProgress != 0F &&
-            data.aps >= 3) {
-            data.flag("killaura", 30, "YAW RATE(aps=${data.aps},yawRot=${abs(player.rotationYaw - player.prevRotationYaw)})")
+            data.aps >= 4) {
+            data.flag("killaura", 30, "performs abnormal head snaps during combat(aps=${data.aps},yawRot=${abs(player.rotationYaw - player.prevRotationYaw)})")
             passed = false
         }
 
         // flight
-        if (player.ridingEntity == null && data.airTicks> (minAirTicks / 2)) {
-            if (abs(data.motionY - data.lastMotionY) < (if (data.airTicks >= 115) { 1E-3 } else { 5E-3 })) {
-                data.flag("fly", 20, "GLIDE(diff=${abs(data.motionY - data.lastMotionY)})")
+        if (player.ridingEntity == null && data.airTicks > (minAirTicks / 2)) {
+            if (abs(data.motionY - data.lastMotionY) < (if (data.airTicks >= 115) {
+                    1E-3
+                } else {
+                    5E-3
+                })) {
+                data.flag("fly", 20, "moved unexpectedly(diff=${abs(data.motionY - data.lastMotionY)})")
                 passed = false
             }
             if (data.motionY > maxMotionY) {
-                data.flag("fly", 20, "YAXIS(motY=${data.motionY})")
+                data.flag("fly", 20, "seems jumps very high(motY=${data.motionY})")
                 passed = false
             }
-            if (data.airTicks > minAirTicks && data.motionY> 0) {
-                data.flag("fly", 30, "YAXIS(motY=${data.motionY})")
+            if (data.airTicks > minAirTicks && data.motionY >= 0) {
+                data.flag("fly", 30, "floating too long(motY=${data.motionY})")
                 passed = false
             }
             // gravity check from ACR
@@ -204,14 +220,14 @@ class HackerDetector : Module() {
         if (data.airTicks == 0) { // onGround
             var limit = 0.37
             if (data.groundTicks < 5) limit += 0.1
-            if (player.isBlocking) limit *= 0.45
-            if (player.isSneaking) limit *= 0.68
+            if (player.isBlocking) limit *= 0.53
+            if (player.isSneaking) limit *= 0.70
             if (player.isPotionActive(Potion.moveSpeed)) { // server will send real player potionData?i hope that
                 limit += player.getActivePotionEffect(Potion.moveSpeed).amplifier
                 limit *= 1.5
             }
             if (distanceXZ > limit) {
-                data.flag("speed", 20, "GROUND SPEED(speed=$distanceXZ,limit=$limit)")
+                data.flag("speed", 20, "moves very fast on ground(speed=$distanceXZ,limit=$limit)")
             }
         } else {
             val multiplier = 0.985
@@ -221,18 +237,18 @@ class HackerDetector : Module() {
             }
             var limit = 0.05
             if (player.isPotionActive(Potion.moveSpeed)) {
-                predict += player.getActivePotionEffect(Potion.moveSpeed).amplifier * 0.05
-                limit *= 1.2
+                predict += player.getActivePotionEffect(Potion.moveSpeed).amplifier * 0.1
+                limit *= 1.3
             }
             if (player.isPotionActive(Potion.jump)) {
-                predict += player.getActivePotionEffect(Potion.jump).amplifier * 0.05
+                predict += player.getActivePotionEffect(Potion.jump).amplifier * 0.1
             }
             if (player.isBlocking) {
-                predict *= 0.7
+                predict *= 0.8
             }
 
             if (distanceXZ - predict > limit) {
-                data.flag("speed", 20, "AIR SPEED(speed=$distanceXZ,limit=$limit,predict=$predict)")
+                data.flag("speed", 20, (if (player.isBlocking || player.isSneaking) "has frequently ignored sneak/item slowdowns" else "moved too quickly") + "(speed=$distanceXZ,limit=$limit,predict=$predict)")
             }
         }
 //        if (abs(data.motionX) > 0.42
@@ -255,19 +271,19 @@ class HackerDetector : Module() {
         if (!this.useHacks.contains(type)) this.useHacks.add(type)
         // display debug message
         if (debugMode.get()) {
-            alert("§f${this.player.name} §euse §2$type §7$msg §c${this.vl}+$vl")
+            alert("§f${this.player.name} §eis suspected for §2$type §7$msg §c${this.vl}+$vl")
         }
         this.vl += vl
 
-        if (this.vl> vlValue.get()) {
+        if (this.vl > vlValue.get()) {
             var use = ""
             for (typ in this.useHacks) {
                 use += "$typ,"
             }
             use = use.substring(0, use.length - 1)
-            alert("§f${this.player.name} §eusing hack §a$use")
+            alert("§f${this.player.name} §eis suspected for §a$use #2")
             if (notify.get()) {
-                LiquidBounce.hud.addNotification(Notification(name, "${this.player.name} might use hack ($use)", NotifyType.WARNING))
+                LiquidBounce.hud.addNotification(Notification(name, "${this.player.name} is suspected for ($use) #2", NotifyType.WARNING))
             }
             this.vl = -vlValue.get()
 
@@ -283,26 +299,26 @@ class HackerDetector : Module() {
         var attackerCount = 0
 
         for (worldEntity in mc.theWorld.loadedEntityList) {
-            if (worldEntity !is EntityPlayer || worldEntity.getDistanceToEntity(entity)> 7 || worldEntity.equals(entity)) continue
+            if (worldEntity !is EntityPlayer || worldEntity.getDistanceToEntity(entity) > 7 || worldEntity.equals(entity)) continue
             attackerCount++
             attacker = worldEntity
         }
 
         // multi attacker may cause false result
         if (attackerCount != 1) return
-        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return // i and my friend is hacker lol
+        if (attacker!! == entity || EntityUtils.isFriend(attacker)) return // i and my friend(s) are hackers lol
         val data = datas[attacker] ?: return
 
         // reach check
         val reach = attacker.getDistanceToEntity(entity)
-        if (reach> 3.7) {
-            data.flag("killaura", 70, "(reach=$reach)")
+        if (reach > if (lagCheck.get()) 3.43 * EntityUtils.getPing(attacker) * 0.01 + 1 else 3.7) {
+            data.flag("reach", 70, "attacks $reach blocks further than normal")
         }
 
         // aim check
         val yawDiff = calculateYawDifference(attacker, entity)
-        if (yawDiff> 50) {
-            data.flag("killaura", 100, "(yawDiff=$yawDiff)")
+        if (yawDiff > 50) {
+            data.flag("killaura", 100, "has exhibited yaw patterns characteristic of aimbot ($yawDiff)")
         }
     }
 
@@ -323,6 +339,7 @@ class HackerData(val player: EntityPlayer) {
     var packetBalance = 0.0
     var lastMovePacket = System.currentTimeMillis()
     var aliveTicks = 0
+
     // Ticks in air
     var airTicks = 0
 
