@@ -36,13 +36,15 @@ import net.minecraft.util.EnumFacing
 class FastUse : Module() {
     private val modeValue = ListValue(
         "Mode",
-        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "MinemoraTest", "AAC", "NewAAC", "StableAAC"),
+        arrayOf("Instant", "Timer", "CustomDelay", "DelayedInstant", "AAC", "NewAAC"),
         "DelayedInstant"
     )
     private val packetValue = ListValue("Packet", arrayOf("C03flying", "C04position", "C05look", "C06position_look"), "C04position")
-    private val timerValue = FloatValue("Timer",1.22F,0.1F,2.0F).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
-    private val durationValue =IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
+    private val timerValue = FloatValue("Timer", 1.22F, 0.1F, 2.0F).displayable { modeValue.equals("Timer") || modeValue.equals("CustomDelay") }
+    private val durationValue = IntegerValue("InstantDelay", 14, 0, 35).displayable { modeValue.equals("DelayedInstant") }
     private val delayValue = IntegerValue("CustomDelay", 0, 0, 300).displayable { modeValue.equals("CustomDelay") }
+    private val newAACFastValue = BoolValue("NewAAC-Fast", false).displayable { modeValue.equals("NewAAC") }
+    private val newAACDelayValue = BoolValue("NewAAC-Delay", false).displayable { modeValue.equals("NewAAC") }
     private val noMoveValue = BoolValue("NoMove", false)
     private val testValue = BoolValue("test", false)
     // private val bowValue = BoolValue("bow", false)
@@ -115,31 +117,20 @@ class FastUse : Module() {
                         if (usingItem !is ItemBow) mc.playerController.onStoppedUsingItem(mc.thePlayer)
                     }
                 }
-                "newaac" -> {
-                    mc.timer.timerSpeed = 0.49F
-                    usedTimer = true
-                    repeat(2) {
-                        sendPacket(packetValue.get())
-                    }
-
-                    // mc.playerController.onStoppedUsingItem(mc.thePlayer)
-                }
-                "stableaac" -> {
-                    mc.timer.timerSpeed = 0.5F
-                    usedTimer = true
-                    sendPacket(packetValue.get())
-                    // mc.playerController.onStoppedUsingItem(mc.thePlayer)
-                }
                 "timer" -> {
                     mc.timer.timerSpeed = timerValue.get()
                     usedTimer = true
                 }
 
-                "minemoratest" -> {
-                    mc.timer.timerSpeed = 0.5F
+                "newaac" -> {
+                    mc.timer.timerSpeed = 0.49F
                     usedTimer = true
-                    if (mc.thePlayer.ticksExisted % 2 == 0) {
-                        repeat(2) {
+                    if (mc.thePlayer.ticksExisted % 2 == 0 || !newAACDelayValue.get()) {
+                        if (newAACFastValue.get()) {
+                            repeat(2) {
+                                sendPacket(packetValue.get())
+                            }
+                        } else {
                             sendPacket(packetValue.get())
                         }
                     }
