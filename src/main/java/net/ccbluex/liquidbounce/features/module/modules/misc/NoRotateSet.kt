@@ -19,6 +19,8 @@ import net.minecraft.network.play.server.S08PacketPlayerPosLook
 class NoRotateSet : Module() {
 
     private val confirmValue = BoolValue("Confirm", true)
+    private val confirmBackValue = BoolValue("ConfirmBack", true)
+    private val usePrevRotationValue = BoolValue("usePrevRotation", true)
     private val illegalRotationValue = BoolValue("ConfirmIllegalRotation", false)
     private val noZeroValue = BoolValue("NoZero", false)
 
@@ -40,10 +42,15 @@ class NoRotateSet : Module() {
                 if (confirmValue.get()) {
                     mc.netHandler.addToSendQueue(C05PacketPlayerLook(packet.getYaw(), packet.getPitch(), mc.thePlayer.onGround))
                 }
+                val yaw = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationYaw else mc.thePlayer.rotationYaw
+                val pitch = if (usePrevRotationValue.get()) mc.thePlayer.prevRotationPitch else mc.thePlayer.rotationPitch
+                if (confirmBackValue.get()) {
+                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(yaw, pitch(), mc.thePlayer.onGround))
+                }
             }
 
-            packet.yaw = mc.thePlayer.rotationYaw
-            packet.pitch = mc.thePlayer.rotationPitch
+            packet.yaw = yaw
+            packet.pitch = pitch
         }
     }
 }
