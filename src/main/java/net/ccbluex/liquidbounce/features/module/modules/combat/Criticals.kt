@@ -29,7 +29,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "PacketHop"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "huayutingTest", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "PacketHop"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -149,6 +149,10 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(ground = false)
                     sendCriticalPacket(yOffset = RandomUtils.nextDouble(0.01, 0.06), ground = false)
                     sendCriticalPacket(ground = false)
+                }
+                "huautingtest" -> {
+                    sendCriticalPacket(yOffset = RandomUtils.nextDouble(0.00130000000001, 0.0014), ground = false)
+                    sendCriticalPacket(yOffset = -0.00000074518164, ground = false)
                 }
                 "oldhypixel2" -> {
                     sendCriticalPacket(yOffset = RandomUtils.nextDouble(0.01, 0.06), ground = false)
