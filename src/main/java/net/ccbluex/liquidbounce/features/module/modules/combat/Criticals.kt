@@ -29,7 +29,7 @@ import net.minecraft.stats.StatList
 
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
-val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "Hypixel2", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "PacketHop"), "packet")
+val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCPPacket2", "Hypixel", "OldHypixel", "OldHypixel2", "Hypixel2", "AACPacket", "LitePacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "PacketHop"), "packet")
     val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
@@ -133,7 +133,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     }
                     if(hytMorePacketValue.get()) {sendCriticalPacket(yOffset = 0.05250000000101, ground = false)}
                     sendCriticalPacket(yOffset = 0.00133545, ground = false)
-                    if(hytMorePacketValue.get()) {sendCriticalPacket(yOffset = 0.01400000001010, ground = false)}
+                    if (hytMorePacketValue.get()) {
+                        sendCriticalPacket(yOffset = 0.01400000001010, ground = false)
+                    }
                     sendCriticalPacket(yOffset = -0.000000433, ground = false)
                 }
 
@@ -143,7 +145,15 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.01, ground = false)
                     sendCriticalPacket(yOffset = 0.0011, ground = false)
                 }
-
+                "oldhypixel" -> {
+                    sendCriticalPacket(ground = false)
+                    sendCriticalPacket(yOffset = RandomUtils.nextDouble(0.01, 0.06), ground = false)
+                    sendCriticalPacket(ground = false)
+                }
+                "oldhypixel2" -> {
+                    sendCriticalPacket(yOffset = RandomUtils.nextDouble(0.01, 0.06), ground = false)
+                    sendCriticalPacket(ground = mc.thePlayer.onGround)
+                }
                 "aac4.3.11oldhyt" -> {
                     sendCriticalPacket(yOffset = 0.042487, ground = false)
                     sendCriticalPacket(yOffset = 0.0104649713461000007, ground = false)
@@ -151,9 +161,9 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla", "Packet", "NCPPacket", "NCP
                     sendCriticalPacket(yOffset = 0.0000007451816400000, ground = false)
                 }
                 "noteless" -> {
-                    sendCriticalPacket(yOffset=0.11921599284565,ground = false)
-                    sendCriticalPacket(yOffset=0.00163166800276,ground = false)
-                    sendCriticalPacket(yOffset=0.15919999545217,ground = false)
+                    sendCriticalPacket(yOffset = 0.11921599284565, ground = false)
+                    sendCriticalPacket(yOffset = 0.00163166800276, ground = false)
+                    sendCriticalPacket(yOffset = 0.15919999545217, ground = false)
                     sendCriticalPacket(yOffset=0.11999999731779,ground = false)
                 }
                 "hypixel2" -> {
