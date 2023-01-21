@@ -40,7 +40,7 @@ class AutoTool : Module() {
         }
 
         if (bestSlot != -1 && mc.thePlayer.inventory.currentItem != bestSlot) {
-            if (max(mc.thePlayer.inventory.currentItem, bestSlot) != 1 && bypass.get()) {
+            if ((if (mc.thePlayer.inventory.currentItem > bestSlot) (mc.thePlayer.inventory.currentItem - bestSlot) else (bestSlot - mc.thePlayer.inventory.currentItem)) > 1 && bypass.get()) {
                 if (bestSlot > mc.thePlayer.inventory.currentItem) {
                     for (i in mc.thePlayer.inventory.currentItem..bestSlot - 1) {
                         mc.netHandler.addToSendQueue(C09PacketHeldItemChange(i))
