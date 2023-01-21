@@ -40,13 +40,13 @@ class Blink : Module() {
     private val pingValue = BoolValue("ping", false)
     private val actionValue = BoolValue("action", true)
     private val moveValue = BoolValue("move", true)
-    private val moveActionCheckValue = BoolValue("moveActionCheck", true)
+    private val movingCheckValue = BoolValue("movingCheck", true).displayable { moveValue.get() }
     private val pingCalcValue = BoolValue("PingCalc", true)
-    private val pingCalcDupePacketValue = BoolValue("PingCalcDupePacket", true)
-    private val dupePacketsPerMSValue = IntegerValue("dupePacketsPerMS", 30, 5, 500).displayable { pingCalcDupePacketValue.get() }
-    private val maxDupePacketsValue = IntegerValue("MaxDupePackets", 5, 0, 15).displayable { pingCalcDupePacketValue.get() }
-    private val dupeC00Value = BoolValue("dupeC00", true)
-    private val dupeC0FValue = BoolValue("dupeC0F", true)
+    private val pingCalcDupePacketValue = BoolValue("PingCalcDupePacket", true).displayable { pingCalcValue.get() }
+    private val dupePacketsPerMSValue = IntegerValue("dupePacketsPerMS", 30, 5, 500).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
+    private val maxDupePacketsValue = IntegerValue("MaxDupePackets", 5, 0, 15).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
+    private val dupeC00Value = BoolValue("dupeC00", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
+    private val dupeC0FValue = BoolValue("dupeC0F", true).displayable { pingCalcValue.get() && pingCalcDupePacketValue.get() }
     private val debugValue = BoolValue("debug", true)
     private val pulseDelayValue = IntegerValue("PulseDelay", 1000, 500, 5000).displayable { pulseValue.get() }
     private val pulseTimer = MSTimer()
@@ -89,7 +89,7 @@ class Blink : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
         if (mc.thePlayer == null || disableLogger) return
-        if (packet is C03PacketPlayer && (!moveActionCheckValue.get() || packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
+        if (packet is C03PacketPlayer && (!movingCheckValue.get() || packet.isMoving() || packet.getRotating()) && moveValue.get()) { // Cancel all movement stuff
             event.cancelEvent()
         }
         if (
@@ -127,7 +127,7 @@ class Blink : Module() {
                         roundToInt(
                             (pulseDelayValue.get() - EntityUtils.getPing(mc.thePlayer)) / dupePacketsPerMSValue.get()
                         ),
-                        if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 114514
+                        if (maxDupePacketsValue.get() > 0) maxDupePacketsValue.get() else 800
                     )
 
                     repeat(packetsAmounts) {
@@ -138,18 +138,13 @@ class Blink : Module() {
                             packets.add(c0fPacketToDupe)
                         }
                     }
-                    if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to fix your ping to the Blink value you set §7(" + EntityUtils.getPing(mc.thePlayer)
+                    if (debugValue.get()) alert("Blink §7» duped " + packetsAmounts.toString() + " packet(s) to make sure your ping is around " + (if (dupeC0FValue.get() || dupeC00Value.get()) "the Blink value you set" else "your ping(lol)") + " §7("/*please excuse my typing error(s)*/ + EntityUtils.getPing(mc.thePlayer)
                         .toString() + (if (dupeC00Value.get()) ">" else "<") + (if (dupeC0FValue.get()) ">" else "<") + pulseDelayValue.get()
                         .toString() + ")")
                 }
                 blink ()
-                fakePlayer !!. setPositionAndRotation (
-                        mc.thePlayer.posX,
-            mc.thePlayer.posY,
-            mc.thePlayer.posZ,
-            mc.thePlayer.rotationYaw,
-            mc.thePlayer.rotationPitch
-            )
+                fakePlayer !!. setPositionAndRotation (mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)
+            fakePlayer!!.setInvisible(mc.gameSettings.thirdPersonView == 0)
             pulseTimer.reset()
         }
     }
