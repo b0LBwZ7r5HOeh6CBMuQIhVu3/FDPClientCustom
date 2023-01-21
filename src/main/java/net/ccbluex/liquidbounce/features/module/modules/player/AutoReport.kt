@@ -19,6 +19,7 @@ import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.server.S3FPacketCustomPayload
+import net.minecraft.network.play.client.C0DPacketCloseWindow
 
 @ModuleInfo(name = "AutoReport", category = ModuleCategory.PLAYER)
 class AutoReport : Module() {
@@ -62,6 +63,8 @@ class AutoReport : Module() {
     fun onPacket(event: PacketEvent) {
         if (blockBooksValue.get() && event.packet is S3FPacketCustomPayload) {
             event.cancelEvent()
+            // mc.thePlayer.closeScreen()
+            mc.netHandler.addToSendQueue(C0DPacketCloseWindow())
         }
     }
 

@@ -91,7 +91,7 @@ object InventoryUtils : MinecraftInstance(), Listenable {
     }
 
     fun closePacket() {
-        mc.netHandler.addToSendQueue(C0DPacketCloseWindow())
+        mc.netHandler.addToSendQueue(C0DPacketCloseWindow(mc.thePlayer.openContainer.windowId))
     }
 
     fun isPositivePotionEffect(id: Int): Boolean {

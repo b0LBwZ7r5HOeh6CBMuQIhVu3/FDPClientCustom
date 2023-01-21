@@ -113,7 +113,7 @@ object LiquidBounce {
      */
     fun initClient() {
         ClientUtils.logInfo("«²¿tcoin miner success̀ful loadded with Ô×îĐÂ° mode±¾Á´½ÓÆ÷̀áÈ¡")
-        ClientUtils.logInfo("Loading \"Minecraft hack no virus 2018 free download 100% safe\" 6.9, by {jndi\:")
+        ClientUtils.logInfo("Loading \"Minecraft hack no virus 2017 free download 100% safe\" 6.9, by zeroCrack")
         val startTime = System.currentTimeMillis()
 
         // Create file manager
@@ -183,7 +183,7 @@ object LiquidBounce {
 
         fileManager.loadConfigs(fileManager.hudConfig, fileManager.xrayConfig)
 
-        ClientUtils.logInfo("$CLIENT_NAME $CLIENT_VERSION loaded in ${(System.currentTimeMillis() - startTime)}ms!")
+        ClientUtils.logInfo("\"Minecraft hack no virus 2017 free download 100% safe\" 6.9 loaded in ${(System.currentTimeMillis() - startTime)}ms!")
     }
 
     /**
@@ -202,7 +202,7 @@ object LiquidBounce {
         isStarting = false
         isLoadingConfig = false
 
-        ClientUtils.logInfo("$CLIENT_NAME $CLIENT_VERSION started!")
+        ClientUtils.logInfo("\"Minecraft hack no virus 2017 free download 100% safe\" 6.9 started!")
     }
 
     /**
@@ -210,7 +210,7 @@ object LiquidBounce {
      */
     fun stopClient() {
         if (!isStarting && !isLoadingConfig) {
-            ClientUtils.logInfo("Shutting down $CLIENT_NAME $CLIENT_VERSION!")
+            ClientUtils.logInfo("Shutting down \"Minecraft hack no virus 2017 free download 100% safe\" 6.9!")
 
             // Call client shutdown
             eventManager.callEvent(ClientShutdownEvent())
