@@ -25,10 +25,10 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
     val bigLogo = ResourceLocation("fdpclient/big.png")
 
-    var slideX : Float = 0F
-    var fade : Float = 0F
+    var slideX: Float = 0F
+    var fade: Float = 0F
 
-    var sliderX : Float = 0F
+    var sliderX: Float = 0F
 
     companion object {
         var useParallax = true
@@ -46,6 +46,28 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         drawBackground(0)
         GL11.glPushMatrix()
         renderSwitchButton()
+        Fonts.font35.drawStringWithShadow("UpdateLog", 2F, 12F, Color(0, 128, 255, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- the copy of this ▉▉▉▉▉▉▉ is from the ▉▉▉, and cracked fully.", 2F, 12F + (11 * 1), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- you can run this under offline without any problems.", 2F, 12F + (11 * 2), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("+ ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉", 2F, 12F + (11 * 3), Color(128, 255, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- ▉▉▉▉▉▉'s uncrackable client died. congratulations. btw happy new year.", 2F, 12F + (11 * 4), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("+ ", 2F, 12F + (11 * 5), Color(128, 255, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- 这个版本的▉▉▉▉▉▉▉是来自▉▉▉的，并且完全离线破解。", 2F, 12F + (11 * 6), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- 祝▉▉▉▉▉▉的舔狗们，新年快乐，这是晚到的新年礼物。", 2F, 12F + (11 * 7), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- ▉▉▉▉▉ ▉▉▉ cracked by ▉▉▉▉▉▉▉▉▉", 2F, 12F + (11 * 11), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- How to Install ▉▉▉▉▉▉:", 2F, 12F + (11 * 12), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- 1. Go to %appdata%/.minecraft and drop the folders I included (mods and versions)", 2F, 12F + (11 * 13), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- 2. Open your minecraft launcher, select the ▉▉▉▉▉ I included (1.8.9)", 2F, 12F + (11 * 14), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- 4. Run Forge.", 2F, 12F + (11 * 15), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- NOTE: This client is a ▉▉▉▉▉ mod, don't try to run it like a version. Just drop the folders I included (\"mods\" containing  the client, and \"versions\" containing the forge).", 2F, 12F + (11 * 16), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("- Enjoy, I guess..", 2F, 12F + (11 * 17), Color(255, 128, 128, 240).rgb)
+        Fonts.font35.drawStringWithShadow("/ ▉▉▉▉▉▉▉▉▉▉▉e▉▉▉▉▉▉▉▉▉", 2F, 12F + (11 * 8), Color(255, 255, 128, 240).rgb)
+        for (i in 0..500 step 11) {
+            Fonts.font35.drawStringWithShadow("- buy ▉▉▉▉▉▉▉▉▉▉.", 25F, 12F + (11 * i), Color(255, 128, 128, 240).rgb)
+        }
+        for (i2 in 500 DownTo 0 step 11) {
+            Fonts.font35.drawStringWithShadow("- cracked by ▉▉▉▉▉▉▉▉▉▉.", 25F + (11 * i2), 12F + i2, Color(255, 128, 128, 240).rgb)
+        }
         Fonts.font35.drawStringWithShadow("${LiquidBounce.CLIENT_NAME} build ${LiquidBounce.CLIENT_VERSION}", 2F, height - 12F, -1)
         Fonts.font35.drawStringWithShadow(creditInfo, width - 3F - Fonts.font35.getStringWidth(creditInfo), height - 12F, -1)
         if (useParallax) moveMouseEffect(mouseX, mouseY, 10F)
@@ -77,7 +99,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
                     5 -> mc.displayGuiScreen(GuiBackground(this))
                     6 -> mc.shutdown()
                 }
-            
+
             index++
         }
 
@@ -89,7 +111,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val mY = mouseY - height / 2
         val xDelta = mX.toFloat() / (width / 2).toFloat()
         val yDelta = mY.toFloat() / (height / 2).toFloat()
-        
+
         GL11.glTranslatef(xDelta * strength, yDelta * strength, 0F)
     }
 
@@ -107,7 +129,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val staticY = height / 2F + 20F
 
         RenderUtils.drawRoundedRect(staticX, staticY, staticX + 240F, staticY + 20F, 10F, Color(255, 255, 255, 100).rgb)
-        
+
         var index: Int = 0
         var shouldAnimate = false
         var displayString: String? = null
@@ -123,7 +145,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         if (displayString != null)
             Fonts.font35.drawCenteredString(displayString!!, width / 2F, staticY + 30F, -1)
-        else 
+        else
             Fonts.font35.drawCenteredString("love skid", width / 2F, staticY + 30F, -1)
 
         if (shouldAnimate) {
