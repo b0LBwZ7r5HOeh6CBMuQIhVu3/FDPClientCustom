@@ -8,6 +8,7 @@ package net.ccbluex.liquidbounce.features.module.modules.movement
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.JumpEvent
 import net.ccbluex.liquidbounce.event.MoveEvent
+import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
@@ -18,6 +19,7 @@ import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.block.Block
 import net.minecraft.block.BlockPane
 import net.minecraft.network.play.client.C03PacketPlayer
@@ -29,13 +31,14 @@ import net.minecraft.util.EnumFacing
 @ModuleInfo(name = "HighJump", category = ModuleCategory.MOVEMENT)
 class HighJump : Module() {
     private val heightValue = FloatValue("Height", 2f, 1.1f, 7f)
-    private val modeValue = ListValue("Mode", arrayOf("Vanilla", "StableMotion", "Damage", "AACv3", "DAC", "Mineplex", "Matrix", "MatrixWater"), "Vanilla")
+    private val modeValue = ListValue("Mode", arrayOf("Vanilla", "StableMotion", "Damage", "AACv3", "DAC", "Mineplex", "Matrix", "MatrixWater", "OldRedeSky"), "Vanilla")
     private val glassValue = BoolValue("OnlyGlassPane", false)
     private val stableMotionValue = FloatValue("StableMotion", 0.42f, 0.1f, 1f).displayable { modeValue.equals("StableMotion") }
     private var jumpY = 114514.0
 
     private var martrixStatus = 0
     private var martrixWasTimer = false
+    private var usedTimer = false
 
     private val timer = MSTimer()
 
@@ -52,7 +55,10 @@ class HighJump : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (glassValue.get() && getBlock(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)) !is BlockPane) return
-
+        if (usedTimer) {
+            mc.timer.timerSpeed = 1F
+            usedTimer = false
+        }
         when (modeValue.get().lowercase()) {
             "damage" -> {
                 if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) mc.thePlayer.motionY += (0.42f * heightValue.get()).toDouble()
@@ -81,12 +87,24 @@ class HighJump : Module() {
             }
             "matrixwater" -> {
                 if (mc.thePlayer.isInWater()) {
-                    if (mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ)).getBlock() == Block.getBlockById(9)) {
+                    if (mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + 1, mc.thePlayer.posZ))
+                            .getBlock() == Block.getBlockById(9)) {
                         mc.thePlayer.motionY = 0.18
-                    } else if (mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ)).getBlock() == Block.getBlockById(9)) {
+                    } else if (mc.theWorld.getBlockState(BlockPos(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ))
+                            .getBlock() == Block.getBlockById(9)) {
                         mc.thePlayer.motionY = heightValue.get().toDouble()
                         mc.thePlayer.onGround = true
                     }
+                }
+            }
+            "oldredesky" -> {
+                if (mc.gameSettings.keyBindJump.pressed) {
+                    mc.timer.timerSpeed = 0.2f
+                    usedTimer = true
+                    mc.thePlayer.setJumping(true)
+                    mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 10, mc.thePlayer.posZ, false))
+                    mc.thePlayer.sendQueue.addToSendQueue(C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 50, mc.thePlayer.posZ, false))
+                    mc.thePlayer.fallDistance = 0.0f
                 }
             }
             "matrix" -> {
@@ -94,8 +112,10 @@ class HighJump : Module() {
                     mc.timer.timerSpeed = 1.00f
                     martrixWasTimer = false
                 }
-                if ((mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, mc.thePlayer.motionY, 0.0).expand(0.0, 0.0, 0.0)).isNotEmpty() ||
-                            mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -4.0, 0.0).expand(0.0, 0.0, 0.0)).isNotEmpty()) &&
+                if ((mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, mc.thePlayer.motionY, 0.0)
+                        .expand(0.0, 0.0, 0.0)).isNotEmpty() ||
+                            mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -4.0, 0.0)
+                                .expand(0.0, 0.0, 0.0)).isNotEmpty()) &&
                     mc.thePlayer.fallDistance > 10) {
                     if (!mc.thePlayer.onGround) {
                         mc.timer.timerSpeed = 0.1f
@@ -145,6 +165,18 @@ class HighJump : Module() {
                     mc.thePlayer.motionZ = 0.0
                     mc.thePlayer.onGround = false
                 }
+            }
+        }
+    }
+
+    @EventTarget
+    fun onPacket(event: PacketEvent) {
+        val packet = event.packet
+        if (modeValue.get().lowercase() == "oldredesky") {
+            if (mc.thePlayer == null) return
+            if (packet is S12PacketEntityVelocity && packet.getMotionY() > 1800 && mc.gameSettings.keyBindJump.pressed) {
+                mc.gameSettings.keyBindJump.pressed = false
+                alert("HighJump §7» Successfully boost you up to sky (" + packet.getMotionY().toString() + ")")
             }
         }
     }
