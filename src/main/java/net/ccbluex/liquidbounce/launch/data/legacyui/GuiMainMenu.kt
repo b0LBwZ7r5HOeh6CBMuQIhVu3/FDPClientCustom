@@ -63,10 +63,10 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         Fonts.font35.drawStringWithShadow("- Enjoy, I guess..", 2F, 12F + (11 * 17), Color(255, 128, 128, 240).rgb)
         Fonts.font35.drawStringWithShadow("/ ▉▉▉▉▉▉▉▉▉▉▉e▉▉▉▉▉▉▉▉▉", 2F, 12F + (11 * 8), Color(255, 255, 128, 240).rgb)
         for (i in 0..500 step 11) {
-            Fonts.font35.drawStringWithShadow("- buy ▉▉▉▉▉▉▉▉▉▉.", 25F, 12F + (11 * i), Color(255, 128, 128, 240).rgb)
+            Fonts.font35.drawStringWithShadow("- buy ▉▉▉▉▉▉▉▉▉▉.", 25F, 12F + (11 * i), Color(255, 128, 128, 200).rgb)
         }
         for (i2 in 500 DownTo 0 step 11) {
-            Fonts.font35.drawStringWithShadow("- cracked by ▉▉▉▉▉▉▉▉▉▉.", 25F + (11 * i2), 12F + i2, Color(255, 128, 128, 240).rgb)
+            Fonts.font35.drawStringWithShadow("- cracked by ▉▉▉▉▉▉▉▉▉▉.", 25F + (11 * i2), 12F + i2, Color(255, 128, 128, 200).rgb)
         }
         Fonts.font35.drawStringWithShadow("${LiquidBounce.CLIENT_NAME} build ${LiquidBounce.CLIENT_VERSION}", 2F, height - 12F, -1)
         Fonts.font35.drawStringWithShadow(creditInfo, width - 3F - Fonts.font35.getStringWidth(creditInfo), height - 12F, -1)
