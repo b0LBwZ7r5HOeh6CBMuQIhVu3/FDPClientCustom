@@ -41,6 +41,7 @@ class ClipFly : FlyMode("Clip") {
             mc.thePlayer.motionX = 0.0
             mc.thePlayer.motionY = 0.0
             mc.thePlayer.motionZ = 0.0
+        }
             if (stopMoveIIValue.get()) {
                 mc.thePlayer.isInWeb = true
             }
@@ -49,7 +50,7 @@ class ClipFly : FlyMode("Clip") {
                 mc.thePlayer.speedInAir = 0.0f
             }
 
-        }
+
         if (timer.hasTimePassed(delayValue.get().toLong())) {
             val yaw = Math.toRadians(mc.thePlayer.rotationYaw.toDouble())
             mc.thePlayer.setPosition(mc.thePlayer.posX + (-sin(yaw) * xValue.get()), mc.thePlayer.posY + yValue.get(), mc.thePlayer.posZ + (cos(yaw) * zValue.get()))
