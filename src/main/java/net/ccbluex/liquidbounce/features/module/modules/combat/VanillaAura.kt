@@ -103,7 +103,7 @@ class VanillaAura : Module() {
                 if (event.isCancelled) {
                     return
                 }
-                if(!ignoreHurtResistantValue.get() || it.hurtResistantTime <= 5) return@forEach
+                if(!ignoreHurtResistantValue.get() && it.hurtResistantTime <= 5) return@forEach
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }
