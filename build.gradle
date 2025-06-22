@@ -11,6 +11,8 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
+    gradlePluginPortal()
+    maven { url = "https://maven.minecraftforge.net/" }
     maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
     maven { url = "https://jitpack.io/" }
     // maven { url = "https://repo.getfdp.today/" } //bigrat
@@ -35,12 +37,14 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.TransformerLoader", "-Xmx1024m -Xms1024m", "-Ddev-mode"]
+    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.TransformerLoader"/*, "-Xmx1024m -Xms1024m"*/, "-Ddev-mode"]
 }
 
 configurations {
     include
     implementation.extendsFrom(include)
+
+    runtimeOnly.canBeResolved = true
 }
 
 dependencies {
@@ -62,10 +66,10 @@ dependencies {
         exclude module: "jogl-all" // we use lwjgl
         exclude module: "gluegen-rt" // this is the library for joal
     }
-    include("com.github.unlegitmc:fuckpcl:2.0") {
-        exclude module: "kotlin-stdlib-jdk8"
-        exclude module: "jna-platform"
-    }
+//    include("com.github.unlegitmc:fuckpcl:2.0") {
+//        exclude module: "kotlin-stdlib-jdk8"
+//        exclude module: "jna-platform"
+//    }
     include("com.jagrosh:DiscordIPC:0.4")
 //    include("me.liuli:Elixir:1.2.1") {
 //        exclude module: "kotlin-stdlib"
@@ -154,4 +158,14 @@ reobf {
     }
 }
 
-tasks.reobfJar.dependsOn(shadowJar)
+
+jar.dependsOn("shadowJar")
+
+tasks.reobfShadowJar.mustRunAfter shadowJar
+
+task copyZipInclude(type: Copy) {
+    from 'zip_include/'
+    into 'build/libs/zip'
+}
+
+build.dependsOn copyZipInclude

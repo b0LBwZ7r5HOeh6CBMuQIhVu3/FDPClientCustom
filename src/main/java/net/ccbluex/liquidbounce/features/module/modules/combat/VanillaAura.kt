@@ -5,16 +5,17 @@
  */
 package net.ccbluex.liquidbounce.features.module.modules.exploit
 
+import com.sun.org.apache.xpath.internal.operations.Bool
+import net.ccbluex.liquidbounce.LiquidBounce
+import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.MotionEvent
-import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
-import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.EntityUtils
-import net.ccbluex.liquidbounce.utils.PacketUtils
+import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
@@ -23,82 +24,112 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.Entity
 import net.minecraft.network.play.client.C02PacketUseEntity
-import net.minecraft.network.play.client.C03PacketPlayer
-import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
 import net.minecraft.network.play.client.C07PacketPlayerDigging
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C0APacketAnimation
-import net.minecraft.network.play.server.S08PacketPlayerPosLook
-import net.minecraft.network.play.server.S40PacketDisconnect
 import net.minecraft.util.BlockPos
-import net.minecraft.util.ChatComponentText
 import net.minecraft.util.EnumFacing
-import scala.math.Ordering
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
-@ModuleInfo(name = "VanillaAura", category = ModuleCategory.EXPLOIT)
+@ModuleInfo(name = "VanillaAura", category = ModuleCategory.COMBAT)
 class VanillaAura : Module() {
     private val APSValue = IntegerValue("APS", 10, 1, 20)
     private val rangeValue = FloatValue("Range", 3.7f, 1f, 8f)
+    private val ignoreHurtResistantValue = BoolValue("ignoreHurtResistant", true)
+    private val onlyCritHitValue = BoolValue("OnlyCritHit", true)
     private val autoBlockValue = BoolValue("AutoBlock", true)
-    private val instantRotationValue = BoolValue("instantRotation", true)
+    private val fakeAutoBlockValue = BoolValue("FakeAutoBlock", true)
+    private val autoUnblockValue = BoolValue("AutoUnblock", true).displayable { autoBlockValue.get() }
+    private val RotationValue = BoolValue("Rotation", true)
+    private val KeepRotationValue = IntegerValue("RotationKeepLen", 1, -1, 10).displayable { RotationValue.get() }
+    private val RotationBackValue = BoolValue("RotationBack", true).displayable { RotationValue.get() }
+    private val swingValue = ListValue("Swing", arrayOf("Normal", "Packet", "None"), "Normal")
     private val targetList = ArrayList<Entity>()
-    private var blocked = false
+    private var blocking = false
+
+    fun shouldDisplayBlocking(): Boolean {
+        return blocking || (fakeAutoBlockValue.get() && targetList.isNotEmpty())
+    }
+
     private val msTimer = MSTimer()
 
     @EventTarget
     fun onMotion(event: MotionEvent) {
-        if (event.isPre()) {
-
-        } else {
-            if (autoBlockValue.get() && !blocked) {
-                block()
-            }
-        }
-
+//        if (event.isPre()) {
+//
+//        } else {
+//            if (autoBlockValue.get() && !blocking) {
+//                block()
+//            }
+//        }
     }
 
     private fun block() {
         mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
-        blocked = true
+        blocking = true
     }
 
     private fun unblock() {
-        blocked = false
+        blocking = false
         mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN))
+    }
+
+    private fun setRot(rot: Rotation){
+        if (KeepRotationValue.get() >= 0) {
+            RotationUtils.setTargetRotation(rot, KeepRotationValue.get())
+        } else {
+            mc.netHandler.addToSendQueue(C05PacketPlayerLook(rot.yaw, rot.pitch, mc.thePlayer.onGround))
+        }
     }
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if (!msTimer.hasTimePassed(1000L / APSValue.get())) return
+        if(onlyCritHitValue.get() && mc.thePlayer.motionY >= 0)
+        msTimer.reset()
         targetList.clear()
         mc.theWorld.loadedEntityList.forEach {
-            if (EntityUtils.isSelected(it, true) && it != mc.thePlayer && it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get()) {
+            if (EntityUtils.isSelected(it, true) && it != mc.thePlayer && it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get() && (!ignoreHurtResistantValue.get() || it.hurtResistantTime <= 10)) {
+                block()
                 targetList.add(it)
             }
         }
-        if (!msTimer.hasTimePassed(1000L / APSValue.get())) return
-        msTimer.reset()
         targetList.forEach {
             if (it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get()) {
-                if (autoBlockValue.get()) {
+                val event = AttackEvent(it)
+                LiquidBounce.eventManager.callEvent(event)
+                if (event.isCancelled) {
+                    return
+                }
+                if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }
                 val rotation = RotationUtils.getJigsawRotations(it)
-                if (instantRotationValue.get()) {
-                    mc.netHandler.addToSendQueue(C05PacketPlayerLook(rotation.yaw, rotation.pitch, mc.thePlayer.onGround))
-                } else {
-                    RotationUtils.setTargetRotation(rotation, 1)
+                if(RotationValue.get()) {
+                    setRot(rotation)
                 }
-                mc.netHandler.addToSendQueue(C0APacketAnimation())
+                if (swingValue.equals("packet")) {
+                    mc.netHandler.addToSendQueue(C0APacketAnimation())
+                } else if (swingValue.equals("normal")) {
+                    mc.thePlayer.swingItem()
+                }
+
                 mc.netHandler.addToSendQueue(C02PacketUseEntity(it, C02PacketUseEntity.Action.ATTACK))
             }
             if (autoBlockValue.get()) {
                 block()
             }
-
         }
+        if(targetList.isEmpty()) {
+            unblock()
+            if (RotationBackValue.get()) setRot(Rotation(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch))
+        }
+    }
+
+    override fun onDisable() {
+        unblock()
+        targetList.clear()
     }
 }

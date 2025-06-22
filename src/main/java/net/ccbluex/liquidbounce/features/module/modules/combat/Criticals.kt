@@ -24,6 +24,9 @@ import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import java.util.*
 import net.ccbluex.liquidbounce.features.module.modules.movement.Fly
+import net.ccbluex.liquidbounce.features.module.modules.world.BloxdPhysics
+import net.ccbluex.liquidbounce.features.module.modules.world.BloxdPhysics.PhysicsBody
+import net.ccbluex.liquidbounce.features.module.modules.world.BloxdPhysics.Vec3
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
@@ -40,7 +43,7 @@ import net.minecraft.stats.StatList
 @ModuleInfo(name = "Criticals", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
 val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Packet", "NCPPacket", "NCPPacket2", "Hypixel", "VulcanSemi", "OldHypixel", "MatrixSemi", "OldHypixel2", "Hypixel2", "Hypixel3", "huayutingTest", "AACPacket", "MiniPhase", "NanoPacket", "non-calculable", "invalid", "MiPacket", "AAC4.3.11OldHYT", "AAC5.0.14HYT", "AAC5.0.14HYT2", "Noteless", "NoGround", "Visual", "TPHop", "FakeCollide", "VerusSmart", "Mineplex", "More", "TestMinemora", "Motion", "Hover", "Matrix", "MiniPhase", "phasePacket", "packet1", "packet2", "AAC4Packet", "OldCubecraft"), "packet")
-    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis"), "Jump")
+    val motionValue = ListValue("MotionMode", arrayOf("RedeSkyLowHop", "Hop", "Jump", "LowJump", "MinemoraTest", "Minis", "BloxdLowJump"), "Jump")
     val hoverValue = ListValue("HoverMode", arrayOf("AAC4", "AAC4Other", "OldRedesky", "Normal1", "Normal2", "Minis", "Minis2", "TPCollide", "2b2t", "Edit", "hover", "phase"), "AAC4")
     private val vanillaCritCheckValue = ListValue("VanillaCriticalCheck", arrayOf("Off", "Normal", "Strict"), "Normal")
     // private val packetHopMotionModeValue = ListValue("packetHopMotionMode", arrayOf("tp", "motion"), "tp")
@@ -441,6 +444,10 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
                         }
                         "minis" -> {
                             mc.thePlayer.motionY = 0.0000194382390
+                        }
+                        "bloxdlowjump" -> {
+                            PhysicsBody.impulseVector.add(Vec3(0f, 4f, 0f))
+                            mc.thePlayer.motionY = PhysicsBody.getMotionForTick(4f, 1f, 1f).y.toDouble()
                         }
                     }
                 }

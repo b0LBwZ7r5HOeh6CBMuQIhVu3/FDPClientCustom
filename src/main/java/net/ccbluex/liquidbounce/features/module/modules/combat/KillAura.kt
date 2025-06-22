@@ -192,6 +192,7 @@ class KillAura : Module() {
     private val keepDirectionValue = BoolValue("KeepDirection", true).displayable { !rotationModeValue.equals("None") }
     private val keepDirectionTickValue = IntegerValue("KeepDirectionTick", 15, 1, 20).displayable { !rotationModeValue.equals("None") }
     private val hitableValue = BoolValue("AlwaysHitable", true).displayable { !rotationModeValue.equals("None") }
+    private val onlyCriticalsValue = BoolValue("OnlyCriticals", true)
     private val fovValue = FloatValue("FOV", 180f, 0f, 180f)
 
     // Predict
@@ -855,6 +856,7 @@ class KillAura : Module() {
      * Attack enemy
      */
     private fun runAttack() {
+
         target ?: return
         currentTarget ?: return
 
