@@ -28,7 +28,7 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "BloxdPhysics", description = "Bloxd movement logic", category = ModuleCategory.WORLD)
 class BloxdPhysics : Module() {
-    private val jumpIV = FloatValue("JumpImpulseVector", 4F, 4F, 10F)
+    private val jumpIV = FloatValue("JumpImpulseVector", 8F, 4F, 10F)
     private val spiderSpeedValue = FloatValue("SpiderSpeed", 5F, 4F, 10F)
     private val gravityMul = FloatValue("GravityMultiplier", 2F, 1F, 10F)
     private val mass = FloatValue("Mass", 1F, 0.1F, 5F)
@@ -124,35 +124,6 @@ class BloxdPhysics : Module() {
         )
     }
 
-    fun calculateImpulseForHeight(heightInBlocks: Float): Float {
-        val gravity = -10.0f
-        val gravityMultiplier = 4.0f
-        val delta = 0.05f
-
-        // (gravity * gravityMultiplier) * delta = (-10 * 4) * 0.05 = -2.0
-        val gravityVelocityChangePerTick = (gravity * gravityMultiplier) * delta
-
-        if (heightInBlocks <= 0) {
-            return 0.0f
-        }
-
-        val a = 0.025
-        val b = 0.025
-        val c = -heightInBlocks
-
-        val discriminant = b * b - 4 * a * c
-        if (discriminant < 0) {
-            return 0.0f
-        }
-
-        val v0 = (-b + sqrt(discriminant)) / (2 * a)
-
-        val impulse = v0 - gravityVelocityChangePerTick
-
-        return impulse.toFloat()
-    }
-
-
     @EventTarget
     fun onStrafe(event: StrafeEvent) {
 
@@ -171,7 +142,7 @@ class BloxdPhysics : Module() {
         }
 
         if (mc.thePlayer.isCollidedHorizontally) {
-            PhysicsBody.velocityVector.set(0f, 5f, 0f)
+            PhysicsBody.velocityVector.set(0f, spiderSpeedValue.get(), 0f)
         }
 
         val moveDir = getMoveDir(

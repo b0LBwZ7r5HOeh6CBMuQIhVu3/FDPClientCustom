@@ -91,7 +91,7 @@ class VanillaAura : Module() {
         msTimer.reset()
         targetList.clear()
         mc.theWorld.loadedEntityList.forEach {
-            if (EntityUtils.isSelected(it, true) && it != mc.thePlayer && it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get() && (!ignoreHurtResistantValue.get() || it.hurtResistantTime <= 10)) {
+            if (EntityUtils.isSelected(it, true) && it != mc.thePlayer && it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get()) {
                 block()
                 targetList.add(it)
             }
@@ -103,6 +103,7 @@ class VanillaAura : Module() {
                 if (event.isCancelled) {
                     return
                 }
+                if(!ignoreHurtResistantValue.get() || it.hurtResistantTime <= 5) return@forEach
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }
