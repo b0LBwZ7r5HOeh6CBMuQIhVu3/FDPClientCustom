@@ -171,6 +171,7 @@ class Scaffold : Module() {
 
     // Launch position
     private var launchY = 0
+    private var firstBlockPlaced = false
     private var facesBlock = false
 
     // AutoBlock
@@ -198,6 +199,7 @@ class Scaffold : Module() {
         val player = mc.thePlayer ?: return
 
         launchY = player.posY.roundToInt()
+        firstBlockPlaced = false
         slot = player.inventory.currentItem
         facesBlock = false
     }
@@ -410,7 +412,7 @@ class Scaffold : Module() {
             } else {
                 BlockPos(player.posX, player.posY - 0.6, player.posZ).down()
             })
-        } else (if (sameYValue.get() && launchY <= player.posY && !mc.gameSettings.keyBindJump.pressed) {
+        } else (if (sameYValue.get() && firstBlockPlaced && launchY <= player.posY && !mc.gameSettings.keyBindJump.pressed) {
             BlockPos(player.posX, launchY - 1.0, player.posZ)
         } else (if (player.posY == player.posY.roundToInt() + 0.5) {
             BlockPos(player)
@@ -491,6 +493,10 @@ class Scaffold : Module() {
                 player, world, itemStack, targetPlace!!.blockPos, targetPlace!!.enumFacing, targetPlace!!.vec3
             )
         ) {
+            if (!firstBlockPlaced) {
+                launchY = targetPlace!!.vec3.yCoord.toInt() + 1
+                firstBlockPlaced = true
+            }
             delayTimer.reset()
             delay = if (!placeDelay.get()) 0 else TimeUtils.randomDelay(minDelayValue.get(), maxDelayValue.get())
 
