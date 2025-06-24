@@ -3,20 +3,15 @@ package net.ccbluex.liquidbounce.features.module.modules.world
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.BlockBBEvent
 import net.ccbluex.liquidbounce.event.EventTarget
-import net.ccbluex.liquidbounce.event.MotionEvent
-import net.ccbluex.liquidbounce.event.MoveEvent
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.StrafeEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
-import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
-import net.minecraft.block.BlockAir
-import net.minecraft.block.material.Material
 import net.minecraft.init.Blocks
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.network.play.server.S3FPacketCustomPayload
@@ -39,8 +34,7 @@ class BloxdPhysics : Module() {
     }
 
     private val attackingBoost = BoolValue("attackingBoost", false)
-    private val compatibility = BoolValue("compatibility", false)
-    private val AllowBHop = IntegerValue("AllowBHop", 3, 0, 3)
+    private val allowBHop = IntegerValue("AllowBHop", 3, 0, 3)
 
     private val damageBoost = BoolValue("DamageBoost", true)
     private val dbTime = IntegerValue("DamageBoostTime", 1100, 100, 2000)
@@ -132,7 +126,7 @@ class BloxdPhysics : Module() {
         }
 
         if (mc.thePlayer.onGround && mc.thePlayer.motionY >= 0.419f) {
-            jumpFunny = min(jumpFunny + 1, AllowBHop.get())
+            jumpFunny = min(jumpFunny + 1, allowBHop.get())
             PhysicsBody.impulseVector.add(Vec3(0f, jumpIV.get(), 0f))
         }
 
@@ -192,12 +186,15 @@ class BloxdPhysics : Module() {
     fun onBlockBB(e: BlockBBEvent) {
         val thePlayer = mc.thePlayer ?: return
 
-        // Bloxd server didn't ipmled the non-full block bounding boxes correctly because it's not a real block game
+        // Bloxd 没有实现真正的碰撞检测，因为他们不是真正的方块游戏
         when (e.block) {
+            // 这些方块是在原版方块游戏是不满全格，但是在 Bloxd 中是满格的
             Blocks.bed, Blocks.chest, Blocks.trapped_chest, Blocks.enchanting_table, Blocks.cauldron, Blocks.snow -> e.boundingBox = AxisAlignedBB(e.x.toDouble(), e.y.toDouble(), e.z.toDouble(), e.x + 1.0, e.y + 1.0, e.z + 1.0)
 
+            // 特例
             Blocks.brewing_stand -> e.boundingBox = AxisAlignedBB(e.x.toDouble() - 0.5, e.y.toDouble(), e.z.toDouble() - 1, e.x + 1.5, e.y + 1.0, e.z + 1.5)
 
+            // 碰撞不绝对就是绝对不碰撞
             Blocks.snow_layer, Blocks.carpet -> e.boundingBox = AxisAlignedBB(0.0,0.0,0.0,0.0,0.0,0.0)
 
             else -> return

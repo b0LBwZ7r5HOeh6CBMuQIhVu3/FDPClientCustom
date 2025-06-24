@@ -30,6 +30,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C0APacketAnimation
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
+import scala.Int
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,7 +38,8 @@ import kotlin.collections.ArrayList
 class VanillaAura : Module() {
     private val APSValue = IntegerValue("APS", 10, 1, 20)
     private val rangeValue = FloatValue("Range", 3.7f, 1f, 8f)
-    private val ignoreHurtResistantValue = BoolValue("ignoreHurtResistant", true)
+    private val ignoreHurtResistantValue = IntegerValue("ignoreHurtResistant", 8, -1, 20)
+        .displayable { !onlyCritHitValue.get() }
     private val onlyCritHitValue = BoolValue("OnlyCritHit", true)
     private val autoBlockValue = BoolValue("AutoBlock", true)
     private val fakeAutoBlockValue = BoolValue("FakeAutoBlock", true)
@@ -103,7 +105,7 @@ class VanillaAura : Module() {
                 if (event.isCancelled) {
                     return
                 }
-                if(!ignoreHurtResistantValue.get() && it.hurtResistantTime <= 5) return@forEach
+                if(ignoreHurtResistantValue.get() >= 0 && it.hurtResistantTime <= ignoreHurtResistantValue.get()) return@forEach
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }

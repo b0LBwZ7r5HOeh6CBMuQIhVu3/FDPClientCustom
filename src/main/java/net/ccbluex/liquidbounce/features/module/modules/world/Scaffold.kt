@@ -209,7 +209,7 @@ class Scaffold : Module() {
 
         mc.timer.timerSpeed = timerValue.get()
         shouldGoDown =
-            downValue.get() && !sameYValue.get() && GameSettings.isKeyDown(mc.gameSettings.keyBindSneak) && blocksAmount > 1
+            downValue.get()/* && !sameYValue.get()*/ && GameSettings.isKeyDown(mc.gameSettings.keyBindSneak) && blocksAmount > 1
         if (shouldGoDown) {
             mc.gameSettings.keyBindSneak.pressed = false
         }
@@ -410,7 +410,7 @@ class Scaffold : Module() {
             } else {
                 BlockPos(player.posX, player.posY - 0.6, player.posZ).down()
             })
-        } else (if (sameYValue.get() && launchY <= player.posY) {
+        } else (if (sameYValue.get() && launchY <= player.posY && !mc.gameSettings.keyBindJump.pressed) {
             BlockPos(player.posX, launchY - 1.0, player.posZ)
         } else (if (player.posY == player.posY.roundToInt() + 0.5) {
             BlockPos(player)
@@ -605,7 +605,7 @@ class Scaffold : Module() {
             val z = if (omniDirectionalExpand.get()) cos(yaw).roundToInt() else player.horizontalFacing.directionVec.z
             val blockPos = BlockPos(
                 player.posX + x * i,
-                if (sameYValue.get() && launchY <= player.posY) launchY - 1.0 else player.posY - (if (player.posY == player.posY + 0.5) 0.0 else 1.0) - if (shouldGoDown) 1.0 else 0.0,
+                if (sameYValue.get() && launchY <= player.posY && !mc.gameSettings.keyBindJump.pressed) launchY - 1.0 else player.posY - (if (player.posY == player.posY + 0.5) 0.0 else 1.0) - if (shouldGoDown) 1.0 else 0.0,
                 player.posZ + z * i
             )
             val placeInfo = PlaceInfo.get(blockPos)

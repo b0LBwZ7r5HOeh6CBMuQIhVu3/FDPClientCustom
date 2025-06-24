@@ -18,6 +18,7 @@ import net.ccbluex.liquidbounce.file.FileManager
 import net.ccbluex.liquidbounce.utils.FileUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.ccbluex.liquidbounce.value.TextValue
 import net.minecraft.entity.player.EntityPlayer
@@ -38,6 +39,7 @@ object KillInsults : Module() {
     private val waterMarkValue = BoolValue("WaterMark", true)
     private val hytShoutValue = BoolValue("hytShout", true)
     private val messageValue = TextValue("message", "%name% how are you today")
+    private val repeat = IntegerValue("Repeat", 1, 1, 10)
     private val insultFile = File(LiquidBounce.fileManager.dir, "insult.json")
 
     init {
@@ -87,24 +89,26 @@ object KillInsults : Module() {
         if (target !is EntityPlayer) {
             return
         }
+        repeat(repeat.get(), {
+            when (modeValue.get().lowercase()) {
+                "clear" -> {
+                    sendInsultWords("L ${target.name}", target.name)
+                }
+                "withwords" -> {
+                    sendInsultWords("L ${target.name} " + getRandomOne(), target.name)
+                }
+                "rawwords" -> {
+                    sendInsultWords(getRandomOne(), target.name)
+                }
+            }
+        })
 
-        when (modeValue.get().lowercase()) {
-            "clear" -> {
-                sendInsultWords("L ${target.name}", target.name)
-            }
-            "withwords" -> {
-                sendInsultWords("L ${target.name} " + getRandomOne(), target.name)
-            }
-            "rawwords" -> {
-                sendInsultWords(getRandomOne(), target.name)
-            }
-        }
     }
 
     private fun sendInsultWords(msg: String, name: String) {
         var message = msg.replace("%name%", name)
         if (waterMarkValue.get()) {
-            message = "[FDPClient] $message"
+            message = "[Filhodaputa] $message"
         }
         if(hytShoutValue.get()){
             message = "@$message"

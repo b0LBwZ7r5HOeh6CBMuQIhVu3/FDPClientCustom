@@ -13,7 +13,10 @@ import net.minecraft.block.Block
 import net.minecraft.init.Blocks
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
+import net.minecraft.item.ItemEgg
+import net.minecraft.item.ItemFireball
 import net.minecraft.item.ItemPotion
+import net.minecraft.item.ItemSnowball
 import net.minecraft.item.ItemStack
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C0DPacketCloseWindow
@@ -27,12 +30,12 @@ object InventoryUtils : MinecraftInstance(), Listenable {
     val BLOCK_BLACKLIST = listOf(Blocks.enchanting_table, Blocks.chest, Blocks.ender_chest, Blocks.trapped_chest,
         Blocks.anvil, Blocks.sand, Blocks.web, Blocks.torch, Blocks.crafting_table, Blocks.furnace, Blocks.waterlily,
         Blocks.dispenser, Blocks.stone_pressure_plate, Blocks.wooden_pressure_plate, Blocks.red_flower, Blocks.flower_pot, Blocks.yellow_flower,
-        Blocks.noteblock, Blocks.dropper, Blocks.standing_banner, Blocks.wall_banner)
+        Blocks.noteblock, Blocks.dropper, Blocks.standing_banner, Blocks.wall_banner, Blocks.tnt)
 
     fun findItem(startSlot: Int, endSlot: Int, item: Item): Int {
         for (i in startSlot until endSlot) {
             val stack = mc.thePlayer.inventoryContainer.getSlot(i).stack
-            if (stack != null && stack.item === item) {
+            if (stack != null && stack.stackSize >= 0 && stack.item === item) {
                 return i
             }
         }
@@ -59,6 +62,25 @@ object InventoryUtils : MinecraftInstance(), Listenable {
         }
         return -1
     }
+
+    fun findBall(): Int {
+        var egg = -1
+        for (i in 36..44) {
+            val itemStack = mc.thePlayer.inventoryContainer.getSlot(i).stack
+            if (itemStack != null && itemStack.stackSize > 0) {
+                when (itemStack.item) {
+                    is ItemFireball -> {
+                            return i
+                    }
+                    is ItemEgg, is ItemSnowball -> {
+                        egg = i
+                    }
+                }
+            }
+        }
+        return egg
+    }
+
 
     fun canPlaceBlock(block: Block): Boolean {
         return block.isFullCube && !BLOCK_BLACKLIST.contains(block)

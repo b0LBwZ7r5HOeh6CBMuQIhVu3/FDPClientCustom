@@ -11,9 +11,11 @@ package net.ccbluex.liquidbounce.features.module.modules.movement
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.*
+import net.ccbluex.liquidbounce.features.module.modules.exploit.Damage
 import net.ccbluex.liquidbounce.features.module.modules.movement.flys.FlyMode
 import net.ccbluex.liquidbounce.utils.ClassUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
+import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.*
 import net.minecraft.network.play.server.S19PacketEntityStatus
 import org.lwjgl.input.Keyboard
@@ -41,6 +43,10 @@ class Fly : Module() {
 
     private val motionResetValue = BoolValue("MotionReset", false)
 
+    private val needDamageValue = BoolValue("NeedDamage", false)
+    private val damageTimeValue = IntegerValue("DamageTime", 1300, 500, 5000).displayable { needDamageValue.get() }
+    private val toggleDamageModule = BoolValue("ToggleDamageModule", true).displayable { needDamageValue.get() }
+
     // Visuals
     private val markValue = ListValue("Mark", arrayOf("Up", "Down", "Off"), "Up")
     private val fakeDamageValue = BoolValue("FakeDamage", false)
@@ -54,6 +60,8 @@ class Fly : Module() {
     var launchPitch = 0f
 
     var antiDesync = false
+
+    val damagedTimer = MSTimer()
 
     override fun onEnable() {
         antiDesync = false
@@ -70,6 +78,10 @@ class Fly : Module() {
         launchZ = mc.thePlayer.posZ
         launchYaw = mc.thePlayer.rotationYaw
         launchPitch = mc.thePlayer.rotationPitch
+
+        if (needDamageValue.get() && toggleDamageModule.get()) {
+            LiquidBounce.moduleManager[Damage::class.java]!!.onEnable()
+        }
 
         mode.onEnable()
     }
@@ -108,6 +120,9 @@ class Fly : Module() {
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if(needDamageValue.get() && mc.thePlayer.hurtTime > 0) {
+            damagedTimer.reset()
+        }
         mode.onUpdate(event)
     }
 
@@ -127,6 +142,10 @@ class Fly : Module() {
 
     @EventTarget
     fun onMove(event: MoveEvent) {
+        if(needDamageValue.get() && damagedTimer.hasTimePassed(damageTimeValue.get().toLong())) {
+            event.zero()
+            return
+        }
         mode.onMove(event)
     }
 

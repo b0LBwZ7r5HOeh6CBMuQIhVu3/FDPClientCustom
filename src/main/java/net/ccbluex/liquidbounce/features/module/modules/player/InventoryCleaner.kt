@@ -78,6 +78,7 @@ class InventoryCleaner : Module() {
     private val nbtArmorPriority = FloatValue("NBTArmorPriority", 0f, 0f, 5f).displayable { !nbtGoalValue.equals("NONE") }
     private val nbtWeaponPriority = FloatValue("NBTWeaponPriority", 0f, 0f, 5f).displayable { !nbtGoalValue.equals("NONE") }
     private val ignoreVehiclesValue = BoolValue("IgnoreVehicles", false)
+    private val selfHurtNotGarbageValue = BoolValue("selfHurtNotGarbage", false)
     private val onlyPositivePotionValue = BoolValue("OnlyPositivePotion", false)
 //    private val ignoreDurabilityUnder = FloatValue("IgnoreDurabilityUnder", 0.3f, 0f, 1f)
 
@@ -313,7 +314,8 @@ class InventoryCleaner : Module() {
                         item is ItemFood || itemStack.unlocalizedName == "item.arrow" ||
                         (item is ItemBlock && !InventoryUtils.isBlockListBlock(item)) ||
                         item is ItemBed || (item is ItemPotion && (!onlyPositivePotionValue.get() || InventoryUtils.isPositivePotion(item, itemStack))) ||
-                        item is ItemEnderPearl || item is ItemBucket || ignoreVehiclesValue.get() && (item is ItemBoat || item is ItemMinecart)
+                        item is ItemEnderPearl || item is ItemBucket || ignoreVehiclesValue.get() && (item is ItemBoat || item is ItemMinecart) ||
+                        selfHurtNotGarbageValue.get() && (item is ItemFireball || item is ItemSnowball || item is ItemEgg)
             }
         } catch (ex: Exception) {
             ClientUtils.logError("(InventoryCleaner) Failed to check item: ${itemStack.unlocalizedName}.", ex)

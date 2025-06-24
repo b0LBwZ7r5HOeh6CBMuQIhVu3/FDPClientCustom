@@ -212,7 +212,7 @@ class TargetStrafe : Module() {
         val target = LiquidBounce.combatManager.target
         if(!canStrafe(target)) return
         var aroundVoid = false
-        for (x in -1..0) for (z in -1..0) if (isVoid(x, z)) aroundVoid = true
+        for (x in -2..2) for (z in -2..2) if (isVoid(x, z)) aroundVoid = true
 
         var yaw = RotationUtils.getRotationFromEyeHasPrev(LiquidBounce.combatManager.target).yaw
 
