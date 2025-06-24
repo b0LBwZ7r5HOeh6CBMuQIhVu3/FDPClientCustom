@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB
 import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @ModuleInfo(name = "BloxdPhysics", description = "Bloxd movement logic", category = ModuleCategory.WORLD)
@@ -192,12 +193,17 @@ class BloxdPhysics : Module() {
             Blocks.bed, Blocks.chest, Blocks.trapped_chest, Blocks.enchanting_table, Blocks.cauldron, Blocks.snow -> e.boundingBox = AxisAlignedBB(e.x.toDouble(), e.y.toDouble(), e.z.toDouble(), e.x + 1.0, e.y + 1.0, e.z + 1.0)
 
             // 特例
-            Blocks.brewing_stand -> e.boundingBox = AxisAlignedBB(e.x.toDouble() - 0.5, e.y.toDouble(), e.z.toDouble() - 1, e.x + 1.5, e.y + 1.0, e.z + 1.5)
+            Blocks.brewing_stand -> e.boundingBox = AxisAlignedBB(0.0,0.0,0.0,0.0,0.0,0.0)
 
             // 碰撞不绝对就是绝对不碰撞
             Blocks.snow_layer, Blocks.carpet -> e.boundingBox = AxisAlignedBB(0.0,0.0,0.0,0.0,0.0,0.0)
 
-            else -> return
+            else -> {
+                val bb = e.boundingBox ?: return
+                // 对所有值进行四舍五入
+                e.boundingBox = AxisAlignedBB(bb.minX.roundToInt().toDouble(), bb.minY.roundToInt().toDouble(), bb.minZ.roundToInt().toDouble(),
+                    bb.maxX.roundToInt().toDouble(), bb.maxY.roundToInt().toDouble(), bb.maxZ.roundToInt().toDouble())
+            }
         }
     }
 }
