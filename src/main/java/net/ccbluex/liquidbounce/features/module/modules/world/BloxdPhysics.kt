@@ -1,6 +1,5 @@
 package net.ccbluex.liquidbounce.features.module.modules.world
 
-import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.BlockBBEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
@@ -26,15 +25,24 @@ import kotlin.math.sqrt
 class BloxdPhysics : Module() {
     private val jumpIV = FloatValue("JumpImpulseVector", 8F, 4F, 10F)
     private val spiderSpeedValue = FloatValue("SpiderSpeed", 5F, 4F, 10F)
-    private val gravityMul = FloatValue("GravityMultiplier", 2F, 1F, 10F)
-    private val mass = FloatValue("Mass", 1F, 0.1F, 5F)
+
+    private val jumpGravityMul = FloatValue("JumpGravityMultiplier", 2.5F, 1F, 10F)
+    private val jumpMass = FloatValue("JumpMass", 1F, 0.1F, 5F)
+
+    private val speedGravityMul = FloatValue("SpeedGravityMultiplier", 3.5F, 1F, 10F)
+    private val speedMass = FloatValue("SpeedMass", 1F, 0.1F, 5F)
+
+    private val fallingGravityMul = FloatValue("FallingGravityMultiplier", 2F, 1F, 10F)
+    private val fallingMass = FloatValue("FallingMass", 1F, 0.1F, 5F)
+    private val fallingDist = FloatValue("FallingDist", 1.6F, 1F, 3F)
+
 
     private val DELTA = IntegerValue("Ticks", 30, 20, 30)
     fun getDELTA(): Float {
         return 1f / DELTA.get()
     }
 
-    private val attackingBoost = BoolValue("attackingBoost", false)
+//    private val attackingBoost = BoolValue("attackingBoost", false)
     private val allowBHop = IntegerValue("AllowBHop", 3, 0, 3)
 
     private val damageBoost = BoolValue("DamageBoost", true)
@@ -44,6 +52,8 @@ class BloxdPhysics : Module() {
     private var groundTicks = 0
     private var jumpFunny = 0
     private val damageTimer: MSTimer = MSTimer()
+
+    private var normalJumping = false
 
     data class Vec3(
         var x: Float = 0f,
@@ -72,7 +82,7 @@ class BloxdPhysics : Module() {
         }
     }
 
-    object PhysicsBody {
+    companion object PhysicsBody {
         val impulseVector = Vec3()
         val forceVector = Vec3()
         val velocityVector = Vec3()
@@ -121,7 +131,6 @@ class BloxdPhysics : Module() {
 
     @EventTarget
     fun onStrafe(event: StrafeEvent) {
-
         if (mc.thePlayer.onGround && PhysicsBody.velocityVector.y < 0) {
             PhysicsBody.velocityVector.set(0f, 0f, 0f)
         }
@@ -131,7 +140,10 @@ class BloxdPhysics : Module() {
             PhysicsBody.impulseVector.add(Vec3(0f, jumpIV.get(), 0f))
         }
 
-        groundTicks = if (mc.thePlayer.onGround) groundTicks + 1 else 0
+        groundTicks = if (mc.thePlayer.onGround) {
+            normalJumping = false
+            groundTicks + 1
+        } else 0
         if (groundTicks > 5) {
             jumpFunny = 0
         }
@@ -149,12 +161,22 @@ class BloxdPhysics : Module() {
         event.cancelEvent()
         mc.thePlayer.motionX = moveDir.x.toDouble()
         mc.thePlayer.motionY =
-            if(mc.theWorld.getChunkFromBlockCoords(mc.thePlayer.position).isLoaded)
+            if(mc.theWorld.getChunkFromBlockCoords(mc.thePlayer.position).isLoaded) {
+                val (currentGravityMul, currentMass) = if(normalJumping || mc.thePlayer.fallDistance >= fallingDist.get()){
+                    Pair(fallingGravityMul.get(), fallingMass.get())
+                } else if (mc.gameSettings.keyBindJump.pressed) {
+                    normalJumping = true
+                    Pair(jumpGravityMul.get(), jumpMass.get())
+                } else {
+                    Pair(speedGravityMul.get(), speedMass.get())
+                }
+
                 PhysicsBody.getMotionForTick(
-                    if(attackingBoost.get() && LiquidBounce.combatManager.target != null)
-                     gravityMul.get() * 2
-                 else gravityMul.get(), mass.get(), getDELTA()).y * getDELTA().toDouble()
-            else 0.0
+                    currentGravityMul,
+                    currentMass,
+                    getDELTA()
+                ).y * getDELTA().toDouble()
+            } else 0.0
         mc.thePlayer.motionZ = moveDir.z.toDouble()
     }
 
@@ -182,6 +204,11 @@ class BloxdPhysics : Module() {
         }
     }
 
+    override fun onDisable(){
+        PhysicsBody.impulseVector.set(0f, 0f, 0f)
+        PhysicsBody.forceVector.set(0f, 0f, 0f)
+        PhysicsBody.velocityVector.set(0f, 0f, 0f)
+    }
 
     @EventTarget
     fun onBlockBB(e: BlockBBEvent) {
@@ -206,4 +233,5 @@ class BloxdPhysics : Module() {
             }
         }
     }
+
 }

@@ -7,6 +7,7 @@ package net.ccbluex.liquidbounce.features.module.modules.player
 
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.EventTarget
+import net.ccbluex.liquidbounce.event.MoveEvent
 import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
@@ -25,7 +26,7 @@ import net.minecraft.util.BlockPos
 
 @ModuleInfo(name = "AntiVoid", category = ModuleCategory.PLAYER)
 class AntiVoid : Module() {
-    private val modeValue = ListValue("Mode", arrayOf("Blink", "TPBack", "MotionFlag", "PacketFlag", "GroundSpoof", "OldHypixel", "Jartex", "OldCubecraft", "MinemoraTest", "OldRedesky", "MatrixFlag"), "Blink")
+    private val modeValue = ListValue("Mode", arrayOf("Blink", "TPBack", "MotionFlag", "PacketFlag", "GroundSpoof", "OldHypixel", "Jartex", "OldCubecraft", "MinemoraTest", "OldRedesky", "MatrixFlag", "Predict"), "Blink")
     private val maxFallDistValue = FloatValue("MaxFallDistance", 10F, 5F, 20F)
     private val resetMotion = BoolValue("ResetMotion", false).displayable { modeValue.equals("Blink") }
     private val startFallDistValue = FloatValue("BlinkStartFallDistance", 2F, 0F, 5F).displayable { modeValue.equals("Blink") }
@@ -284,6 +285,15 @@ class AntiVoid : Module() {
                     }
                     if (!voidOnly.get() && mc.thePlayer.fallDistance >= maxFallDistValue.get()) packet.y += 11.0
                 }
+            }
+        }
+    }
+
+    @EventTarget
+    fun onMove(event: MoveEvent) {
+        when (modeValue.get().lowercase()){
+            "predict" -> if (!mc.thePlayer.onGround && FallingPlayer(mc.thePlayer).findCollision(60) == null) {
+                    event.zero()
             }
         }
     }
