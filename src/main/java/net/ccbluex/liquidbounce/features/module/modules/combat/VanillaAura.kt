@@ -3,13 +3,13 @@
  * A free open source mixin-based injection hacked client for Minecraft using Minecraft Forge by LiquidBounce.
  * https://github.com/UnlegitMC/FDPClient/
  */
-package net.ccbluex.liquidbounce.features.module.modules.exploit
+package net.ccbluex.liquidbounce.features.module.modules.combat
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.MotionEvent
+import net.ccbluex.liquidbounce.event.PacketEvent
 import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
@@ -24,14 +24,14 @@ import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.Entity
 import net.minecraft.network.play.client.C02PacketUseEntity
+import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
 import net.minecraft.network.play.client.C07PacketPlayerDigging
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C0APacketAnimation
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
-import scala.Int
-import java.util.*
+import kotlin.Int.Companion.MIN_VALUE
 import kotlin.collections.ArrayList
 
 @ModuleInfo(name = "VanillaAura", category = ModuleCategory.COMBAT)
@@ -57,6 +57,9 @@ class VanillaAura : Module() {
 
     private val msTimer = MSTimer()
 
+    private var lastY = -99999.00
+    private var willCritical = false
+
     @EventTarget
     fun onMotion(event: MotionEvent) {
 //        if (event.isPre()) {
@@ -67,6 +70,16 @@ class VanillaAura : Module() {
 //            }
 //        }
     }
+
+    @EventTarget
+    fun onPacket(event: PacketEvent){
+        val packet = event.packet
+        if (onlyCritHitValue.get() && packet is C03PacketPlayer /*outdated kotlin*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
+            willCritical = packet.y < lastY
+            lastY = packet.y
+        }
+    }
+
 
     private fun block() {
         mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
@@ -89,7 +102,7 @@ class VanillaAura : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (!msTimer.hasTimePassed(1000L / APSValue.get())) return
-        if(onlyCritHitValue.get() && mc.thePlayer.motionY >= 0)
+        if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ willCritical) return
         msTimer.reset()
         targetList.clear()
         mc.theWorld.loadedEntityList.forEach {
