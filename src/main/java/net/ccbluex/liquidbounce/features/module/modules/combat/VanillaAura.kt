@@ -39,7 +39,6 @@ class VanillaAura : Module() {
     private val APSValue = IntegerValue("APS", 10, 1, 20)
     private val rangeValue = FloatValue("Range", 3.7f, 1f, 8f)
     private val ignoreHurtResistantValue = IntegerValue("ignoreHurtResistant", 8, -1, 20)
-        .displayable { !onlyCritHitValue.get() }
     private val onlyCritHitValue = BoolValue("OnlyCritHit", true)
     private val autoBlockValue = BoolValue("AutoBlock", true)
     private val fakeAutoBlockValue = BoolValue("FakeAutoBlock", true)
@@ -75,7 +74,11 @@ class VanillaAura : Module() {
     fun onPacket(event: PacketEvent){
         val packet = event.packet
         if (onlyCritHitValue.get() && packet is C03PacketPlayer /*outdated kotlin moment, as will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
-            willCritical = packet.y < lastY
+            if (lastY - packet.y > 0.1) {
+                willCritical = true
+            } else if (mc.thePlayer.onGround) {
+                willCritical = false
+            }
             lastY = packet.y
         }
     }
@@ -102,7 +105,7 @@ class VanillaAura : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (!msTimer.hasTimePassed(1000L / APSValue.get())) return
-        if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ willCritical) return
+        if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ !willCritical) return
         msTimer.reset()
         targetList.clear()
         mc.theWorld.loadedEntityList.forEach {
