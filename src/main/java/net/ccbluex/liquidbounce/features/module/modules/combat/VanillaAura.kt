@@ -74,7 +74,7 @@ class VanillaAura : Module() {
     @EventTarget
     fun onPacket(event: PacketEvent){
         val packet = event.packet
-        if (onlyCritHitValue.get() && packet is C03PacketPlayer /*outdated kotlin*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
+        if (onlyCritHitValue.get() && packet is C03PacketPlayer /*outdated kotlin moment, as will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
             willCritical = packet.y < lastY
             lastY = packet.y
         }
