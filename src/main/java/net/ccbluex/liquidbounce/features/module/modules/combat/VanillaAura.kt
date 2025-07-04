@@ -105,7 +105,7 @@ class VanillaAura : Module() {
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
         if (!msTimer.hasTimePassed(1000L / APSValue.get())) return
-        if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ !willCritical) return
+
         msTimer.reset()
         targetList.clear()
         mc.theWorld.loadedEntityList.forEach {
@@ -122,6 +122,7 @@ class VanillaAura : Module() {
                     return
                 }
                 if(ignoreHurtResistantValue.get() >= 0 && it.hurtResistantTime <= ignoreHurtResistantValue.get()) return@forEach
+                if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ !willCritical) return
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }

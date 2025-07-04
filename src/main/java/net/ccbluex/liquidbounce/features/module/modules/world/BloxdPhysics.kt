@@ -23,19 +23,20 @@ import kotlin.math.sqrt
 
 @ModuleInfo(name = "BloxdPhysics", description = "Bloxd movement logic", category = ModuleCategory.WORLD)
 class BloxdPhysics : Module() {
-    private val jumpIV = FloatValue("JumpImpulseVector", 8F, 4F, 10F)
+
     private val spiderSpeedValue = FloatValue("SpiderSpeed", 5F, 4F, 10F)
 
     private val jumpGravityMul = FloatValue("JumpGravityMultiplier", 2.5F, 1F, 10F)
-    private val jumpMass = FloatValue("JumpMass", 1F, 0.1F, 5F)
+    private val jumpImpulseVec = FloatValue("JumpImpulseY", 8F, 4F, 10F)
 
     private val speedGravityMul = FloatValue("SpeedGravityMultiplier", 3.5F, 1F, 10F)
-    private val speedMass = FloatValue("SpeedMass", 1F, 0.1F, 5F)
+    private val speedImpulseVec = FloatValue("SpeedImpulseY", 0F, 0F, 10F)
 
     private val fallingGravityMul = FloatValue("FallingGravityMultiplier", 2F, 1F, 10F)
-    private val fallingMass = FloatValue("FallingMass", 1F, 0.1F, 5F)
+//    private val fallingImpulseVec = FloatValue("FallingImpulseY", 0F, 0F, 10F)
     private val fallingDist = FloatValue("FallingDist", 1.6F, 1F, 3F)
 
+    private val mass = FloatValue("Mass", 1F, 0.1F, 5F)
 
     private val DELTA = IntegerValue("Ticks", 30, 20, 30)
     fun getDELTA(): Float {
@@ -54,6 +55,39 @@ class BloxdPhysics : Module() {
     private val damageTimer: MSTimer = MSTimer()
 
     private var normalJumping = false
+
+    // 临时变量用于下一次跳跃参数
+    private var nextJumpImpulse: Float? = null
+    private var nextGravityMultiplier: Float? = null
+    private var applyNextNow: Boolean = false
+
+    // 当前重力倍数
+    private var currentGravityMultiplier: Float? = null
+
+    /**
+     * 重置所有移动速度
+     */
+    fun resetMotion() {
+        PhysicsBody.velocityVector.set(0f, 0f, 0f)
+        PhysicsBody.impulseVector.set(0f, 0f, 0f)
+        PhysicsBody.forceVector.set(0f, 0f, 0f)
+    }
+
+    /**
+     * 设置仅用于下一次跳跃的跳跃冲量、重力和重力倍数
+     */
+    fun setNextImpulseAndGravity(jumpImpulse: Float, gravityMultiplier: Float) {
+        nextJumpImpulse = jumpImpulse
+        nextGravityMultiplier = gravityMultiplier
+    }
+
+    /**
+     * 立即强制设定跳跃冲量、重力和重力倍数
+     */
+    fun setNowMotionAndGravity(jumpImpulse: Float, gravityMultiplier: Float) {
+        setNextImpulseAndGravity(jumpImpulse, gravityMultiplier)
+        applyNextNow = true
+    }
 
     data class Vec3(
         var x: Float = 0f,
@@ -135,13 +169,31 @@ class BloxdPhysics : Module() {
             PhysicsBody.velocityVector.set(0f, 0f, 0f)
         }
 
-        if (mc.thePlayer.onGround && mc.thePlayer.motionY >= 0.419f) {
+        val jumpIV = if (nextJumpImpulse != null) {
+            nextJumpImpulse ?: jumpImpulseVec.get()
+        }else if (mc.gameSettings.keyBindJump.pressed) {
+            normalJumping = true
+            jumpImpulseVec.get()
+        } else {
+            speedImpulseVec.get()
+        }
+        nextJumpImpulse = null
+
+        if (mc.thePlayer.onGround && mc.thePlayer.motionY > 0.419) {
             jumpFunny = min(jumpFunny + 1, allowBHop.get())
-            PhysicsBody.impulseVector.add(Vec3(0f, jumpIV.get(), 0f))
+            PhysicsBody.impulseVector.add(Vec3(0f, jumpIV * (mc.thePlayer.motionY / 0.42).toFloat(), 0f))
+
+            currentGravityMultiplier = if (mc.gameSettings.keyBindJump.pressed) {
+                jumpGravityMul.get()
+            } else {
+                speedGravityMul.get()
+            }
+
         }
 
         groundTicks = if (mc.thePlayer.onGround) {
             normalJumping = false
+            currentGravityMultiplier = null
             groundTicks + 1
         } else 0
         if (groundTicks > 5) {
@@ -162,18 +214,21 @@ class BloxdPhysics : Module() {
         mc.thePlayer.motionX = moveDir.x.toDouble()
         mc.thePlayer.motionY =
             if(mc.theWorld.getChunkFromBlockCoords(mc.thePlayer.position).isLoaded) {
-                val (currentGravityMul, currentMass) = if(normalJumping || mc.thePlayer.fallDistance >= fallingDist.get()){
-                    Pair(fallingGravityMul.get(), fallingMass.get())
-                } else if (mc.gameSettings.keyBindJump.pressed) {
-                    normalJumping = true
-                    Pair(jumpGravityMul.get(), jumpMass.get())
+                val currentGravityMul = if(mc.thePlayer.fallDistance >= fallingDist.get()){
+                    fallingGravityMul.get()
                 } else {
-                    Pair(speedGravityMul.get(), speedMass.get())
+                    currentGravityMultiplier ?: jumpGravityMul.get()
+                }
+
+                if (applyNextNow){
+                    currentGravityMultiplier = nextGravityMultiplier
+                    nextGravityMultiplier = null
+                    applyNextNow = false
                 }
 
                 PhysicsBody.getMotionForTick(
                     currentGravityMul,
-                    currentMass,
+                    mass.get(),
                     getDELTA()
                 ).y * getDELTA().toDouble()
             } else 0.0

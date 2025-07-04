@@ -80,7 +80,7 @@ class Fly : Module() {
         launchPitch = mc.thePlayer.rotationPitch
 
         if (needDamageValue.get() && toggleDamageModule.get()) {
-            LiquidBounce.moduleManager[Damage::class.java]!!.onEnable()
+            LiquidBounce.moduleManager[Damage::class.java]!!.state = true
         }
 
         mode.onEnable()

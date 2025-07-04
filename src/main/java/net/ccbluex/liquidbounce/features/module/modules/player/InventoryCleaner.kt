@@ -485,7 +485,7 @@ class InventoryCleaner : Module() {
                 mc.thePlayer.inventory.mainInventory.forEachIndexed { index, stack ->
                     val item = stack?.item
 
-                    if (stack.unlocalizedName == "item.arrow" && !type(index).equals("Arrow", ignoreCase = true)) {
+                    if (stack != null && stack.unlocalizedName == "item.arrow" && !type(index).equals("Arrow", ignoreCase = true)) {
                         val replaceCurr = slotStack == null || slotStack.unlocalizedName != "item.arrow"
 
                         return if (replaceCurr) index else null

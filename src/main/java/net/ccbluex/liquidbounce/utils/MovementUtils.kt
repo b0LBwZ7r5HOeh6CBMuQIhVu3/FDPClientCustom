@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.utils
 
 import net.ccbluex.liquidbounce.event.MoveEvent
+import net.ccbluex.liquidbounce.features.module.modules.world.BloxdPhysics
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import net.minecraft.potion.Potion
@@ -59,6 +60,14 @@ object MovementUtils : MinecraftInstance() {
         mc.thePlayer.motionX = -sin(yaw) * speed
         mc.thePlayer.motionZ = cos(yaw) * speed
     }
+
+    fun getStrafeXZ(speed: Float): Pair<Float, Float> {
+        if (!isMoving()) return Pair(0f, 0f)
+        val yaw = direction
+        return Pair(-sin(yaw).toFloat() * speed, cos(yaw).toFloat() * speed)
+
+    }
+
     fun strafe(speed: Double) {
         strafe(speed.toFloat())
     }

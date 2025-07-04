@@ -31,7 +31,12 @@ open class Module : MinecraftInstance(), Listenable {
     // Module information
     var name: String
     var localizedName = ""
-        get() = field.ifEmpty { name }
+        get() {
+            if (field.isEmpty() || field.startsWith("%") && field.endsWith("%")) {
+                return name
+            }
+            return field
+        }
     var description: String
     var category: ModuleCategory
     var keyBind = Keyboard.CHAR_NONE
@@ -104,10 +109,10 @@ open class Module : MinecraftInstance(), Listenable {
             if (!LiquidBounce.isStarting) {
                 if (value) {
                     Modules.playSound(true)
-                    LiquidBounce.hud.addNotification(Notification("%notify.module.title%", LanguageManager.getAndFormat("notify.module.enable", localizedName), NotifyType.SUCCESS))
+                    LiquidBounce.hud.addNotification(Notification("Module", LanguageManager.getAndFormat("notify.module.enable", localizedName), NotifyType.SUCCESS))
                 } else {
                     Modules.playSound(false)
-                    LiquidBounce.hud.addNotification(Notification("%notify.module.title%", LanguageManager.getAndFormat("notify.module.disable", localizedName), NotifyType.ERROR))
+                    LiquidBounce.hud.addNotification(Notification("Module", LanguageManager.getAndFormat("notify.module.disable", localizedName), NotifyType.ERROR))
                 }
             }
 
