@@ -106,10 +106,12 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
             if(!vanillaCritCheckValue.get().equals("Off")){
                 if ( (!mc.thePlayer.onGround && (mc.thePlayer.motionY < 0 || vanillaCritCheckValue.get().equals("Normal")) ) || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
                 mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtTime > hurtTimeValue.get() ||
-                LiquidBounce.moduleManager[Fly::class.java]!!.state || !msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get() || (onlyDamagingValue.get() && mc.thePlayer.hurtTime <= 0)) {
+                LiquidBounce.moduleManager[Fly::class.java]!!.state) {
                 return
                 }
             }
+
+            if (!msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get() || (onlyDamagingValue.get() && mc.thePlayer.hurtTime == 0)) return
 
             if (s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
                 return

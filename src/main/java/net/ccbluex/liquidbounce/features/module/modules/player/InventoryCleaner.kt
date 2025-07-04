@@ -35,6 +35,7 @@ import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.init.Blocks
+import net.minecraft.init.Items
 import net.minecraft.item.*
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C09PacketHeldItemChange
@@ -78,11 +79,11 @@ class InventoryCleaner : Module() {
     private val nbtArmorPriority = FloatValue("NBTArmorPriority", 0f, 0f, 5f).displayable { !nbtGoalValue.equals("NONE") }
     private val nbtWeaponPriority = FloatValue("NBTWeaponPriority", 0f, 0f, 5f).displayable { !nbtGoalValue.equals("NONE") }
     private val ignoreVehiclesValue = BoolValue("IgnoreVehicles", false)
-    private val selfHurtNotGarbageValue = BoolValue("selfHurtNotGarbage", false)
+    private val throwableNotGarbageValue = BoolValue("ThrowableNotGarbage", false)
     private val onlyPositivePotionValue = BoolValue("OnlyPositivePotion", false)
 //    private val ignoreDurabilityUnder = FloatValue("IgnoreDurabilityUnder", 0.3f, 0f, 1f)
 
-    private val items = arrayOf("None", "Ignore", "Sword", "Bow", "Pickaxe", "Axe", "Food", "Block", "Water", "Gapple", "Pearl", "Potion")
+    private val items = arrayOf("None", "Ignore", "Sword", "Bow", "Pickaxe", "Axe", "Food", "Block", "Water", "Gapple", "Pearl", "Potion", "Arrow", "Throwable")
     private val sortSlot1Value = ListValue("SortSlot-1", items, "Sword").displayable { sortValue.get() }
     private val sortSlot2Value = ListValue("SortSlot-2", items, "Gapple").displayable { sortValue.get() }
     private val sortSlot3Value = ListValue("SortSlot-3", items, "Potion").displayable { sortValue.get() }
@@ -311,11 +312,12 @@ class InventoryCleaner : Module() {
                 items(0, 45).none { (_, stack) -> itemStack != stack && stack.unlocalizedName == "item.compass" }
             } else {
                 (nbtItemNotGarbage.get() && ItemUtils.hasNBTGoal(itemStack, goal)) ||
-                        item is ItemFood || itemStack.unlocalizedName == "item.arrow" ||
+                        item is ItemFood ||
+                        (itemStack.unlocalizedName == "item.arrow" && throwableNotGarbageValue.get()) ||
+                        ((item is ItemSnowball || item is ItemEgg || item is ItemFireball) && throwableNotGarbageValue.get() && !type(slot - 36).equals("Throwable", ignoreCase = true)) ||
                         (item is ItemBlock && !InventoryUtils.isBlockListBlock(item)) ||
                         item is ItemBed || (item is ItemPotion && (!onlyPositivePotionValue.get() || InventoryUtils.isPositivePotion(item, itemStack))) ||
-                        item is ItemEnderPearl || item is ItemBucket || ignoreVehiclesValue.get() && (item is ItemBoat || item is ItemMinecart) ||
-                        selfHurtNotGarbageValue.get() && (item is ItemFireball || item is ItemSnowball || item is ItemEgg)
+                        item is ItemEnderPearl || item is ItemBucket || ignoreVehiclesValue.get() && (item is ItemBoat || item is ItemMinecart)
             }
         } catch (ex: Exception) {
             ClientUtils.logError("(InventoryCleaner) Failed to check item: ${itemStack.unlocalizedName}.", ex)
@@ -473,6 +475,30 @@ class InventoryCleaner : Module() {
                     if ((item is ItemPotion && ItemPotion.isSplash(stack.itemDamage)) &&
                         !type(index).equals("Potion", ignoreCase = true)) {
                         val replaceCurr = slotStack == null || slotStack.item !is ItemPotion || !ItemPotion.isSplash(slotStack.itemDamage)
+
+                        return if (replaceCurr) index else null
+                    }
+                }
+            }
+
+            "arrow" -> {
+                mc.thePlayer.inventory.mainInventory.forEachIndexed { index, stack ->
+                    val item = stack?.item
+
+                    if (stack.unlocalizedName == "item.arrow" && !type(index).equals("Arrow", ignoreCase = true)) {
+                        val replaceCurr = slotStack == null || slotStack.unlocalizedName != "item.arrow"
+
+                        return if (replaceCurr) index else null
+                    }
+                }
+            }
+
+            "throwable" -> {
+                mc.thePlayer.inventory.mainInventory.forEachIndexed { index, stack ->
+                    val item = stack?.item
+
+                    if ((item is ItemSnowball || item is ItemEgg || item is ItemFireball) && !type(index).equals("Throwable", ignoreCase = true)) {
+                        val replaceCurr = slotStack == null || slotStack.item !is ItemSnowball && slotStack.item !is ItemEgg && slotStack.item !is ItemFireball
 
                         return if (replaceCurr) index else null
                     }
