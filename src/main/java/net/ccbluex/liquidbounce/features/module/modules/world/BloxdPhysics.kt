@@ -55,6 +55,7 @@ class BloxdPhysics : Module() {
     private val damageTimer: MSTimer = MSTimer()
 
     private var normalJumping = false
+    private var jumped = false
 
     // 临时变量用于下一次跳跃参数
     private var nextJumpImpulse: Float? = null
@@ -179,19 +180,21 @@ class BloxdPhysics : Module() {
         }
         nextJumpImpulse = null
 
-        if (mc.thePlayer.onGround && mc.thePlayer.motionY > 0.419) {
+        if (mc.thePlayer.onGround && mc.thePlayer.motionY > 0 && !mc.thePlayer.isCollidedHorizontally && !jumped) {
             jumpFunny = min(jumpFunny + 1, allowBHop.get())
             PhysicsBody.impulseVector.add(Vec3(0f, jumpIV * (mc.thePlayer.motionY / 0.42).toFloat(), 0f))
-
-            currentGravityMultiplier = if (mc.gameSettings.keyBindJump.pressed) {
+            jumped = true
+            currentGravityMultiplier = if (nextJumpImpulse != null){
+                nextGravityMultiplier
+            } else if (mc.gameSettings.keyBindJump.pressed) {
                 jumpGravityMul.get()
             } else {
                 speedGravityMul.get()
             }
-
         }
 
         groundTicks = if (mc.thePlayer.onGround) {
+            jumped = false
             normalJumping = false
             currentGravityMultiplier = null
             groundTicks + 1
@@ -200,7 +203,7 @@ class BloxdPhysics : Module() {
             jumpFunny = 0
         }
 
-        if (mc.thePlayer.isCollidedHorizontally) {
+        if (mc.thePlayer.isCollidedHorizontally && !mc.thePlayer.isCollidedVertically) {
             PhysicsBody.velocityVector.set(0f, spiderSpeedValue.get(), 0f)
         }
 
