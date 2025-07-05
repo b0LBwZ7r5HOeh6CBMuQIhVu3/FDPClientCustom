@@ -84,10 +84,12 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
 
 
     override fun onUpdate() {
-        if (mc.thePlayer.motionY > 0) {
-            mc.timer.timerSpeed = 1.6F
+        if (mc.thePlayer.motionY > 0.1 && mc.thePlayer.fallDistance < 1) {
+            mc.timer.timerSpeed = 4.914514F
         } else if (mc.thePlayer.motionY < 0 && mc.thePlayer.fallDistance < 1) {
             mc.timer.timerSpeed = 1.1F
+        } else if (mc.thePlayer.fallDistance >= 1){
+            mc.timer.timerSpeed = 1.0F
         }
 //        if (abs(mc.thePlayer.movementInput.moveStrafe) < 0.1) {
 //            mc.thePlayer.jumpMovementFactor = 0.026f
