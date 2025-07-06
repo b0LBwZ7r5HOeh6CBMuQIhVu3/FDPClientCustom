@@ -108,7 +108,7 @@ object KillInsults : Module() {
     private fun sendInsultWords(msg: String, name: String) {
         var message = msg.replace("%name%", name)
         if (waterMarkValue.get()) {
-            message = "$clientNameValue$message"
+            message = "${clientNameValue.get()} $message"
         }
         if(hytShoutValue.get()){
             message = "@$message"
