@@ -167,13 +167,9 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         Thread {
             if (LiquidBounce.CLIENTTEXT.contains("Waiting") || LiquidBounce.CLIENTTEXT.contains("Oops")) {
                 try {
-                    LiquidBounce.CLIENTTEXT = HttpUtils.get("http://fdpinfo.github.io/changelogs")
+                    LiquidBounce.CLIENTTEXT = HttpUtils.get("http://example.com")
                 } catch (e: Exception) {
-                    try {
-                        LiquidBounce.CLIENTTEXT = HttpUtils.get("http://fdpinfo.github.io/changelogs")
-                    } catch (e: Exception) {
-                        LiquidBounce.CLIENTTEXT = "Oops.. :(\$Can't get information!#Try reopen the main menu\$140\$80"
-                    }
+                    LiquidBounce.CLIENTTEXT = "seems no internet connection?"
                 }
             }
         }.start()

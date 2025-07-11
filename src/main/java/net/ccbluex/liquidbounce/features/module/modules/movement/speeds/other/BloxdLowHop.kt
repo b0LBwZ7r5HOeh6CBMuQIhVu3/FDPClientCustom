@@ -76,8 +76,8 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
             event.x *= 0.98
             event.z *= 0.98
         }else if(airTicks > 7){
-//            event.x *= 1.02
-//            event.z *= 1.02
+            event.x *= 1.0199999809265137
+            event.z *= 1.0199999809265137
         }
 
     }
@@ -86,9 +86,11 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
     override fun onUpdate() {
         if (mc.thePlayer.motionY > 0.1 && mc.thePlayer.fallDistance < 1) {
             mc.timer.timerSpeed = 4.914514F
-        } else if (mc.thePlayer.motionY < 0 && mc.thePlayer.fallDistance < 1) {
+        } else if (mc.thePlayer.fallDistance < 0.1) {
+            mc.timer.timerSpeed = 4.114514F
+        } else if (mc.thePlayer.fallDistance in 0.2..0.4){
             mc.timer.timerSpeed = 1.1F
-        } else if (mc.thePlayer.fallDistance >= 1){
+        } else {
             mc.timer.timerSpeed = 1.0F
         }
 //        if (abs(mc.thePlayer.movementInput.moveStrafe) < 0.1) {
@@ -96,7 +98,7 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
 //        }else{
 //            mc.thePlayer.jumpMovementFactor = 0.0247f
 //        }
-        if(mc.thePlayer.motionY > 0.1){
+        if(mc.thePlayer.motionY > 0.1 && !mc.gameSettings.keyBindJump.isKeyDown) {
             LiquidBounce.moduleManager.getModule(BloxdPhysics::class.java)!!.setNowMotionAndGravity(8f,4f)
         }
     }
