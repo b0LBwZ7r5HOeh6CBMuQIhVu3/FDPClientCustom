@@ -118,6 +118,8 @@ class Scaffold : Module() {
         }
     }
 
+    private val maxBuildRangeValue = FloatValue("MaxBuildRange", 4.25f, 3f, 6f)
+
     // Turn Speed
     private val maxTurnSpeedValue: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 1f, 180f) {
         override fun onChanged(oldValue: Float, newValue: Float) {
@@ -665,7 +667,7 @@ class Scaffold : Module() {
                         )
                         val distanceSqPosVec = eyesPos.squareDistanceTo(posVec)
                         val hitVec = posVec.add(Vec3(dirVec.xCoord * 0.5, dirVec.yCoord * 0.5, dirVec.zCoord * 0.5))
-                        if (raycast && (eyesPos.distanceTo(hitVec) > 4.25 || distanceSqPosVec > eyesPos.squareDistanceTo(
+                        if (raycast && (eyesPos.distanceTo(hitVec) > maxBuildRangeValue.get() || distanceSqPosVec > eyesPos.squareDistanceTo(
                                 posVec.add(dirVec)
                             ) || world.rayTraceBlocks(
                                 eyesPos,
@@ -697,7 +699,7 @@ class Scaffold : Module() {
                         )
                         val rotationVector = RotationUtils.getVectorForRotation(rotation)
                         val vector = eyesPos.addVector(
-                            rotationVector.xCoord * 4.25, rotationVector.yCoord * 4.25, rotationVector.zCoord * 4.25
+                            rotationVector.xCoord * maxBuildRangeValue.get(), rotationVector.yCoord * maxBuildRangeValue.get(), rotationVector.zCoord * maxBuildRangeValue.get()
                         )
 
                         val obj = world.rayTraceBlocks(

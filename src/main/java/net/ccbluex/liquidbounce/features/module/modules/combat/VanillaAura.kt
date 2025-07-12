@@ -39,7 +39,7 @@ class VanillaAura : Module() {
     private val APSValue = IntegerValue("APS", 10, 1, 20)
     private val rangeValue = FloatValue("Range", 3.7f, 1f, 8f)
     private val ignoreHurtResistantValue = IntegerValue("ignoreHurtResistant", 8, -1, 20)
-    private val onlyCritHitValue = BoolValue("OnlyCritHit", true)
+    private val onlyCritHitValue = ListValue("OnlyCritHit", arrayOf("Packet", "Motion", "Off"), "Packet")
     private val autoBlockValue = BoolValue("AutoBlock", true)
     private val fakeAutoBlockValue = BoolValue("FakeAutoBlock", true)
     private val autoUnblockValue = BoolValue("AutoUnblock", true).displayable { autoBlockValue.get() }
@@ -73,8 +73,8 @@ class VanillaAura : Module() {
     @EventTarget
     fun onPacket(event: PacketEvent){
         val packet = event.packet
-        if (onlyCritHitValue.get() && packet is C03PacketPlayer /*outdated kotlin moment, as will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
-            if (lastY - packet.y > 0.008) {
+        if (onlyCritHitValue.get() == "Packet" && packet is C03PacketPlayer /*outdated kotlin moment, as will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
+            if (lastY - packet.y > 0.1) {
                 willCritical = true
             } else {
                 willCritical = false
@@ -85,13 +85,17 @@ class VanillaAura : Module() {
 
 
     private fun block() {
-        mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
-        blocking = true
+        if(!blocking){
+            mc.netHandler.addToSendQueue(C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getCurrentItem()))
+            blocking = true
+        }
     }
 
     private fun unblock() {
-        blocking = false
-        mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN))
+        if(blocking){
+            blocking = false
+            mc.netHandler.addToSendQueue(C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN))
+        }
     }
 
     private fun setRot(rot: Rotation){
@@ -122,7 +126,7 @@ class VanillaAura : Module() {
                     return
                 }
                 if(ignoreHurtResistantValue.get() >= 0 && it.hurtResistantTime <= ignoreHurtResistantValue.get()) return@forEach
-                if(onlyCritHitValue.get() && /*mc.thePlayer.motionY >= 0*/ !willCritical) return
+                if(onlyCritHitValue.get() !="Off" && (mc.thePlayer.motionY >= -0.08 && onlyCritHitValue.get() == "Motion") || (!willCritical && onlyCritHitValue.get() == "Packet")) return
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }

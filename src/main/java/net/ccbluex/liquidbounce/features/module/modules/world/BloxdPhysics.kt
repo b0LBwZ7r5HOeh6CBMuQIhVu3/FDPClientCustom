@@ -1,5 +1,6 @@
 package net.ccbluex.liquidbounce.features.module.modules.world
 
+import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.BlockBBEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
@@ -7,6 +8,7 @@ import net.ccbluex.liquidbounce.event.StrafeEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.features.module.modules.movement.NoSlow
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
@@ -45,6 +47,7 @@ class BloxdPhysics : Module() {
 
 //    private val attackingBoost = BoolValue("attackingBoost", false)
     private val allowBHop = IntegerValue("AllowBHop", 3, 0, 3)
+    private val keepBHop = BoolValue("KeepBHop", true)
 
     private val damageBoost = BoolValue("DamageBoost", true)
     private val dbTime = IntegerValue("DamageBoostTime", 1100, 100, 2000)
@@ -199,7 +202,7 @@ class BloxdPhysics : Module() {
             currentGravityMultiplier = null
             groundTicks + 1
         } else 0
-        if (groundTicks > 5) {
+        if (groundTicks > 5 && !keepBHop.get()) {
             jumpFunny = 0
         }
 
@@ -211,7 +214,9 @@ class BloxdPhysics : Module() {
             event.forward,
             event.strafe,
             mc.thePlayer.rotationYaw,
-            if (damageTimer.timePassed() < dbTime.get() && damageBoost.get()) dbSpeed.get() else (if (mc.thePlayer.isUsingItem) 0.06f else 0.26f + 0.025f * jumpFunny)
+            if (damageTimer.timePassed() < dbTime.get() && damageBoost.get()) dbSpeed.get() else (if (mc.thePlayer.isUsingItem && !LiquidBounce.moduleManager.getModule(
+                    NoSlow::class.java)!!.state
+            ) 0.06f else 0.26f + 0.025f * jumpFunny)
         )
         event.cancelEvent()
         mc.thePlayer.motionX = moveDir.x.toDouble()

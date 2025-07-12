@@ -62,10 +62,10 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
             3 -> {
                 val (x, z) = MovementUtils.getStrafeXZ(0.208f); event.x = x.toDouble(); event.z = z.toDouble()
             }
-//                4 -> BloxdPhysics.PhysicsBody.velocityVector.y += 0.03f
-//                5 -> BloxdPhysics.PhysicsBody.velocityVector.y -= 0.1905189780583944f
-//                6 -> BloxdPhysics.PhysicsBody.velocityVector.y *= 1.01f
-//                7 -> BloxdPhysics.PhysicsBody.velocityVector.y /= 1.5f
+//                4 -> event.x *= 1.0109999980926514
+//                5 -> event.z *= 1.0109999980926514
+//                6 -> event.x *= 1.0129999809265138
+//                7 -> event.z *= 1.0129999809265138
         }
         if(mc.thePlayer.onGround){
 
@@ -75,10 +75,10 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
 
             event.x *= 0.98
             event.z *= 0.98
-        }else if(airTicks > 7){
+        }/*else if(airTicks > 7){
             event.x *= 1.0199999809265137
             event.z *= 1.0199999809265137
-        }
+        }*/
 
     }
 
@@ -89,9 +89,9 @@ class BloxdLowHop : SpeedMode("BloxdLowHop") {
         } else if (mc.thePlayer.fallDistance < 0.1) {
             mc.timer.timerSpeed = 4.114514F
         } else if (mc.thePlayer.fallDistance in 0.2..0.4){
-            mc.timer.timerSpeed = 1.1F
+            mc.timer.timerSpeed = 2F
         } else {
-            mc.timer.timerSpeed = 1.0F
+            mc.timer.timerSpeed = 1.05F
         }
 //        if (abs(mc.thePlayer.movementInput.moveStrafe) < 0.1) {
 //            mc.thePlayer.jumpMovementFactor = 0.026f

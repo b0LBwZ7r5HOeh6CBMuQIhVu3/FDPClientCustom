@@ -17,6 +17,7 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
+import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
@@ -53,6 +54,8 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
     private val onGroundPacketValue = BoolValue("onGroundPacket", true)
     private val lessPacketValue = BoolValue("PacketLessPackets", true)
     private val onlyDamagingValue = BoolValue("onlyDamaging", false)
+    private val damageTimeValue = IntegerValue("DamageTime", 1300, 500, 5000).displayable { onlyDamagingValue.get() }
+    private val onlynoGroundValue = BoolValue("onlyNoGround", false)
     private val timerValue = FloatValue("Timer", 0.82f, 0.1f, 1f)
 
     private val matrixTPHopValue = BoolValue("MatrixTPHop", false).displayable { modeValue.equals("Matrix") }
@@ -70,6 +73,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
     var antiDesync = false
 
     val msTimer = MSTimer()
+    val damagedTimer = MSTimer()
 
     private val minemoraTimer = MSTimer()
     private var usedTimer = false
@@ -111,7 +115,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
                 }
             }
 
-            if (!msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get() || (onlyDamagingValue.get() && mc.thePlayer.hurtTime == 0)) return
+            if (!msTimer.hasTimePassed(delayValue.get().toLong()) || Random().nextInt(100) > critRate.get() || (onlyDamagingValue.get() && damagedTimer.hasTimePassed(damageTimeValue.get().toLong())) || (onlynoGroundValue.get() && mc.thePlayer.onGround)) return
 
             if (s08FlagValue.get() && !flagTimer.hasTimePassed(s08DelayValue.get().toLong()))
                 return
@@ -453,7 +457,7 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
                             mc.thePlayer.motionY = 0.0000194382390
                         }
                         "bloxdlowjump" -> {
-                            PhysicsBody.impulseVector.add(Vec3(0f, 4f, 0f))
+                            PhysicsBody.velocityVector.y = 0.5f
                             mc.thePlayer.motionY = PhysicsBody.getMotionForTick(4f, 1f, 1f).y.toDouble()
                         }
                     }
@@ -673,6 +677,13 @@ val modeValue = ListValue("Mode", arrayOf("Vanilla","NCPMotion","BlocksMC","Pack
             if (packet.animationType == 4 && packet.entityID == target) {
                 alert("Criticals §7» " + packet.entityID.toString())
             }
+        }
+    }
+
+    @EventTarget
+    fun onUpdate(event: UpdateEvent){
+        if(mc.thePlayer.hurtTime > 0){
+            damagedTimer.reset()
         }
     }
 
