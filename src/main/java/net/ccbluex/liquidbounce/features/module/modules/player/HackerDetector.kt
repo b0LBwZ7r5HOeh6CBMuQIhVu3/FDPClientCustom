@@ -73,7 +73,7 @@ class HackerDetector : Module() {
         if (PacketUtils.getPacketType(event.packet) == PacketUtils.PacketType.SERVERSIDE) {
             lagTimer.reset()
         }
-        if (lagTimer.hasTimePassed((EntityUtils.getPing(mc.thePlayer!!) + 250).toLong()) && lagCheck.get()) {
+        if (lagTimer.hasTimePassed((EntityUtils.getPing(mc.thePlayer?: return) + 250).toLong()) && lagCheck.get()) {
             return
         }
         if (event.packet is S19PacketEntityStatus) {

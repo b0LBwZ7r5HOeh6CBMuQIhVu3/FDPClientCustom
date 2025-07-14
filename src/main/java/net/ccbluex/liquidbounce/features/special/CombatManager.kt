@@ -2,15 +2,14 @@ package net.ccbluex.liquidbounce.features.special
 
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.*
-import net.ccbluex.liquidbounce.utils.EntityUtils
-import net.ccbluex.liquidbounce.utils.MinecraftInstance
-import net.ccbluex.liquidbounce.utils.MovementUtils
+import net.ccbluex.liquidbounce.utils.*
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 
 class CombatManager : Listenable, MinecraftInstance() {
     private val lastAttackTimer = MSTimer()
+    val aps = RollingArrayLongBuffer(100)
 
     var inCombat = false
         private set
@@ -40,7 +39,6 @@ class CombatManager : Listenable, MinecraftInstance() {
             inCombat = true
             return
         }
-
         if (target != null) {
             if (mc.thePlayer.getDistanceToEntity(target) > 7 || !inCombat || target!!.isDead) {
                 target = null
@@ -62,6 +60,7 @@ class CombatManager : Listenable, MinecraftInstance() {
             }
         }
         lastAttackTimer.reset()
+        aps.add(System.currentTimeMillis())
     }
 
     @EventTarget

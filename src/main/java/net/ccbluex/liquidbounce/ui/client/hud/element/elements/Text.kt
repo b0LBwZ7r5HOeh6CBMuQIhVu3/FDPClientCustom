@@ -121,6 +121,8 @@ class Text(
                 "hurtTime" -> return mc.thePlayer.hurtTime.toString()
                 "onGround" -> return if (mc.thePlayer.onGround) "OnGround" else "OffGround"
                 "attackDist" -> return if (LiquidBounce.combatManager.target != null) LiquidBounce.combatManager.attackRange.toString() + " Blocks" else "Hasn't attacked"
+                "aps" -> return LiquidBounce.combatManager.aps.getTimestampsSince(System.currentTimeMillis() - 1000L).toString()
+
             }
         }
 

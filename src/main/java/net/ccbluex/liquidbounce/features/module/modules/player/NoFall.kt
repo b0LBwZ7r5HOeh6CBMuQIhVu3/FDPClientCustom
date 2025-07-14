@@ -11,14 +11,17 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.render.FreeCam
+import net.ccbluex.liquidbounce.features.module.modules.world.BloxdPhysics
 import net.ccbluex.liquidbounce.utils.PacketUtils
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.VecRotation
 import net.ccbluex.liquidbounce.utils.block.BlockUtils
 import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
+import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.utils.timer.TickTimer
+import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
@@ -29,8 +32,10 @@ import net.minecraft.item.ItemBlock
 import net.minecraft.item.ItemBucket
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C09PacketHeldItemChange
+import net.minecraft.network.play.client.C17PacketCustomPayload
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.network.play.server.S12PacketEntityVelocity
+import net.minecraft.network.play.server.S3FPacketCustomPayload
 import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
@@ -74,6 +79,7 @@ class NoFall : Module() {
             "OldMatrix",
             "Matrix6.2.X",
             "Matrix6.2.X-Packet",
+            "Bloxd",
             "Matrix6.6.3",
             "Vulcan"
         ), "SpoofGround"
@@ -82,6 +88,8 @@ class NoFall : Module() {
     private val minFallDistanceValue = FloatValue("MinMLGHeight", 5f, 2f, 50f).displayable { modeValue.equals("MLG") }
     private val flySpeedValue =
         FloatValue("MotionSpeed", -0.01f, -5f, 5f).displayable { modeValue.equals("MotionFlag") }
+    private val BloxdFlagValue = BoolValue("BloxdFlag", true).displayable { modeValue.equals("Bloxd") }
+
 
     private var oldaacState = 0
     private var jumped = false
@@ -251,6 +259,26 @@ class NoFall : Module() {
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
                     mc.netHandler.addToSendQueue(C03PacketPlayer(false))
                     mc.thePlayer.fallDistance = 0f
+                }
+            }
+
+            "bloxd" -> {
+                if (mc.thePlayer.onGround) {
+                    //mc.timer.timerSpeed = 1f
+                } else if (mc.thePlayer.fallDistance - mc.thePlayer.motionY > 3f) {
+//                    wasTimer = true
+//                    mc.timer.timerSpeed = (mc.timer.timerSpeed * if (mc.timer.timerSpeed < 0.6) {
+//                        0.25f
+//                    } else {
+//                        0.5f
+//                    }).coerceAtLeast(0.2f)
+
+                    repeat(8) { mc.netHandler.addToSendQueue(C03PacketPlayer(true)) }
+                    if(mc.thePlayer.ticksExisted % 20 == 0){
+                        BloxdPhysics.impulseVector.set(0f, 0f, 0f)
+                        BloxdPhysics.forceVector.set(0f, 0f, 0f)
+                        BloxdPhysics.velocityVector.set(BloxdPhysics.velocityVector.x * 0.2f, if(BloxdFlagValue.get()) -2f else 0f, BloxdPhysics.velocityVector.z * 0.2f)
+                    }
                 }
             }
 

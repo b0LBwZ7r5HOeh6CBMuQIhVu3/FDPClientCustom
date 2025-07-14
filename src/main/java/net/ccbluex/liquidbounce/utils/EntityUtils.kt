@@ -93,7 +93,7 @@ object EntityUtils : MinecraftInstance() {
 
     fun getPing(entityPlayer: EntityPlayer?): Int {
         if (entityPlayer == null) return 0
-        val networkPlayerInfo: NetworkPlayerInfo = mc.getNetHandler().getPlayerInfo(entityPlayer.getUniqueID())
-        return if (networkPlayerInfo == null) 0 else networkPlayerInfo.getResponseTime()
+        val networkPlayerInfo: NetworkPlayerInfo = mc.netHandler.getPlayerInfo(entityPlayer.uniqueID?:return 0)
+        return networkPlayerInfo.responseTime
     }
 }
