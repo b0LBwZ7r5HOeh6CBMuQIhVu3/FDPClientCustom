@@ -16,6 +16,7 @@ class VanillaFly : FlyMode("Vanilla") {
     private val speedValue = FloatValue("${valuePrefix}Speed", 2f, 0f, 5f)
     private val vspeedValue = FloatValue("${valuePrefix}Vertical", 2f, 0f, 5f)
     private val glideSpeedValue = FloatValue("${valuePrefix}glideSpeed", -0.1f, -0.8f, 0f)
+    private val timerValue = FloatValue("${valuePrefix}Timer", 0.9f, 0.4f, 3f)
     private val kickBypassValue = BoolValue("${valuePrefix}KickBypass", false)
     private val keepAliveValue = BoolValue("${valuePrefix}KeepAlive", false) // old KeepAlive fly combined
     private val noClipValue = BoolValue("${valuePrefix}NoClip", false)
@@ -30,6 +31,7 @@ class VanillaFly : FlyMode("Vanilla") {
     }
 
     override fun onUpdate(event: UpdateEvent) {
+        mc.timer.timerSpeed = timerValue.get()
         if (keepAliveValue.get()) {
             mc.netHandler.addToSendQueue(C00PacketKeepAlive())
         }

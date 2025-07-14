@@ -13,20 +13,26 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
+import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
+import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.network.play.client.C03PacketPlayer
 
 @ModuleInfo(name = "AntiAim", category = ModuleCategory.PLAYER)
 class AntiAim : Module() {
-    private val yawMode = ListValue("YawMove", arrayOf("Jitter", "Spin", "Back", "BackJitter"), "Spin")
+    private val yawMode = ListValue("YawMove", arrayOf("Jitter", "Spin", "Back", "BackJitter", "Random"), "Spin")
     private val pitchMode = ListValue("PitchMode", arrayOf("Down", "Up", "Jitter", "AnotherJitter","Headless"), "Down")
-    private val rotateValue = BoolValue("SilentRotate", true)
+    private val rotateValue = ListValue("SetRotate", arrayOf("Edit", "Send", "Client"), "Edit")
+    private val delayValue = IntegerValue("Delay", 0, 0,1000)
 
     private var yaw = 0f
     private var pitch = 0f
+    private val delayTimer = MSTimer()
 
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
+        if(delayTimer.hasTimePassed(delayValue.get().toLong())) delayTimer.reset() else return
         when (yawMode.get().lowercase()) {
             "spin" -> {
                 yaw += 20.0f
@@ -37,8 +43,9 @@ class AntiAim : Module() {
                 }
             }
             "jitter" -> {
-                yaw = mc.thePlayer.rotationYaw + if (mc.thePlayer.ticksExisted % 2 === 0) 90F else -90F
+                yaw = mc.thePlayer.rotationYaw + if (mc.thePlayer.ticksExisted % 2 == 0) 90F else -90F
             }
+            "random" -> yaw = if (mc.thePlayer.ticksExisted % 2 == 0) RandomUtils.nextDouble(-34.0, -114.0).toFloat() else RandomUtils.nextDouble(14.0, 154.0).toFloat()
             "back" -> {
                 yaw = mc.thePlayer.rotationYaw + 180f
             }
@@ -70,11 +77,14 @@ class AntiAim : Module() {
             }
         }
 
-        if (rotateValue.get()) {
-            RotationUtils.setTargetRotation(Rotation(yaw, pitch))
-        } else {
-            mc.thePlayer.rotationYaw = yaw
-            mc.thePlayer.rotationPitch = pitch
+        when (rotateValue.get().lowercase()) {
+            "edit" -> RotationUtils.setTargetRotation(Rotation(yaw, pitch))
+            "send" -> mc.netHandler.addToSendQueue(C03PacketPlayer.C05PacketPlayerLook(yaw, pitch,mc.thePlayer.onGround))
+            "client" -> {
+               mc.thePlayer.rotationYaw = yaw
+               mc.thePlayer.rotationPitch = pitch
+            }
+
         }
     }
 }

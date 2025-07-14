@@ -17,11 +17,13 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
+import net.ccbluex.liquidbounce.utils.block.BlockUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.block.BlockAir
 import net.minecraft.entity.Entity
 import net.minecraft.network.play.client.C02PacketUseEntity
 import net.minecraft.network.play.client.C03PacketPlayer
@@ -77,9 +79,13 @@ class VanillaAura : Module() {
             if (lastY - packet.y > 0.1) {
                 willCritical = true
             } else {
-                willCritical = false
+                if(lastY - packet.y >= 0) {
+                    lastY = packet.y
+                }
+                if (BlockUtils.getBlock(BlockPos(packet.x, packet.y - 0.25, packet.z)) !is BlockAir){
+                    willCritical = false
+                }
             }
-            lastY = packet.y
         }
     }
 
