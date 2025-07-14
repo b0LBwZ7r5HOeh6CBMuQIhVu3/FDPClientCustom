@@ -16,7 +16,7 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 8
-          cache: "gradle"
+          #cache: "gradle"
       - name: Set outputs
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
