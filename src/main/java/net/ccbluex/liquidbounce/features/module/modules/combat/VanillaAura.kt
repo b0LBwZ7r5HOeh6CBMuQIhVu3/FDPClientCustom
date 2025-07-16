@@ -40,7 +40,7 @@ import kotlin.collections.ArrayList
 class VanillaAura : Module() {
     private val APSValue = IntegerValue("APS", 10, 1, 20)
     private val rangeValue = FloatValue("Range", 3.7f, 1f, 8f)
-    private val ignoreHurtResistantValue = IntegerValue("ignoreHurtResistant", 8, -1, 20)
+    private val ignoreHurtResistantValue = IntegerValue("ignoreHurtResistant", 8, 0, 20)
     private val onlyCritHitValue = ListValue("OnlyCritHit", arrayOf("Packet", "Motion", "Off"), "Packet")
     private val autoBlockValue = BoolValue("AutoBlock", true)
     private val fakeAutoBlockValue = BoolValue("FakeAutoBlock", true)
@@ -75,14 +75,14 @@ class VanillaAura : Module() {
     @EventTarget
     fun onPacket(event: PacketEvent){
         val packet = event.packet
-        if (onlyCritHitValue.get() == "Packet" && packet is C03PacketPlayer /*outdated kotlin moment, as will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
-            if (lastY - packet.y > 0.1) {
+        if (onlyCritHitValue.get() == "Packet" && packet is C03PacketPlayer /*outdated kotlin moment, conv will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
+            if (lastY - packet.y > 0.01) {
                 willCritical = true
             } else {
-                if(lastY - packet.y >= 0) {
+                if(lastY - packet.y >= 0.15 || packet.y - lastY >= 0.15) {
                     lastY = packet.y
                 }
-                if (BlockUtils.getBlock(BlockPos(packet.x, packet.y - 0.25, packet.z)) !is BlockAir){
+                if(mc.theWorld.getBlockState(BlockPos(packet.x, packet.y - 0.00001, packet.z)).block !is BlockAir) {
                     willCritical = false
                 }
             }
@@ -126,13 +126,18 @@ class VanillaAura : Module() {
         }
         targetList.forEach {
             if (it.getDistanceToEntity(mc.thePlayer) <= rangeValue.get()) {
+
+                if(ignoreHurtResistantValue.get() > 0 && it.hurtResistantTime >= ignoreHurtResistantValue.get()) return@forEach
+
                 val event = AttackEvent(it)
                 LiquidBounce.eventManager.callEvent(event)
                 if (event.isCancelled) {
                     return
                 }
-                if(ignoreHurtResistantValue.get() >= 0 && it.hurtResistantTime <= ignoreHurtResistantValue.get()) return@forEach
+
                 if(onlyCritHitValue.get() !="Off" && (mc.thePlayer.motionY >= -0.08 && onlyCritHitValue.get() == "Motion") || (!willCritical && onlyCritHitValue.get() == "Packet")) return
+
+
                 if (autoBlockValue.get() && autoUnblockValue.get()) {
                     unblock()
                 }

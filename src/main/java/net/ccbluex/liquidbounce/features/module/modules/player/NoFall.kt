@@ -274,10 +274,10 @@ class NoFall : Module() {
 //                    }).coerceAtLeast(0.2f)
 
                     repeat(8) { mc.netHandler.addToSendQueue(C03PacketPlayer(true)) }
-                    if(mc.thePlayer.ticksExisted % 20 == 0){
+                    if(mc.thePlayer.ticksExisted % 40 == 0){
                         BloxdPhysics.impulseVector.set(0f, 0f, 0f)
                         BloxdPhysics.forceVector.set(0f, 0f, 0f)
-                        BloxdPhysics.velocityVector.set(BloxdPhysics.velocityVector.x * 0.2f, if(BloxdFlagValue.get()) -2f else 0f, BloxdPhysics.velocityVector.z * 0.2f)
+                        BloxdPhysics.velocityVector.set(BloxdPhysics.velocityVector.x * 0.2f, if(BloxdFlagValue.get()) -2f else -0.1f, BloxdPhysics.velocityVector.z * 0.2f)
                     }
                 }
             }
