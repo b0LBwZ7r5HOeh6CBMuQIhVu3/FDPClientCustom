@@ -22,7 +22,7 @@ class VanillaFly : FlyMode("Vanilla") {
     private val noClipValue = BoolValue("${valuePrefix}NoClip", false)
     private val spoofValue = BoolValue("${valuePrefix}SpoofGround", false)
     private val editMoveValue = BoolValue("${valuePrefix}EditMove", false)
-    private val bloxdValue = BoolValue("${valuePrefix}Bloxd", false)
+//    private val bloxdValue = BoolValue("${valuePrefix}Bloxd", false)
 
     private var packets = 0
 

@@ -31,6 +31,7 @@ import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook
 import net.minecraft.network.play.client.C07PacketPlayerDigging
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.client.C0APacketAnimation
+import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
 import kotlin.Int.Companion.MIN_VALUE
@@ -76,19 +77,29 @@ class VanillaAura : Module() {
     fun onPacket(event: PacketEvent){
         val packet = event.packet
         if (onlyCritHitValue.get() == "Packet" && packet is C03PacketPlayer /*outdated kotlin moment, conv will cause a warning*/ && (packet is C03PacketPlayer.C04PacketPlayerPosition || packet is C03PacketPlayer.C06PacketPlayerPosLook)) {
-            if (lastY - packet.y > 0.01) {
+            if (lastY > packet.y) {
                 willCritical = true
             } else {
                 if(lastY - packet.y >= 0.15 || packet.y - lastY >= 0.15) {
                     lastY = packet.y
                 }
-                if(mc.theWorld.getBlockState(BlockPos(packet.x, packet.y - 0.00001, packet.z)).block !is BlockAir) {
+
+                if(mc.theWorld.checkBlockCollision(
+                        AxisAlignedBB(
+                            0.0,
+                            packet.y,
+                            0.0,
+                            0.0,
+                            packet.y + mc.thePlayer.height,
+                            0.0
+                        )
+                    )) {
                     willCritical = false
                 }
+
             }
         }
     }
-
 
     private fun block() {
         if(!blocking){

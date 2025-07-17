@@ -7,13 +7,42 @@ package net.ccbluex.liquidbounce.utils.item
 
 import net.ccbluex.liquidbounce.utils.RegexUtils
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.item.Item
 import net.minecraft.item.ItemArmor
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.JsonToNBT
+import net.minecraft.util.ResourceLocation
 
 /**
  * @author MCModding4K
  */
 object ItemUtils {
+
+    fun createItem(itemArguments: String): ItemStack? {
+        return try {
+            val args = itemArguments.replace('&', '§').split(" ")
+
+            val amount = args.getOrNull(1)?.toIntOrNull() ?: 1
+            val meta = args.getOrNull(2)?.toIntOrNull() ?: 0
+
+            val resourceLocation = ResourceLocation(args[0])
+            val item = Item.itemRegistry.getObject(resourceLocation) ?: return null
+
+            val itemStack = ItemStack(item, amount, meta)
+
+            if (args.size >= 4) {
+                val nbt = args.drop(3).joinToString(" ")
+
+                itemStack.tagCompound = JsonToNBT.getTagFromJson(nbt)
+            }
+
+            itemStack
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+            null
+        }
+    }
+
     fun getEnchantment(itemStack: ItemStack, enchantment: Enchantment): Int {
         if (itemStack.enchantmentTagList == null || itemStack.enchantmentTagList.hasNoTags()) return 0
         for (i in 0 until itemStack.enchantmentTagList.tagCount()) {

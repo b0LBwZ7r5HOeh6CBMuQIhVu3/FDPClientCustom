@@ -8,7 +8,7 @@ package net.ccbluex.liquidbounce.features.command.commands
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.features.command.Command
 
-class clearChatCommand : Command("clearChat", arrayOf("clearChat")) {
+class clearChatCommand : Command("clearChat", emptyArray()) {
     /**
      * Execute commands with provided [args]
      */
